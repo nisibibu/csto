@@ -1,0 +1,101 @@
+﻿2014-12-06 04:14:21 Debug: 
+From: Sender <vegi.m.8355@gmail.com>
+X-Mailer: CakePHP Email
+Date: Sat, 06 Dec 2014 04:14:20 +0100
+Message-ID: <5482748c080c4462b65d48eb3c9eb562@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+これはテストメールの本文です
+
+
+2014-12-06 04:27:31 Debug: 
+From: Sender <vegi.m.8355@gmail.com>
+X-Mailer: CakePHP Email
+Date: Sat, 06 Dec 2014 04:27:30 +0100
+Message-ID: <548277a2e85c464f8c0b46683c9eb562@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+これはテストメールの本文です
+
+
+2014-12-06 04:31:48 Debug: 
+From: Sender <vegi.m.8355@gmail.com>
+X-Mailer: CakePHP Email
+Date: Sat, 06 Dec 2014 04:31:47 +0100
+Message-ID: <548278a33b2c49c095fe40243c9eb562@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+これはテストメールの本文です
+
+
+2014-12-06 04:36:37 Debug: 
+From: Sender <trialanderror@hotmail.com>
+X-Mailer: CakePHP Email
+Date: Sat, 06 Dec 2014 04:36:36 +0100
+Message-ID: <548279c4576c4ae8b06d4a553c9eb562@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+これはテストメールの本文です
+
+
+2014-12-06 04:39:13 Debug: 
+From: Sender <trialanderror@hotmail.com>
+X-Mailer: CakePHP Email
+Date: Sat, 06 Dec 2014 04:39:13 +0100
+Message-ID: <54827a61622c48598f3e4bff3c9eb562@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+これはテストメールの本文です
+
+
+2014-12-06 04:39:51 Debug: 
+From: Sender <trialanderror685172@hotmail.com>
+X-Mailer: CakePHP Email
+Date: Sat, 06 Dec 2014 04:39:50 +0100
+Message-ID: <54827a868964453d8ad54dea3c9eb562@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+これはテストメールの本文です
+
+
+2014-12-19 15:04:28 Debug: Array
+(
+    [time] => 2014:12:19 15:04:28
+)
+2014-12-19 15:51:10 Debug: 
+2014-12-19 15:51:10 Debug: 
+2014-12-19 15:51:10 Debug: 
+2014-12-19 15:53:21 Debug: [] 0.00000 :  :
+2014-12-19 15:53:21 Debug: [] 0.01400 :  :
+2014-12-19 15:53:22 Debug: [] 0.05400 :  :
+2014-12-19 15:53:22 Debug: [] 0.74304 :  :
+2014-12-19 15:57:43 1: [] 0.00000 :  :
+2014-12-19 15:57:43 1: [] 0.01600 :  :
+2014-12-19 15:57:43 1: [] 0.05500 :  :
+2014-12-19 15:57:43 1: [] 0.65304 :  :
+2014-12-20 00:40:45 Debug: [] 0.00000 :  :
+2014-12-20 00:40:45 Debug: [] 0.01800 :  :
+2014-12-20 00:40:50 Debug: [] 5.06729 :  :
+2014-12-20 00:40:51 Debug: [] 5.52432 :  :
+2014-12-20 00:41:02 Debug: [] 0.00000 :  :
+2014-12-20 00:41:02 Debug: [] 0.01300 :  :
+2014-12-20 00:41:02 Debug: [] 0.05000 :  :
+2014-12-20 00:41:02 Debug: [] 0.52203 :  :
+2014-12-20 00:41:15 Debug: [] 0.00000 :  :
+2014-12-20 00:41:15 Debug: [] 0.03100 :  :
+2014-12-20 00:41:15 Debug: [] 0.10901 :  :
+2014-12-20 00:41:16 Debug: [] 0.72904 :  :
+2014-12-20 00:42:37 Debug: [] 0.00000 :  :
+2014-12-20 00:42:37 Debug: [] 0.01900 :  :
+2014-12-20 00:42:37 Debug: [] 0.07901 :  :
+2014-12-20 00:42:38 Debug: [] 0.66304 :  :
+2014-12-20 05:32:39 Debug: [] 0.00000 :  :
+2014-12-20 05:32:39 Debug: [] 0.01700 :  :
+2014-12-20 05:32:44 Debug: [] 5.06829 :  :
+2014-12-20 05:32:45 Debug: [] 5.63532 :  :

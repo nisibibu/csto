@@ -1,0 +1,27 @@
+{
+    "name": "nojimage/cakephp-rest",
+    "description": "A CakePHP Plugin containing a DataSource for interacting with ReSTful web services.",
+    "type": "cakephp-plugin",
+    "keywords": ["cakephp", "datasource"],
+    "homepage": "https://github.com/nojimage/CakePHP-ReST-DataSource-Plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Neil Crookes",
+            "homepage": "http://www.neilcrookes.com",
+            "role": "Original Developer"
+        },
+        {
+            "name": "Takashi Nojima",
+            "homepage": "http://php-tips.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.8",
+        "composer/installers": "*"
+    },
+    "extra": {
+        "installer-name": "Rest"
+    }
+}
