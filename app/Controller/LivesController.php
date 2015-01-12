@@ -20,14 +20,12 @@ use Goutte\Client;
 
 class LivesController extends AppController{
     
-    public $uses = array('POST','Live');    //使用するモデルを宣言
+    public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
     //var $name = "Api";
     /*コンポーネントの指定*/
     public $components = array('Twitter','Toto');
 
-    public $timeline = array();
-    
-    
+    public $timeline = array();    
     
     //use Goutte\Client;
     
@@ -35,12 +33,25 @@ class LivesController extends AppController{
         //ここで情報を処理 
        //処理記述したら共通化してコンポーネントにする
         
+        /*PHPCrawer 使用してのクローリング*/
+        //$c_result = $this->Crawl->getCrawlResult();
+        //debug($c_result);
+        
+        
         /*Toto投票率の取得*/
        
 
         //今回のtotoマッチングと投票率の取得
         $toto_vote = $this->Toto->getTotoVote();
         //debug($toto_vote);
+        
+        //リンクを全て表示（toto投票率取得元）
+        $this->Toto->getPastTotoVote();
+        //debug($toto_past_data);
+        
+        //Totoコンポーネントを使用してmodelクラスのsaveメソッド呼び出し
+        //$this->Totovote->setTotoDb();
+        
 
         //Goutteオブジェクト生成
         //$client_vote = new Client();

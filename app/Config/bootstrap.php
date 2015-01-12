@@ -99,7 +99,7 @@ Configure::write('Dispatcher.filters', array(
  * Configures default file logging options
  */
 App::uses('CakeLog', 'Log');
-CakeLog::config('debug', array(
+CakeLog::config('default', array(
 	'engine' => 'File',
 	'types' => array('notice', 'info', 'debug'),
 	'file' => 'debug',
@@ -116,16 +116,15 @@ CakePlugin::load('TwitterKit');
 //CakePlugin::load('Twim', array('bootstrap' => true));
 //CakePlugin::load('Rest');
 
-CakePlugin::load('Opauth', array('routes' => true, 'bootstrap' => true));
- 
+CakePlugin::load('Opauth', array('routes' => true, 'bootstrap' => true)); 
 Configure::write('Opauth.Strategy.Twitter', array(
     'key' => 'pkOywXf82gAyn1hnpqgzShmHX',
     'secret' => 'ajN7sqnlvJEmqgQyaXRZ7m2bkSGWGIcsWF6ft9Alm0jmpuGlgE'
 ));
-
 Configure::write('Opauth.path', '/cake/auth/');
 
-CakePlugin::load('Composer', array('bootstrap' => true));
+
+//CakePlugin::load('Composer', array('bootstrap' => true));
 
 /**
     Twitter
