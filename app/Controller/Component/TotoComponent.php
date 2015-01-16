@@ -4,7 +4,7 @@
  *
  *  */
 use Goutte\Client;
-require_once '../Vendor/goutte/goutte.phar';
+require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
 /*定数*/
 //totoOne
 define('TOTOONE', 'www.totoone.jp/');
@@ -17,6 +17,7 @@ $toto_vote_model = ClassRegistry::init('Totovote');
 
 /*totoの投票率を返す*/
 class TotoComponent extends Component{
+    
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
     
     public function getTotoVote(){
@@ -131,7 +132,7 @@ class TotoComponent extends Component{
         //debug($toto_vote_result_2);
         
         /*投票率を返す*/
-        return $toto_vote_result;
+        return $toto_vote_result_2;
     }
     
     //チームの情報を取得
@@ -237,7 +238,7 @@ class TotoComponent extends Component{
              * 
              */
             $data = array(
-                        'Totovote' =>array(
+//                        'Totovote' =>array(
                             'heldtime' => $toto_vote_result[0],
                             'helddate' => $toto_vote_result[1],
                             'no' => $toto_vote_result[2],
@@ -246,9 +247,11 @@ class TotoComponent extends Component{
                             '1_vote' => $toto_vote_result[5],
                             '0_vote' => $toto_vote_result[6],
                             '2_vote' => $toto_vote_result[7],
-                            )
+  //                          )
                 );
+            
             if(!empty($data)){
+                //$toto_vote_set_result = $toto_vote_Instance->save($data);
                 $toto_vote_set_result = $toto_vote_Instance->save($data);
                 debug($toto_vote_set_result);
             }

@@ -43,7 +43,7 @@ class LivesController extends AppController{
 
         //今回のtotoマッチングと投票率の取得
         $toto_vote = $this->Toto->getTotoVote();
-        //debug($toto_vote);
+        debug($toto_vote);
         
         //リンクを全て表示（toto投票率取得元）
         $this->Toto->getPastTotoVote();
