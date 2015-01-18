@@ -23,7 +23,7 @@ class LivesController extends AppController{
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
     //var $name = "Api";
     /*コンポーネントの指定*/
-    public $components = array('Twitter','Toto');
+    public $components = array('Twitter','Toto','Rss');
 
     public $timeline = array();    
     
@@ -43,18 +43,19 @@ class LivesController extends AppController{
 
         //今回のtotoマッチングと投票率の取得
         $toto_vote = $this->Toto->getTotoVote();
-        debug($toto_vote);
+        //debug($toto_vote);
         
         //リンクを全て表示（toto投票率取得元）
-        $this->Toto->getPastTotoVote();
-        //debug($toto_past_data);
+        $links = $this->Toto->getPastTotoVote();
+        debug($links);
         
         //Totoコンポーネントを使用してmodelクラスのsaveメソッド呼び出し
         //$this->Totovote->setTotoDb();
         
-
-        //Goutteオブジェクト生成
-        //$client_vote = new Client();
+        /*RSSコンポーネントテスト*/
+        $feed = "http://web.gekisaka.jp/feed";
+        $output = $this->Rss->read($feed);
+        //debug($output);
         
         /** Userコントローラーから情報を受け取る 
          * 

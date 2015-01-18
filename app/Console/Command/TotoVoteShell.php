@@ -17,12 +17,12 @@ class TotoVoteShell extends AppShell{
     
     /*メイン処理*/
     public function main(){
+        //Toto投票率のDB登録
        $toto_vote =  $this->Toto->getTotoVote();
-       $this->Totovote->setTotoVoteDb();
+       $this->Totovote->setTotoVoteDb($toto_vote);
        //$this->Totovote->upTotoVoteDb();
     }
-    
-    
+
 }
 
 ?>

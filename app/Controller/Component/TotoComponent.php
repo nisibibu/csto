@@ -7,11 +7,13 @@ use Goutte\Client;
 require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
 /*定数*/
 //totoOne
-define('TOTOONE', 'www.totoone.jp/');
+define('TOTOONEURL', 'http://www.totoone.jp');
 //TOTOの投票率の取得用URL
 define('TOTO_VOTE', 'http://www.totoone.jp/blog/datawatch/');
 //TOTOの投票率の過去取得用URL
 define('TOTO_VOTE_BACKNUMBER','http://www.totoone.jp/blog/datawatch/archives.php');
+//TOTOONEURL
+//define('TOT','http://www.totoone.jp/');
 
 $toto_vote_model = ClassRegistry::init('Totovote');
 
@@ -48,6 +50,7 @@ class TotoComponent extends Component{
         //取得したデータを整理
         $toto_vote_result = array();              //連想配列で投票率を保持
         $toto_vote_result_2 = array();            //連想配列で投票率を保持
+        $toto_vote_result_3 = array();            //連想配列で投票率を保持
         
         /*開催回の保持*/
         $held_temp = $toto_vote[0];
@@ -116,6 +119,30 @@ class TotoComponent extends Component{
             $toto_vote_result_2['vote']['2_vote'][] = $var[6];
         }
         
+        /*
+         * データの保管方法
+         *  array = array(
+         *              'held_time'
+         *              'held_date'
+         *              .....
+         *          )
+         *          ......
+         *          */
+        foreach ($vote_temp as $var){
+            $temp_array = array();
+            $temp_array['held_time'] = $held_time;
+            $temp_array['held_date'] = $held_date;
+            $temp_array['No'] = $var[1];
+            $temp_array['card'] = $var[2];
+            $temp_array['all_vote'] = trim(str_replace(array("\r\n", "\n", "\r"), '', $var[3]));
+            //var_dump($temp_array['all_vote']);
+            //debug($temp_array['all_vote']);
+            $temp_array['1_vote'] = $var[4];
+            $temp_array['0_vote'] = $var[5];
+            $temp_array['2_vote'] = $var[6];
+            $toto_vote_result_3[] = $temp_array;
+        }
+        
         //debug($toto_vote_result);
         //debug($toto_vote_result_2);
         
@@ -132,7 +159,7 @@ class TotoComponent extends Component{
         //debug($toto_vote_result_2);
         
         /*投票率を返す*/
-        return $toto_vote_result_2;
+        return $toto_vote_result_3;
     }
     
     //チームの情報を取得
@@ -162,7 +189,7 @@ class TotoComponent extends Component{
         /*1ページ分の過去の投票率へのリンクを取得*/
         $links = $crawler_vote->filter('div.datawatch-archives a')->each(function( $node ){
             return array(
-            'link_loc' => $node->attr('href'),
+            'link_loc' => TOTOONEURL. $node->attr('href'),
             //'content_loc' => $node->attr('src')
             );
         });
@@ -180,9 +207,10 @@ class TotoComponent extends Component{
 //        });
 //        
 //        return $crawler_vote;
+        return $links;
     }
     
-    //selectLing(Gouttteライブラリ)
+    //selectLink(Gouttteライブラリ)
     // xpathを内部で使用
     public function test($value){
      //public function selectLink($value)
