@@ -87,6 +87,7 @@ class UsersController extends AppController{
                   //SessionへTwitterトークン情報を登録
                   $this->Session->write('twitter_token',$this->data);
             
+                  /*
  		  $tmhOAuth = new tmhOAuth(
  		  			array(
  		  				"consumer_key" => "pkOywXf82gAyn1hnpqgzShmHX",
@@ -95,7 +96,15 @@ class UsersController extends AppController{
  		  				"secret" =>$this->data['auth']['credentials']['secret'],
  		  			)
  		  );
- 		  
+ 		  */
+                  $tmhOAuth = new tmhOAuth(
+ 		  			array(
+ 		  				"consumer_key" => "pkOywXf82gAyn1hnpqgzShmHX",
+ 		  				"consumer_secret" => "ajN7sqnlvJEmqgQyaXRZ7m2bkSGWGIcsWF6ft9Alm0jmpuGlgE",
+ 		  				"token" =>'2537332975-vf1gxhneO73mBA5gfk7zx0XvemitEvF46aGQqdk',
+ 		  				"secret" =>'uM7isfBEUZmDRQ9IdD6pEgiKCNhYRdd2e1eYT8Pmdyk0r',
+ 		  			)
+ 		  );
  		  /**
  		  * requestメソッドでTwitterAPIにリクエストを送る
  		  * ここではユーザーのホームラインを取得
