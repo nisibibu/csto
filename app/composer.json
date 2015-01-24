@@ -1,6 +1,7 @@
 {
     "require":{
-	"monolog/monolog":"1.6.*"	
+	"monolog/monolog":"1.6.*",
+        "opauth/twitter" :"0.3,*"
     },
     "config": {
         "vendor-dir": "Vendor"

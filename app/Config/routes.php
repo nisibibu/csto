@@ -43,11 +43,17 @@
  */
 	require CAKE . 'Config' . DS . 'routes.php';
 
-
+/*
 Router::connect(
    //opath 情報解析後のリダイレクト
    '/opauth-complete/*',    //URL
-   array('controller' => 'lives', 'action' => 'opauthComplete')
+   array('controller' => 'user', 'action' => 'complete')
 );
+*/
+Router::connect(
+   '/opauth-complete/*', 
+   array('controller' => 'users', 'action' => 'complete')
+);
+
 
 Router::parseExtensions("json");

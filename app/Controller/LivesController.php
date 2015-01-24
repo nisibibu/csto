@@ -61,17 +61,18 @@ class LivesController extends AppController{
          * 
          **/
         //Sessionからトークン情報を取得
-        $twitter_token = $this->Session->read('twitter_token');
+        //$twitter_token = $this->Session->read('twitter_token');
         //debug($twitter_token);
         
         //tmhOuthオブジェクトの生成
-        $tmhOAuth = $this->Twitter->createTmhOAuth($twitter_token);
+        //$tmhOAuth = $this->Twitter->createTmhOAuth($twitter_token);
         //debug($tmhOauth);
         //twitteroauhtオブジェクトの生成
-        $twitteroauth = $this->Twitter->createTwitterOauth($twitter_token);
+        //$twitteroauth = $this->Twitter->createTwitterOauth($twitter_token);
         
         
        /*Twitterの検索結果を取得*/
+        
        $s_result =$this->Twitter->searchTwtter($tmhOAuth, 'セレッソ大阪', 8);
        //debug($s_result);
        $s_result = $s_result['statuses'];

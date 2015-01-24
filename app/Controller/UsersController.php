@@ -22,6 +22,7 @@ class UsersController extends AppController{
 			//debug($this->data);
 		}
 		
+                //Controller Class 
                 var $name = "Api";
  
 		
@@ -55,10 +56,17 @@ class UsersController extends AppController{
                     exit;
 
     }
-                
+            
+        //test
+        function complete()
+        {
+            debug($this->request->data);
+            //$this->autoRender = false;
+        }
+    
         /*Twitter認証後リダイレクトされてくる*/
 	public function opauthComplete() {
- 		  //debug($this->data);
+ 		  debug($this->data);
  		  
  		  //$tmhUtil = new tmhUtilities();
 		  //$here = $tmhUtil->php_self();
