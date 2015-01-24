@@ -10,7 +10,7 @@ class Totovote extends AppModel{
     //登録処理
     public function setTotoVoteDb($statuses){
         /*DBへ保存*/
-        //$data = array();    
+        //$data = array();
         //debug($statuses);
         foreach ($statuses as $status){
             $data[] = array(
@@ -24,6 +24,9 @@ class Totovote extends AppModel{
                 '2_vote' => $status['2_vote'],
             );
         }
+        
+        //debug($data);
+        
         
         $this->saveAll($data);
     }

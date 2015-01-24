@@ -22,13 +22,14 @@ class TotoComponent extends Component{
     
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
     
-    public function getTotoVote(){
+    public function getTotoVote($toto_vote_url = TOTO_VOTE){
         //Goutteオブジェクト生成
         $client_vote = new Client();
         $toto_vote = array();   //Toto投票率を格納
+        debug($toto_vote_url);
 
         //totoマッチング、投票率HTMLを取得
-        $crawler_vote = $client_vote->request('GET', TOTO_VOTE);
+        $crawler_vote = $client_vote->request('GET', $toto_vote_url);
         
         //開催回の取得
         $crawler_vote->filter('.txt_lead1')->each(function( $node )use(&$toto_vote){
@@ -78,8 +79,22 @@ class TotoComponent extends Component{
         array_splice($toto_vote, 0, 7);     //始めの余分なデータを削除
         $toto_vote = array_filter($toto_vote,"strlen");    //空要素の削除
         $toto_vote = array_values($toto_vote);      //添え字を直す
+        
+        //debug($toto_vote);
+        
+        $date_no;   
         //連想配列の作成（結果データの生成）
-        $vote_temp =  array_chunk($toto_vote, 7);        //一試合毎に分割
+        
+        for($i = 1; $i < count($toto_vote); $i++){
+            if(preg_match('/^[0-9]+.[0-9]+/', $toto_vote[$i])){
+                $date_no = $i;
+                break;
+            }
+        }
+        
+        
+        $vote_temp =  array_chunk($toto_vote, $date_no);        //一試合毎に分割
+        //debug($vote_temp);
         
         //debug($vote_temp);
         
@@ -91,10 +106,11 @@ class TotoComponent extends Component{
          */
         foreach ($vote_temp as $var){
             //始めの不要データを取り除いて格納
-            $toto_data = array_slice($var, 1,6);    //対戦カード～各々の投票率
+            $toto_data = array_slice($var, 1,count($var));    //対戦カード～各々の投票率
             array_unshift($toto_data, $held_time,$held_date);
             $toto_vote_result[] = $toto_data;
         }
+        //debug($toto_vote_result);
  
         /* データの別の保管方法*/
         /*toto_vote_result_2 araay
@@ -108,6 +124,7 @@ class TotoComponent extends Component{
          *             => '0_vote'
          *             => '2_vote'
          */
+        /*
         foreach ($vote_temp as $var){
             $toto_vote_result_2['held_time'][] = $held_time;
             $toto_vote_result_2['held_date'][] = $held_date;
@@ -118,7 +135,7 @@ class TotoComponent extends Component{
             $toto_vote_result_2['vote']['0_vote'][] = $var[5];
             $toto_vote_result_2['vote']['2_vote'][] = $var[6];
         }
-        
+        */
         /*
          * データの保管方法
          *  array = array(
@@ -128,19 +145,27 @@ class TotoComponent extends Component{
          *          )
          *          ......
          *          */
-        foreach ($vote_temp as $var){
-            $temp_array = array();
-            $temp_array['held_time'] = $held_time;
-            $temp_array['held_date'] = $held_date;
-            $temp_array['No'] = $var[1];
-            $temp_array['card'] = $var[2];
-            $temp_array['all_vote'] = trim(str_replace(array("\r\n", "\n", "\r"), '', $var[3]));
-            //var_dump($temp_array['all_vote']);
-            //debug($temp_array['all_vote']);
-            $temp_array['1_vote'] = $var[4];
-            $temp_array['0_vote'] = $var[5];
-            $temp_array['2_vote'] = $var[6];
-            $toto_vote_result_3[] = $temp_array;
+        
+        //debug(count($toto_vote_result[0]));
+        //toto data only 
+        if(count($toto_vote_result[0]) === 9){
+                $toto_vote_result_3[0]['held_time'] =0;
+                debug($toto_vote_result_3);
+        }else{
+            foreach ($vote_temp as $var){
+                $temp_array = array();
+                $temp_array['held_time'] = $held_time;
+                $temp_array['held_date'] = $held_date;
+                $temp_array['No'] = $var[1];
+                $temp_array['card'] = $var[2];
+                $temp_array['all_vote'] = trim(str_replace(array("\r\n", "\n", "\r"), '', $var[3]));
+                //var_dump($temp_array['all_vote']);
+                //debug($temp_array['all_vote']);
+                $temp_array['1_vote'] = $var[4];
+                $temp_array['0_vote'] = $var[5];
+                $temp_array['2_vote'] = $var[6];
+                $toto_vote_result_3[] = $temp_array;
+            }
         }
         
         //debug($toto_vote_result);
@@ -156,7 +181,7 @@ class TotoComponent extends Component{
         
         
         //debug($toto_vote_result);
-        //debug($toto_vote_result_2);
+        //debug($toto_vote_result_3);
         
         /*投票率を返す*/
         return $toto_vote_result_3;
@@ -175,14 +200,14 @@ class TotoComponent extends Component{
     }
     
     //過去の投票率の取得
-    public function getPastTotoVote(){
+    public function getPastTotoVote($past_vote_url = TOTO_VOTE_BACKNUMBER){
         
          //Goutteオブジェクト生成
         $client_vote = new Client();
         $toto_vote = array();   //チーム情報を格納
 
         //totoマッチング、投票率HTMLを取得
-        $crawler_vote = $client_vote->request('GET', TOTO_VOTE_BACKNUMBER);
+        $crawler_vote = $client_vote->request('GET', $past_vote_url);
         
         //$crawler_vote->filter('#data_check_box1 > a')->attr('href');
         //バックナンバーの取得

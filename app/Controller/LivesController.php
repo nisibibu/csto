@@ -33,14 +33,9 @@ class LivesController extends AppController{
         //ここで情報を処理 
        //処理記述したら共通化してコンポーネントにする
         
-        /*PHPCrawer 使用してのクローリング*/
-        //$c_result = $this->Crawl->getCrawlResult();
-        //debug($c_result);
-        
         
         /*Toto投票率の取得*/
        
-
         //今回のtotoマッチングと投票率の取得
         $toto_vote = $this->Toto->getTotoVote();
         //debug($toto_vote);
