@@ -10,7 +10,7 @@ App::uses('Component', 'Controller');
 class TotovotesController extends AppController{
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
      /*コンポーネントの指定*/
-    public $components = array('Twitter','Toto','Rss');
+    public $components = array('Twitter','Toto','Rss','TeamTrend');
     
     /* index */
     public function index(){
@@ -21,8 +21,8 @@ class TotovotesController extends AppController{
         
         //リンクを全て表示（toto投票率取得元）
         
-        $past_vote_url = "http://www.totoone.jp/blog/datawatch/archives.php?off=100";
-        $links = $this->Toto->getPastTotoVote($past_vote_url);
+        //$past_vote_url = "http://www.totoone.jp/blog/datawatch/archives.php?off=100";
+        //$links = $this->Toto->getPastTotoVote($past_vote_url);
         //debug($links);
         
         //$this->setTotoVote($toto_vote);
@@ -30,11 +30,14 @@ class TotovotesController extends AppController{
         //get 1p toto vote
         //$toto_vote = $this->Toto->getTotoVote($links[2]['link_loc']);
         
-        foreach ($links as $var){
-                $toto_vote =$this->Toto->getTotoVote($var['link_loc']);
-                
-                $this->setTotoVote($toto_vote);
-        }
+//        foreach ($links as $var){
+//                $toto_vote =$this->Toto->getTotoVote($var['link_loc']);
+//                
+//                $this->setTotoVote($toto_vote);
+//        }
+        
+        /*チームの傾向情報を取得*/
+        $this->TeamTrend->getTeamTrendGoal();
         
         //debug($toto_vote); 
     }
