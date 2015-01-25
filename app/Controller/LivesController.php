@@ -47,11 +47,6 @@ class LivesController extends AppController{
         //Totoコンポーネントを使用してmodelクラスのsaveメソッド呼び出し
         //$this->Totovote->setTotoDb();
         
-        /*RSSコンポーネントテスト*/
-        $feed = "http://web.gekisaka.jp/feed";
-        $output = $this->Rss->read($feed);
-        //debug($output);
-        
         /** Userコントローラーから情報を受け取る 
          * 
          **/

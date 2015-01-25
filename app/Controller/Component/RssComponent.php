@@ -2,11 +2,14 @@
 
 /* RSSフィードの読み込み.コンポーネント
  */
-App::uses('XML','Utility');
+App::uses('Xml','Utility');
+
 class RssComponent extends Component{
+    
     public function read($feed, $items = 5){
         try{
             //RSSフィードをリード
+            //debug($feed);
             $xmlObject = Xml::build($feed);
         } catch (Exception $ex) {
             throw new InternalErrorException();
@@ -20,6 +23,11 @@ class RssComponent extends Component{
         endfor;
 
         return $output;
+    }
+    
+    /*RSSフィード取得URLを取得する*/
+    public function get_feed_urls(){
+        
     }
     
 }
