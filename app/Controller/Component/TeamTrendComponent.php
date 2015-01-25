@@ -29,10 +29,10 @@ class TeamTrendComponent extends Component{
         //debug($crawler_trend); 
        
         //チーム名の取得
-//        $crawler_trend->filter('.time_team')->each(function( $node )use(&$team_name){
-//            //debug($node->text());
-//            $team_name[] = trim($node->text());
-//        });
+       $crawler_trend->filter('.time_team')->each(function( $node )use(&$team_name){
+            //debug($node->text());
+            $team_name[] = trim($node->text());
+        });
         //debug($team_name);
 
         //J１時間帯別得点を取得
@@ -41,19 +41,19 @@ class TeamTrendComponent extends Component{
             //debug($node->text());
             $team_trend_temp[] = trim($node->text());
         });
-       debug($team_trend_temp);
+       //debug($team_trend_temp);
         
         /*連想配列の名前に使用する文字を取得*/
-//        $all_goal = $team_trend_temp[0];
-//        $time1 = $team_trend_temp[1];
-//        $time2 = $team_trend_temp[2];
-//        $time3 = $team_trend_temp[3];
-//        $time4 = $team_trend_temp[4];
-//        $time5 = $team_trend_temp[5];
-//        $time6 = $team_trend_temp[6];
+        $all_goal = $team_trend_temp[0];
+        $time1 = $team_trend_temp[1];
+        $time2 = $team_trend_temp[2];
+        $time3 = $team_trend_temp[3];
+        $time4 = $team_trend_temp[4];
+        $time5 = $team_trend_temp[5];
+        $time6 = $team_trend_temp[6];
         
         /*取得したデータから得点のみ抽出*/
-//        $temp = array_slice($team_trend_temp, 7);
+        $temp = array_slice($team_trend_temp, 7);
         //debug($temp);
         
         /*  データの保管形式
@@ -69,20 +69,19 @@ class TeamTrendComponent extends Component{
          *   */
         
         //ゴールの一時変数
-//        $temp_goal  = array_chunk($temp, 7);
-        //debug($temp_goal);
+        $temp_goal  = array_chunk($temp, 7);
+        debug($temp_goal);
         
- //       for($i = 0; count($team_name); $i++){
-           //$temp_array = $team_name['name'][$i];
-           //$temp_array[] =  $temp_goal[$i];
-           //debug($team_name['name'][$i]);
+        for($i = 0; count($team_name); $i++){
+           $temp_array = $team_name[$i];
+           $temp_array[] =  $temp_goal[$i];
+           debug($team_name['name'][$i]);
             //$team_trend_goal[] = $temp_array;
-//        }
+        }
         //debug($temp_goal);
         
-        /*
-         foreach($team_name as $name){
-                   foreach($temp_goal as $var){
+        /*データの整形*/
+         foreach($temp as $var){
                             $temp_array = array();
                             $temp_array['team'] = $name;
                             $temp_array[$all_goal][] = $var[0];
@@ -92,10 +91,9 @@ class TeamTrendComponent extends Component{
                             $temp_array[$time4][] = $var[4];
                             $temp_array[$time5][] = $var[5];
                             $temp_array[$time6][] = $var[6];
-                            $team_trend_goal[] = $temp_array;
-                        }
+                            $team_trend_goal[] = $temp_array;                      
             }
-            */
+           
           
         //debug($team_trend_goal);
     }
