@@ -1,0 +1,5 @@
+ゲキサカ,http://web.gekisaka.jp/feed
+ゲキサカ（日本代表）,http://web.gekisaka.jp/feed?category=nationalteam
+サッカー日本代表 - Number Web,http://rss.rssad.jp/rss/number/jfootball
+海外サッカー - Number Web,http://feed.ismedia.jp/rss/number/wfootball
+SoccerMagazine ZONE WEB,http://www.soccermagazine-zone.com/feed

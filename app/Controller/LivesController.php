@@ -23,7 +23,7 @@ class LivesController extends AppController{
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
     //var $name = "Api";
     /*コンポーネントの指定*/
-    public $components = array('Twitter','Toto','Rss');
+    public $components = array('Twitter','Toto','Rss','TeamTrend');
 
     public $timeline = array();    
     

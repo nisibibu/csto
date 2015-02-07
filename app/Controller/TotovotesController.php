@@ -35,11 +35,10 @@ class TotovotesController extends AppController{
 //                
 //                $this->setTotoVote($toto_vote);
 //        }
-        
         /*チームの傾向情報を取得*/
         $this->TeamTrend->getTeamTrendGoal();
         
-        //debug($toto_vote); 
+        debug($toto_vote); 
     }
     
     //

@@ -1,0 +1,7 @@
+ゲキサカ（Jリーグ&国内）,http://web.gekisaka.jp/feed?category=domestic
+ニュース｜サッカー｜スポーツナビ,http://sportsnavi.yahoo.co.jp/sports/soccer/headlines/rss
+SOCCER KING - スポーツ - Yahoo!ニュース,http://headlines.yahoo.co.jp/rss/soccerk-c_spo.xml
+ゲキサカ - スポーツ - Yahoo!ニュース,http://headlines.yahoo.co.jp/rss/gekisaka-c_spo.xml
+Jリーグ - Number Web,http://feed.ismedia.jp/rss/number/jleague
+スポーツナビ＋（Jリーグ）,http://www.plus-blog.sportsnavi.com/feed/centric/jleague/rss2_0.xml
+スポーツナビ＋（C大阪）,http://www.plus-blog.sportsnavi.com/feed/stag/20/rss2_0.xml
