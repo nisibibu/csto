@@ -51,5 +51,27 @@ class Teamtrend extends Appmodel{
          $result =  $this->saveAll($data);
          debug($result);
         }
+        
+        /*登録処理（状況別勝敗）*/
+        public function setTrendWinDb($statuses){
+            foreach ($statuses as $status){
+                //debug($status);
+                $data[] = array(
+                    'team' => $status[0],
+                    'win_pre' => $status[1],
+                    'draw_pre' => $status[2],
+                    'lose_pre' => $status[3],
+                    'winning_pre' => $status[4],
+                    'win_lead' => $status[5],
+                    'draw_lead' => $status[6],
+                    'lose_lead' => $status[7],
+                    'winning_lead' => $status[8],
+                    'data_year' => $status[9],
+            );
+        }
+
+         $result =  $this->saveAll($data);
+         debug($result);
+        }
 }
 

@@ -16,16 +16,31 @@ class TeamTrendController extends AppController{
         //$trend_goal_J2 = $this->TeamTrend->getTeamTrendGoal($param);  //J2チームの時間帯別得点を取得
         
         /*チームの時間帯別失点の情報を取得(J1)*/
-        //$trend_los = $this->TeamTrend->getTeamTrendLOS();
+        //$trend_los_J1 = $this->TeamTrend->getTeamTrendLos();
         
-        //debug($trend_goal_J2);
+        /*チームの時間帯別失点の情報を取得(J2)*/
+        //$param = "?kind=5";
+        //$trend_los_J2 = $this->TeamTrend->getTeamTrendLos($param);
+        
+        ///debug($trend_los_J2);
         
         //DBへ時間帯別得点の情報を登録
         //$this->setTrendGoal($trend_goal_J1);
         //$this->setTrendGoal($trend_goal_J2);
         
         //DBへ時間帯別失点の情報を登録
-        //$this->setTrendLos($trend_los);
+        //$this->setTrendLos($trend_los_J1);
+        //$this->setTrendLos($trend_los_J2);
+        
+        /*状況別勝敗の情報を取得*/
+        //$trend_win_J1 = $this->TeamTrend->getTeamTrendWin();    //J1の状況別勝敗を取得
+        //$this->setTrendWinning($trend_win_J1);
+        
+        //J2の状況別勝敗の情報を取得
+        $param = "?kind=6";
+        $trend_win_J2 = $trend_win_J2 = $this->TeamTrend->getTeamTrendWin($param);    //J2の状況別勝敗を取得
+        //var_dump($trend_win_J2);
+        $this->setTrendWinning($trend_win_J2);
     }
     
         //DBへゴール傾向を保存
@@ -36,9 +51,7 @@ class TeamTrendController extends AppController{
             
             $teamtrend = new Teamtrend('Teamtrend','teamtrendgoal');
             $teamtrend->setTrendGoalDb($trend_goal);
-            
-            
-            //$this->Teamtrendgoal->setTrendGoalDb($trend_goal);
+ 
         }
     
         //DBへ時間帯別失点情報を登録
@@ -67,6 +80,15 @@ class TeamTrendController extends AppController{
             $teamtrend->setTrendLosDb($trend_los);
         }
     
+        public function setTrendWinning($trend_win){
+            //App::uses('Teamtrendgoal','Model'); //モデルクラスにTeamtrendgoalを指定
+            App::uses('Teamtrend','Model');     //モデルクラスにTeamTrendを指定
+            //debug($trend_goal);
+            
+            $teamtrend = new Teamtrend('Teamtrend','teamtrendwinning');
+            $teamtrend->setTrendWinDb($trend_win);
+            
+        }
 }
 
 
