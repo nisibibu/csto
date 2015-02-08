@@ -46,8 +46,34 @@ class TotoResultComponent extends Component{
         
                   /*totoの結果を取得*/  
                   $pattern = "/.+totoくじ結果$/";
-                  //$toto_result = $this->getIndividual($pattern, $result_all);
-                  //debug($toto_result);
+                  $toto_result = $this->getIndividual($pattern, $result_all);
+                  debug($toto_result);
+                  
+                  /*取得したデータの加工*/
+                  if(!is_null($toto_result)){
+                      $result = array();
+                      $match_begin_no = 16;
+                      $match_end_no = 29;
+                      $held_time = preg_match('/[0-9]+/', $toto_result[0]); //開催回の取得
+                      $result[] = $held_time;
+                      /*第1試合～第13試合までの結果取得*/
+                      for($i = $match_begin_no; $i < $match_end_no; $i++){
+                          $match_result[] = $toto_result[$i];
+                          $result[] = $match_result;
+                      }
+                      //当選についての情報の取得
+                      $rank = array();
+                      for($i = $match_end_no; $i < count($toto_result); $i++ ){
+                          if(preg_match('/1等/', $toto_result[$i])){
+                              $temp['money'] = $toto_result[$i + 1];
+                              $temp['count'] = $toto_result[$i + 2];
+                              $temp['carry_over'] = $toto_result[$i + 3];
+                              $rank['rank1'] = $temp;
+                              $result[] = $rank;
+                          }
+                      }
+                  }
+                  debug($result);
 
                    /*miniAの結果を取得*/
                   $pattern_a = "/.+Ａ組くじ結果$/";
@@ -75,13 +101,13 @@ class TotoResultComponent extends Component{
                   
                   /*BIG1000の結果を取得*/
                   $pattern_1000 = "/.+ＢＩＧ１０００くじ結果$/";
-                  $big1000_result = $this->getIndividual($pattern_1000, $result_all);
-                  debug($big1000_result);
+                  //$big1000_result = $this->getIndividual($pattern_1000, $result_all);
+                  //debug($big1000_result);
                   
                   /*BIG mini の結果を取得*/
                   $pattern_mini = "/.+ｍｉｎｉＢＩＧくじ結果$/";
-                  $mini_big_result = $this->getIndividual($pattern_mini, $result_all);
-                  debug($mini_big_result);
+                  //$mini_big_result = $this->getIndividual($pattern_mini, $result_all);
+                  //debug($mini_big_result);
         }
         
         
