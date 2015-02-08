@@ -1,6 +1,7 @@
 <?php
 
 App::uses('Component', 'Controller');
+App::uses('AppController','Controller');    //Shellから呼び出せるようにAppControllerを明示的に読み込み
 /*チーム傾向のコントローラー*/
 class TeamTrendController extends AppController{
      public $uses = array('POST','Teamtrendgoal','Teamtrend');    //使用するモデルを宣言
