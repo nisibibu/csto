@@ -15,6 +15,7 @@ define('TOTO_VOTE_BACKNUMBER','http://www.totoone.jp/blog/datawatch/archives.php
 //TOTOONEURL
 //define('TOT','http://www.totoone.jp/');
 
+/*shellからモデルを使用する*/
 $toto_vote_model = ClassRegistry::init('Totovote');
 
 /*totoの投票率を返す*/

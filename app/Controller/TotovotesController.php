@@ -10,7 +10,7 @@ App::uses('Component', 'Controller');
 class TotovotesController extends AppController{
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
      /*コンポーネントの指定*/
-    public $components = array('Twitter','Toto','Rss','TeamTrend');
+    public $components = array('Twitter','Toto','Rss','TeamTrend','TotoResult');
     
     /* index */
     public function index(){
@@ -36,9 +36,12 @@ class TotovotesController extends AppController{
 //                $this->setTotoVote($toto_vote);
 //        }
         /*チームの傾向情報を取得*/
-        $this->TeamTrend->getTeamTrendGoal();
+       // $this->TeamTrend->getTeamTrendGoal();
         
-        debug($toto_vote); 
+        /*Totoの結果を取得*/
+        $url = "http://www.totoone.jp/kekka/index.php?id=248";
+        $this->TotoResult->getTotoResult($url);
+
     }
     
     //
