@@ -19,10 +19,19 @@ class LeagueController extends AppController{
         //$league_info_j1 = $this->League->getLeagueInfo($j_class);   //J1の情報を取得
         //$this->setLeagueInfo($league_info_j1, $j_class);;
         //J2のリーグ情報を登録
-        $j_class = "j2";
+        //$j_class = "j2";
         
-        $league_info_j2 = $this->League->getLeagueInfo($j_class); 
-        $this->setLeagueInfo($league_info_j2, $j_class);
+        //$league_info_j2 = $this->League->getLeagueInfo($j_class); 
+        //$this->setLeagueInfo($league_info_j2, $j_class);
+        
+        /*ゴールランキングの取得*/
+        $j_class = "j1";
+        $param = "8";
+        
+        
+        $goal_ranking_info = $this->League->getGoalRanking(GOAL_RANKING_J1,$param);
+        //var_dump($goal_ranking_info);
+        $this->setgoalRankingInfo($goal_ranking_info, $j_class);
         
     }
     
@@ -37,8 +46,12 @@ class LeagueController extends AppController{
     }
     
     /*得点ランキングを登録*/
-    public function setgoalRankingInfo(){
+    public function setgoalRankingInfo($goal_ranking_info,$j_class){
+         App::uses('League','Model');     //モデルクラスにTeamTrendを指定
         
+        //モデルクラスのインスタンスを生成
+        $league = new League('League','goalranking');
+        $league->setGoalRankingDb($goal_ranking_info, $j_class);
     }
     
     

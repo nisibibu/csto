@@ -3,10 +3,10 @@
 use Goutte\Client;
 require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
 
-define('LEAG_RANKING', 'http://soccer.yahoo.co.jp/jleague/standings/');        //リーグの情報
-define('TEAM_INFO_SPORTS_NAVI','http://soccer.yahoo.co.jp/jleague/teams/detail');   //チームの情報
-define('GOAL_RANKING','http://soccer.yahoo.co.jp/jleague/stats');                   //得点ランキング
-define('EXPECTATION_RANK',"http://soccer.yahoo.co.jp/jleague/expectranking");       //期待値ランキング
+define('LEAG_RANKING', 'http://soccer.yahoo.co.jp/jleague/standings/');                 //リーグの情報
+define('TEAM_INFO_SPORTS_NAVI','http://soccer.yahoo.co.jp/jleague/teams/detail');       //チームの情報
+define('GOAL_RANKING_J1','http://soccer.yahoo.co.jp/jleague/stats/j1/0/');                    //得点ランキング（J1)
+define('EXPECTATION_RANK',"http://soccer.yahoo.co.jp/jleague/expectranking");           //期待値ランキング
 
 define('ASSIST_RANKING','http://www.football-lab.jp/summary/player_ranking/j1/?year=2014');   //アシストランキング
 
@@ -14,7 +14,7 @@ define('ASSIST_RANKING','http://www.football-lab.jp/summary/player_ranking/j1/?y
 class LeagueComponent extends Component{
     
     /*J1の情報をスクレイピングで取得*/
-    public function  getLeagueInfo($status){
+    public function  getLeagueInfo($status = "j1"){
         //Goutteオブジェクト生成
         $crawer = new Goutte\Client();
         $url = LEAG_RANKING.$status;
@@ -32,7 +32,7 @@ class LeagueComponent extends Component{
         //更新日の取得（年度に使用）
         /*未実装*/
          $crawler->filter('.grayBg2 p10p mb10p yjMS txt_c' )->each(function( $node )use(&$update_time){
-            debug($node->text());
+             var_dump($node->text());
             $update_time = trim($node->text());
         });
 
@@ -75,28 +75,71 @@ class LeagueComponent extends Component{
     }
     
     /*得点ランキングの取得*/
-    public function getGoalRanking($url = GOAL_RANKING){
+    public function getGoalRanking($url = GOAL_RANKING_J1,$param = "1"){
         //Goutteオブジェクト生成
            $crawer = new Goutte\Client();
-           //J1の順位を取得
-           $crawler = $crawer->request('GET',$url."/j1");
+           //HTMLを取得
+           $crawler = $crawer->request('GET',$url.$param);
 
            $craw_result = array(); //取得結果を保持
            $item_name = array();
            $goal_ranking_info = array();
-            //項目の取得
+           $links = array();
+           
+          //項目の取得
           $crawler->filter('#personal_record table th' )->each(function( $node )use(&$item_name){
                //debug($node->text());
                $item_name[] = trim($node->text());
            });
-           var_dump($item_name);
+           //var_dump($item_name);
+           
+           
+           //リンク（ランキングページ）の取得
+           $crawler->filter('.pagelist ul li a' )->each(function( $node )use(&$links){
+               //var_dump($node->attr('href'));
+               $links[] = $node->attr('href');
+           });
+           $links = array_unique($links);//重複するリンクを削除
+           
+           /*リンクを利用して処理するよう記述
+            *
+            *
+            */
+           
            
             //情報の取得
           $crawler->filter('#personal_record table td' )->each(function( $node )use(&$craw_result){
                //debug($node->text());
                $craw_result[] = trim($node->text());
            });
-           var_dump($craw_result);
+           //var_dump($craw_result);
+           
+           //データの整形
+           $result = $this->fixDataBlank($craw_result);
+           //var_dump($goal_ranking_info);
+           
+         //個別に分けて保持
+         /*$goal_ranking_info
+         * array(
+         *      順位
+         *      選手名
+         *      チーム名
+         *      位置
+         *      得点
+         *      PK
+         *      シュート
+         *      シュート決定率
+         *      90分平均得点
+         *      試合数
+         *      出場時間（分）
+         *      警告
+         *      退場
+         *          */
+        $goal_ranking_info = array_chunk($result, count($item_name));
+        //var_dump($goal_ranking_info);
+        
+        return $goal_ranking_info;
+           
     }
     
     /*リーグ順位をソートして返す*/
