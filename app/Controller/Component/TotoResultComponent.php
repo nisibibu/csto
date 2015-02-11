@@ -49,7 +49,10 @@ class TotoResultComponent extends Component{
                   $toto_result = $this->getIndividual($pattern, $result_all);
                   debug($toto_result);
                   
-                  /*取得したデータの加工*/
+                  /*取得したデータの加工
+                   *  未実装　後で修正を行う 
+                   * 
+                   *                    */
                   if(!is_null($toto_result)){
                       $result = array();
                       $match_begin_no = 16;

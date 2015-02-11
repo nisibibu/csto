@@ -10,7 +10,7 @@ App::uses('Component', 'Controller');
 class TotovotesController extends AppController{
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
      /*コンポーネントの指定*/
-    public $components = array('Twitter','Toto','Rss','TeamTrend','TotoResult');
+    public $components = array('Twitter','Toto','Rss','TeamTrend','TotoResult','League');
     
     /* index */
     public function index(){
@@ -39,12 +39,17 @@ class TotovotesController extends AppController{
        // $this->TeamTrend->getTeamTrendGoal();
         
         /*Totoの結果を取得*/
-        $url = "http://www.totoone.jp/kekka/index.php?id=248";
-        $this->TotoResult->getTotoResult($url);
+        //$url = "http://www.totoone.jp/kekka/index.php?id=248";
+        //$this->TotoResult->getTotoResult($url);
 
+        /*League情報を取得*/
+        $league_info = $this->League->getJ1LeagueInfo();   //J1の情報を取得
+        debug($league_info);
+        //$this->League->getGoalRanking();
     }
     
-    //
+    
+    //toto投票率を登録
     public function setTotoVote($toto_vote){
         //debug($toto_vote);
         if($toto_vote[0]['held_time'] === 0){

@@ -4,7 +4,7 @@
  *  チーム傾向のモデル
  * * /
  */
-App::uses('Appmodel', 'Model');
+App::uses('AppModel', 'Model');
 
 class Teamtrend extends Appmodel{
       // public $useTable = 'teamtrendlos';
