@@ -25,14 +25,23 @@ class LeagueController extends AppController{
         //$this->setLeagueInfo($league_info_j2, $j_class);
         
         /*ゴールランキングの取得*/
-        $j_class = "j1";
-        $param = "8";
+        //$j_class = "j1";
+        //$param = "8";
+        //$goal_ranking_j1 = array();
         
+        /**! J1のデータ確認（？）debug表示されない、var_dump表示確認可能 /**/
+        //$goal_ranking_j1 = $this->League->getGoalRanking(GOAL_RANKING_J1,$param); //J1ゴールランキングの取得
+        //var_dump($goal_ranking_j1);
         
-        $goal_ranking_info = $this->League->getGoalRanking(GOAL_RANKING_J1,$param);
-        //var_dump($goal_ranking_info);
-        $this->setgoalRankingInfo($goal_ranking_info, $j_class);
+        //$this->setgoalRankingInfo($goal_ranking_j1, $j_class);   //DBへ保存
         
+        $j_class = "j2";
+        //$param = "11";
+        //$goal_ranking_j2 = $this->League->getGoalRanking(GOAL_RANKING_J2,$param); //J1ゴールランキングの取得
+        //debug($goal_ranking_info_j2);
+        //$this->setgoalRankingInfo($goal_ranking_j2, $j_class);
+         
+         
     }
     
     

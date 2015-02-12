@@ -1,4 +1,5 @@
 <?php
+
 /*Team傾向情報関連コンポーネント
  *
  *  */
@@ -8,7 +9,7 @@ require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
 
 /*定数*/
 //totoOne
-define('TEAM_TREND', 'http://www.totoone.jp/blog/datawatch/timezone.php');
+define('SEREZO_MATCH', 'http://www.cerezo.co.jp/game_schedule1.asp');
 
 App::uses('Component', 'Controller');
 class TeamTrendComponent extends Component{

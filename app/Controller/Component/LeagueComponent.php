@@ -5,7 +5,8 @@ require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
 
 define('LEAG_RANKING', 'http://soccer.yahoo.co.jp/jleague/standings/');                 //リーグの情報
 define('TEAM_INFO_SPORTS_NAVI','http://soccer.yahoo.co.jp/jleague/teams/detail');       //チームの情報
-define('GOAL_RANKING_J1','http://soccer.yahoo.co.jp/jleague/stats/j1/0/');                    //得点ランキング（J1)
+define('GOAL_RANKING_J1','http://soccer.yahoo.co.jp/jleague/stats/j1/0/');              //得点ランキング（J1)
+define('GOAL_RANKING_J2','http://soccer.yahoo.co.jp/jleague/stats/j2/0/');              //得点ランキング(J2)
 define('EXPECTATION_RANK',"http://soccer.yahoo.co.jp/jleague/expectranking");           //期待値ランキング
 
 define('ASSIST_RANKING','http://www.football-lab.jp/summary/player_ranking/j1/?year=2014');   //アシストランキング
@@ -30,7 +31,7 @@ class LeagueComponent extends Component{
         
         
         //更新日の取得（年度に使用）
-        /*未実装*/
+        /*ゴールゴールランキングの部分を適用する*/
          $crawler->filter('.grayBg2 p10p mb10p yjMS txt_c' )->each(function( $node )use(&$update_time){
              var_dump($node->text());
             $update_time = trim($node->text());
@@ -52,6 +53,7 @@ class LeagueComponent extends Component{
         
         //空白行を取り除いて整列
         $result = $this->fixDataBlank($craw_result);
+        //var_dump($result);
         
         //debug($result);
         
@@ -78,13 +80,29 @@ class LeagueComponent extends Component{
     public function getGoalRanking($url = GOAL_RANKING_J1,$param = "1"){
         //Goutteオブジェクト生成
            $crawer = new Goutte\Client();
+           $url = $url.$param;
+           //var_dump($url);
+
            //HTMLを取得
-           $crawler = $crawer->request('GET',$url.$param);
+           $crawler = $crawer->request('GET',$url);
 
            $craw_result = array(); //取得結果を保持
+           $update_time;  //更新日時を取得
+           $year;                   //年度を保持
            $item_name = array();
            $goal_ranking_info = array();
            $links = array();
+           
+           //更新日の取得（年度に使用）
+           $crawler->filter('.yjSt' )->each(function( $node )use(&$update_time){
+                var_dump($node->text());
+                $update_time = trim($node->text());
+            });
+           //var_dump($update_time);
+            /*年度の取得*/
+           preg_match('/^[0-9]{4}/', $update_time,$year);
+           $year = $year[0];
+           //var_dump($year);
            
           //項目の取得
           $crawler->filter('#personal_record table th' )->each(function( $node )use(&$item_name){
@@ -116,6 +134,7 @@ class LeagueComponent extends Component{
            
            //データの整形
            $result = $this->fixDataBlank($craw_result);
+           //var_dump($result);
            //var_dump($goal_ranking_info);
            
          //個別に分けて保持
@@ -134,45 +153,40 @@ class LeagueComponent extends Component{
          *      出場時間（分）
          *      警告
          *      退場
+          *     年度
          *          */
-        $goal_ranking_info = array_chunk($result, count($item_name));
-        //var_dump($goal_ranking_info);
+        $goal_result = array_chunk($result, count($item_name));
+        //var_dump($goal_result);
+        //debug($goal_ranking_info);
         
-        return $goal_ranking_info;
+        foreach ($goal_result as $var){
+            //var_dump($var);
+            //各要素に年度を末尾に追加
+            array_push($var,$year);
+            $goal_ranking_info[] = $var;
+        }
+        //$goal_ranking_info = $goal_result;
+        
+       //var_dump($goal_ranking_info);
+        
+       return $goal_ranking_info;
            
     }
     
-    /*リーグ順位をソートして返す*/
-    public function getsortRanking($result){
-                $flag = TRUE;         //whileループを抜ける判定に使用
-                $data  = array();    //結果を格納
-                  /*個別に取得*/
-                   for($i  = 0 ; $i < count($result); $i++){
-                         //$pattern = '/.+totoくじ結果$/';
-                        if(!$flag){
-                            //var_dump("Falseになったので抜ける");
-                            break;
-                        }
-                        //初めのデータかチェック         
-                        if(preg_match('/^\W.{4,}/', $result[$i])){
-                            $j = $i;    //くじ結果の配列添え字番号を記録
-                            var_dump('チーム名が見つかりました');
-                            //次のデータ行の手前までデータを取得する
-                            while(preg_match('/^\W.{4,}/', $result[$j+1] ) == 0) {
-                                    $data[] = $result[$j];
-                                    $j++;
-                                    //最終行なら抜ける
-                                    if(!isset($result[$j +1])){
-                                        var_dump('最終行なので抜けます');
-                                        break;
-                                    }
-                           }
-                           $data[]  = $result[$j];
-                           $flag = FALSE;
-                 }
-             }
-             return $data;
-        }
+    
+    /*ページのリンク取得用*/
+    public function getLinks($url,$param){
+           //Goutteオブジェクト生成
+           $crawer = new Goutte\Client();
+
+           //HTMLを取得
+           $crawler = $crawer->request('GET',$url);
+
+           $links = array();
+           
+           /*共通化の処理を施す*/
+    }
+    
     
     
     /*空白のデータを削除して配列を整列しなおす*/
@@ -194,9 +208,6 @@ class LeagueComponent extends Component{
          //取得したデータから空の部分を詰めて配列添え直し
           $result =  array_filter($result,'even');
           $result = array_values($result);
-          
-          //取得したデータからスペース(&nbsp;)を除いて配列整列
-          /*実装する*/
           
 
           return $result;
