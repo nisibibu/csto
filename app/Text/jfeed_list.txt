@@ -3,5 +3,10 @@
 SOCCER KING - スポーツ - Yahoo!ニュース,http://headlines.yahoo.co.jp/rss/soccerk-c_spo.xml
 ゲキサカ - スポーツ - Yahoo!ニュース,http://headlines.yahoo.co.jp/rss/gekisaka-c_spo.xml
 Jリーグ - Number Web,http://feed.ismedia.jp/rss/number/jleague
+スポーツナビ,http://sportsnavi.yahoo.co.jp/sports/soccer/headlines/rss
 スポーツナビ＋（Jリーグ）,http://www.plus-blog.sportsnavi.com/feed/centric/jleague/rss2_0.xml
+スポーツナビ＋（J1・ナビスコ),http://www.plus-blog.sportsnavi.com/feed/centric/j1/rss2_0.xml
 スポーツナビ＋（C大阪）,http://www.plus-blog.sportsnavi.com/feed/stag/20/rss2_0.xml
+スポーツナビ＋(ベガルタ仙台),http://www.plus-blog.sportsnavi.com/feed/stag/19/rss2_0.xml
+スポーツナビ＋(G大阪),http://www.plus-blog.sportsnavi.com/feed/stag/6/rss2_0.xml
+SoccerMagazine ZONE WEB,http://www.soccermagazine-zone.com/feed
