@@ -46,14 +46,23 @@ class MatchComponent extends Component{
         
         
         $item_name = array("ホーム","スコア","アウェー","試合開始","競技場");
-        $data_item = array("開催日","ホーム","スコア", "アウェイ",
-                            "開始時刻","スタジアム");
+        $data_item = array("section","home","score",
+                             "home_score","away_score","away","start_time","stadium");
         
         //var_dump($item_name);
         
         //情報を取得
         $crawler->filter('.table-block01 table td' )->each(function( $node )use(&$craw_result){
-            $craw_result[] = $this->stripspaces($node->text());
+            $temp = $this->stripspaces($node->text());
+            $str = "―";
+            $temp = str_replace($str,"-", $temp);   //全角ダッシュ変換
+            $temp = mb_convert_kana($temp, "rna");
+            $craw_result[] = $temp;
+            //スコアなら得点を分けて追加して格納
+            if(preg_match("/(?P<home>\d).(?P<away>\d)/", $temp,$var)){
+                $craw_result[] = $var['home'];
+                $craw_result[] = $var['away'];
+            }
             //var_dump($craw_result);
         });
         
@@ -87,9 +96,9 @@ class MatchComponent extends Component{
         }
 
         //var_dump($result_s[1]);
-        $match_date = array();    //試合開催日をdate型に変換
-        $match_date_s = array();  //曜日も含む文字列で試合開催日を保持
-        $match_date_i = array();
+        $match_date = array();      //試合開催日をdate型に変換
+        $match_date_s = array();    //曜日も含む文字列で試合開催日を保持
+        $match_date_i = array();    //日付のデータの添え字番号を保持
         $temp_result = array();
         $date_count = 0;
         
@@ -97,7 +106,7 @@ class MatchComponent extends Component{
         /*日付が見つかるまで探索*/
         for($i = 0; $i < count($result_s[1]);$i++){
             /*日付のデータ探索*/
-            if(preg_match("/.+月.+日（.+）/", $result_s[0][$i])){
+            if(preg_match("/.+月.+日(.+)/", $result_s[0][$i])){
                 $match_date_i[] = $i;
                 $match_date_s[] = $result_s[0][$i];
             }
@@ -115,53 +124,41 @@ class MatchComponent extends Component{
         }else{
             $temp_result = $result_s[0];
         }
+        
+        //debug($result_s[0]);
+        //debug($match_date_i);
+        //debug($match_date_s);
         /*日付変換（文字列の日付→date型）*/
         //mb_regex_encoding("UTF-8");
         //preg_match("/[０-９]+/", "３月２日",$t);
         //debug($t);
         
-        /**日にちのみ取得（全角数字取り出し、半角数値へ）**/
-        /*日付の部分
-            ○○月○○日（○）
-         *          */
-        $d_1 = mb_substr($match_date_s[0], count($match_date_s[0]) - 6, 1);
-        //debug($d_1);
-        $d_1 = mb_convert_kana($d_1, "n");
+        /**日にち(date型の取得）**/
+        preg_match("/(?P<month>\d+)月(?P<date>\d+)日/", $match_date_s[0], $temp_date);
+        //debug($temp_date);
         
-        $d_2 = mb_substr($match_date_s[0], count($match_date_s[0]) - 7, 1);
-        //debug($d_2);
-        $d_2 = mb_convert_kana($d_2, "n");
+        $month_temp = $temp_date['month'];
+        $date_temp =$temp_date['date'];
         
-        //日にち部分生成
-        if(preg_match("/[\d]/",$d_2)){
-            $d_1 = $d_1.$d_2;
-        }
+        $date_s = $year."-".$month_temp."-".$date_temp;
+        //var_dump($date_s);
+        //日付の生成
+        $d = date("Y-m-d", strtotime($date_s));
+        //var_dump($d);
         
+        /*日にち部分の取り出し*?
         
-        $date_m = $year."-". $month. "-".$d_1;
-        debug($date_m);
-        $match_date = date("Y-m-d",strtotime($date_m));
-        
-        
-        debug($match_date);
-        debug($temp_result);
         
         /*節の取り出し*/
         
         
         /********************************************/
         
-        /*配列の最後*/
+        /*返却用配列の生成*/
         
         
-        /*同一日付のデータに分ける*/
-        $result_d = array();    //日付毎にデータを保持
-        foreach($result_s as $var){
-            $pattern_begin = "/.+月.+日（.+）/";
-            $pattern_end = "/.+月.+日（.+）/";
-            $result_d[] = $this->getIndividual($pattern_begin, $pattern_end, $var);
-        }
-        //var_dump($result_d);
+        /*同一日付ののデータに分ける*/
+       
         
         //各試合ごとに分けて取り出し
          /*$league_info
@@ -169,7 +166,7 @@ class MatchComponent extends Component{
          *      節
          *      開催日
          *      ホームチーム
-         *     スコア
+         *      スコア
          *      ホームチームスコア
          *      アウェイチームスコア
          *      アウェイチーム
@@ -183,6 +180,20 @@ class MatchComponent extends Component{
         //debug($match_info);
         //return $league_info;
     }
+    
+    
+    //受け取ったデータを同一日付別の排列にして返す
+    public function getDateDifferent($result_s){
+        $result_d = array();    //日付毎にデータを保持
+        foreach($result_s as $var){
+            $pattern_begin = "/.+月.+日(.+)/";
+            $pattern_end = "/.+月.+日(.+)/";
+            $result_d[] = $this->getIndividual($pattern_begin, $pattern_end, $var);
+        }
+        var_dump($result_d);
+        return $result_d;
+    }
+    
     
     /*  function getIndividual()
      * 
