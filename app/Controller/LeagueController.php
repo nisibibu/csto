@@ -14,6 +14,10 @@ class LeagueController extends AppController{
     
     /* index */
     public function index(){
+        /*
+            以下テスト用コード
+         *          */
+        
         /*League情報を取得*/
         //$j_class = "j1";
         //$league_info_j1 = $this->League->getLeagueInfo($j_class);   //J1の情報を取得
@@ -35,7 +39,7 @@ class LeagueController extends AppController{
         
         //$this->setgoalRankingInfo($goal_ranking_j1, $j_class);   //DBへ保存
         
-        $j_class = "j2";
+        //$j_class = "j2";
         //$param = "11";
         //$goal_ranking_j2 = $this->League->getGoalRanking(GOAL_RANKING_J2,$param); //J1ゴールランキングの取得
         //debug($goal_ranking_info_j2);
@@ -66,7 +70,7 @@ class LeagueController extends AppController{
     
     /*期待値ランキングを登録*/
     public function setExpectation(){
-        
+        /*後で実装する*/
     }
     
 }

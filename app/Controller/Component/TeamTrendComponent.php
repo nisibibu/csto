@@ -163,9 +163,7 @@ class TeamTrendComponent extends Component{
         
         //失点の一時変数
         $temp_los  = array_chunk($temp, 7);
-        //debug($temp_goal);
-        //debug(count($team_name) -1);
-        
+
         //データの加工処理
         for($i = 0; $i < count($team_name) ;  $i++){
            //チーム名の追加（各チーム配列の先頭）
@@ -183,8 +181,7 @@ class TeamTrendComponent extends Component{
     public function getTeamTrendWin($param = "?kind=3"){
         //Goutteオブジェクト生成
         $crawer_trend = new Goutte\Client();
-        //$crawer_trend_2 = new Goutte\Client();
-        //$client_trend = new Client();
+
         $team_trend_win = array();      //チームの時間帯別得点を保持
         $team_trend_temp = array();     //データ一時保管用変数
         $team_name = array();               //チーム名を保管
