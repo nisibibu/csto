@@ -1,1 +1,7 @@
 SoccerMagazine ZONE WEB,http://www.soccermagazine-zone.com/archives/category/j-eague
+サッカーダイジェスト(J1),http://www.soccerdigestweb.com/tag_list/tag_search=1&tag_id=50
+サッカーダイジェスト(J2),http://www.soccerdigestweb.com/tag_list/tag_search=1&tag_id=51
+サッカーダイジェスト(天皇杯),http://www.soccerdigestweb.com/tag_list/tag_search=1&tag_id=53
+サッカーダイジェスト(ナビスコ杯),http://www.soccerdigestweb.com/tag_list/tag_search=1&tag_id=54
+ゲキサカ（Jリーグ&国内）,http://web.gekisaka.jp/news/category?category=domestic
+サッカーキング,http://www.soccer-king.jp/news

@@ -46,13 +46,13 @@ class MatchComponent extends Component{
         
         
         $item_name = array("ホーム","スコア","アウェー","試合開始","競技場");
-        $data_item = array("section","home","score",
-                             "home_score","away_score","away","start_time","stadium");
+        $data_item = array("section","date_s","date","home","score",
+                             "home_score","away_score","away","start_time","stadium","yaer","month");
         
-        var_dump($data_item);
+        debug($data_item);
         
         //情報を取得
-        $crawler->filter('.table-block01 table td' )->each(function( $node )use(&$craw_result){
+        $crawler->filter('.table-block01 table td' )->each(function( $node )use(&$craw_result,$year){
             $temp = $this->stripspaces($node->text());
             $str = "―";
             $str_2 = "▽";
@@ -65,6 +65,11 @@ class MatchComponent extends Component{
                 $craw_result[] = $var['home'];
                 $craw_result[] = $var['away'];
             }
+            //開催日ならDATE型に変換したものを追加
+            if(preg_match("/.+月.+日(.+)/", $temp)){
+                $craw_result[] = $this->changeDateType($year,$temp);
+            }
+            
             //var_dump($craw_result);
         });
         
@@ -102,47 +107,58 @@ class MatchComponent extends Component{
         $match_date_s = array();    //曜日も含む文字列で試合開催日を保持
         $match_date_i = array();    //日付のデータの添え字番号を保持
         $temp_result = array();     //整理前のデータ（一時保管）
-        $date_count = 0;
+        //$date_count = 0;
         
-        /**
+        
+        /*日にち毎に分割して取得*/
         foreach ($result_s as $var){
-           $temp_result[] = $this->getDataByDate($var);
+            $temp_result[] = $this->getDataByDate($var);
         }
-        */
-        //debug($result_s[4]);
+
         
-        $temp_result = $this->getDataByDate($result_s[0]);
-        //var_dump($temp_result);
-        $temp;
+        /*DB登録用にデータを整形*/
+        foreach ($temp_result as $var){
+            $match_info[] = $this->formatResult($var, $year, $month);
+        } 
+        debug($match_info);
+        
+
+    }
+    
+    /*日程毎の配列をDB登録用に整形して返す*/
+    public function formatResult($temp_result, $year, $month){
         /* データの個別変換 */
-        foreach($temp_result as $var){
-           //debug($var);
-           $i = 0;
-           $section = $var[$i];      //節
-           array_shift($var);
-           $date_str = $var[$i];      //試合開催日
-           array_shift($var);
-           //debug($var);
-           $t[] = array_chunk($var, count($data_item) - 1);
-           //debug($te);
-        }
-        
-        //debug($t);   
-        
-        foreach($t as $var1 ){
-            foreach($var1 as $var2){
-               array_unshift($var2, $section,$date_str);
-               //debug($var2);
-               $temp[] = $var2; 
+        $arr = $this->arrayDepth($temp_result);
+        $temp = array();
+        if($arr === 1){
+               $i = 0;  //単日の場合
+               $section[] = $temp_result[$i];      //節
+               array_shift($temp_result);
+               $date_str[] = $temp_result[$i];      //試合開催日
+               array_shift($temp_result);
+               $date_d[] = $temp_result[$i];
+               array_shift($temp_result);
+               $temp[] = array_chunk($temp_result, 7);
+ 
+        }else{
+            //複日の場合
+            foreach($temp_result as $var){
+               $i = 0;
+               $section[] = $var[$i];      //節
+               array_shift($var);
+               $date_str[] = $var[$i];      //試合開催日
+               array_shift($var);
+               $date_d[] = $var[$i];
+               array_shift($var);
+               $temp[] = array_chunk($var, 7);
             }
         }
-        
-        debug($temp);
-        
-        //各試合ごとに分けて取り出し
+
+        /*各配列（試合)をDB登録用の配列に整形 */
          /*$league_info
          * array(
          *      節
+         *      開催日（曜日）
          *      開催日
          *      ホームチーム
          *      スコア
@@ -154,14 +170,22 @@ class MatchComponent extends Component{
          *      年度
          *      月
          *          */
-        //$match_info = array_chunk($result, count($data_item));
+        $result = array();
         
-        //debug($match_info);
-        //return $league_info;
+        for($i = 0; $i < count($temp);$i++){
+           //1つの配列に処理を行う
+            foreach($temp[$i] as $var){
+                array_unshift($var, $section[$i],$date_str[$i],$date_d[$i]);   //節、開催日（曜日）、開催日追加
+                array_push($var, $year,$month);  //年、月を追加
+                $result[] = $var;
+            }  
+        }
+        
+        return $result;
     }
     
     
-    /*開催日毎のデータに分割して返す*/
+    /*開催日排列を毎のデータに分割して返す*/
     public function getDataByDate($result_s){
         $section = $result_s[0];
         for($i = 0; $i < count($result_s);$i++){
@@ -202,8 +226,22 @@ class MatchComponent extends Component{
          return $result;
     }
 
+    /*配列の階層を返す*/
+    public function arrayDepth($arr, $blank=false, $depth=0){
+        if( !is_array($arr)){
+            return $depth;  //配列空の場合、0
+        } else {
+            $depth++;
+            $tmp = ($blank) ? array($depth) : array(0);
+            foreach($arr as $value){
+                $tmp[] = $this->arrayDepth($value, $blank, $depth);
+            }
+            return max($tmp);
+        }
+    }
+    
     //○月×日を日をDATE型に変換
-    public function changeDateType($str){
+    public function changeDateType($year,$str){
         preg_match("/(?P<month>\d+)月(?P<date>\d+)日/", $str, $temp_date);
         //debug($temp_date);
         

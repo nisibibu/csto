@@ -10,3 +10,4 @@ Jリーグ - Number Web,http://feed.ismedia.jp/rss/number/jleague
 スポーツナビ＋(ベガルタ仙台),http://www.plus-blog.sportsnavi.com/feed/stag/19/rss2_0.xml
 スポーツナビ＋(G大阪),http://www.plus-blog.sportsnavi.com/feed/stag/6/rss2_0.xml
 SoccerMagazine ZONE WEB,http://www.soccermagazine-zone.com/feed
+フットボールチャンネル,http://www.footballchannel.jp/feed/
