@@ -53,8 +53,9 @@ class League extends AppModel{
             );
         }
          
+         debug($data);
          $result = $this->saveAll($data);
-         debug($result);
+         //debug($result);
     }
 }
 
