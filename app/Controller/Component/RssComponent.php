@@ -6,6 +6,10 @@ App::uses('Xml','Utility');
 
 class RssComponent extends Component{
     
+    /*フィート取得
+     * $feed feedURL
+     * $item 取得する個数
+     *      */
     public function read($feed, $items = 5){
         try{
             //RSSフィードをリード

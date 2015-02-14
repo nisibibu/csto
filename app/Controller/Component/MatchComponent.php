@@ -136,7 +136,7 @@ class MatchComponent extends Component{
 
     }
     
-    /*日程毎の配列をDB登録用に整形して返す*/
+    /*日程毎の配列をDB登録用に整形して返す(Jリーグ使用)*/
     public function formatResult($temp_result, $year, $month){
         /* データの個別変換 */
         $arr = $this->arrayDepth($temp_result);
@@ -195,8 +195,8 @@ class MatchComponent extends Component{
         return $result;
     }
     
-    
-    /*開催日排列を毎のデータに分割して返す*/
+   
+    /*開催日排列を毎のデータに分割し,先頭に節を挿入して返す*/
     public function getDataByDate($result_s){
         $section = $result_s[0];
         for($i = 0; $i < count($result_s);$i++){
@@ -272,11 +272,11 @@ class MatchComponent extends Component{
     public function getDateDifferent($result_s){
         $result_d = array();    //日付毎にデータを保持
         foreach($result_s as $var){
-            $pattern_begin = "/.+月.+日(.+)/";
-            $pattern_end = "/.+月.+日(.+)/";
+            $pattern_begin = "#(.+月.+日(.+))|(\d+/\d+)#";
+            $pattern_end = "#(.+月.+日(.+))|(\d+/\d+)#";
             $result_d[] = $this->getIndividual($pattern_begin, $pattern_end, $var);
         }
-        var_dump($result_d);
+        //var_dump($result_d);
         return $result_d;
     }
     
@@ -299,6 +299,7 @@ class MatchComponent extends Component{
                         }
                         //探す初めのデータかチェック         
                         if(preg_match($pattern_begin, $result[$i])){
+                            //var_dump("データを発見");
                             $j = $i;    //くじ結果の配列添え字番号を記録
                             //次の行の手前までデータを取得する
                             while(preg_match($pattern_end, $result[$j+1] ) == 0) {
@@ -306,7 +307,7 @@ class MatchComponent extends Component{
                                     $j++;
                                     //最終行なら抜ける
                                     if(!isset($result[$j +1])){
-                                        //debug('最終行なので抜けます');
+                                        //var_dump('最終行なので抜けます');
                                         break;
                                     }
                            }
@@ -342,7 +343,7 @@ class MatchComponent extends Component{
         //更新日の取得（年度に使用）
         $now_date = date('Y-m-d');  //年月に使用
         
-        $item_name = array("キックオフ","ホーム","試合状況","アウェイ","試合会場");
+        $item_name = array("キックオフ","ホーム","試合状況","ホーム得点","アウェイ得点","アウェイ","試合会場");
         $data_item = array("section","date_s","date","home","score",
                              "home_score","away_score","away","start_time","stadium","yaer","month");
         
@@ -350,79 +351,71 @@ class MatchComponent extends Component{
         $crawler->filter('.h02_c h3' )->each(function( $node )use(&$tournament){
             $tournament[] = $node->text();
         });
-        debug($tournament);
+        //debug($tournament);
         
+        $year = "2014";
         //情報を取得
-//        $crawler->filter('.table-block01 table td' )->each(function( $node )use(&$craw_result,$year){
-//            $temp = $this->stripspaces($node->text());
-//            $str = "―";
-//            $str_2 = "▽";
-//            $temp = str_replace($str,"-", $temp);   //全角ダッシュ変換
-//            $temp = str_replace($str_2,"", $temp);
-//            $temp = mb_convert_kana($temp, "rna");
-//            $craw_result[] = $temp;
-//            //スコアなら得点を分けて追加して格納
-//            if(preg_match("/(?P<home>\d+)-(?P<away>\d+)/", $temp,$var)){
-//                $craw_result[] = $var['home'];
-//                $craw_result[] = $var['away'];
-//            }
-//            //中止回だった場合、スコアに-99を入れる
-//            if($temp === "-"){
-//                $craw_result[] = -99;
-//                $craw_result[] = -99;
-//            }
-//            //開催日ならDATE型に変換したものを追加
-//            if(preg_match("/.+月.+日(.+)/", $temp)){
-//                $craw_result[] = $this->changeDateType($year,$temp);
-//            }
-//            
-//            //var_dump($craw_result);
-//        });
+        $crawler->filter('.h02_c h3, .paragraph_tbl table td' )->each(function( $node )use(&$craw_result,$year){
+            $temp = $this->stripspaces($node->text());
+            $str = "―";
+            $str_2 = "▽";
+            $temp = str_replace($str,"-", $temp);   //全角ダッシュ変換
+            $temp = str_replace($str_2,"", $temp);
+            $temp = mb_convert_kana($temp, "rna");
+            $craw_result[] = $temp;
+            //スコアなら得点を分けて追加して格納
+            if(preg_match("/(?P<home>\d+)-(?P<away>\d+)/", $temp,$var)){
+                $craw_result[] = $var['home'];
+                $craw_result[] = $var['away'];
+            }
+            //中止回だった場合、スコアに-99を入れる
+            if($temp === "-"){
+                $craw_result[] = -99;
+                $craw_result[] = -99;
+            }
+            //開催日ならDATE型に変換したものを追加
+            if(preg_match("/.+月.+日(.+)/", $temp)){
+                $craw_result[] = $this->changeDateType($year,$temp);
+            }
+            
+            //var_dump($craw_result);
+        });
         
-        //不要な項目データを削除（添え字も詰める）
-//        array_splice($craw_result, 0, count($item_name));
-//        $craw_result = array_filter($craw_result,"strlen");    //空要素の削除
-//        $craw_result = array_values($craw_result);      //添え字を直す
-//
-//        //debug($craw_result);
-//        
-//        $setu = array();
-//         for($i = 0; $i < count($craw_result); $i++){
-//            if(preg_match("/第\d+節/",$craw_result[$i])){
-//                $setu[$i] = $craw_result[$i];
-//            }
-//        }
-//        
-//        //debug($setu);
-//        
-//        //空白行を取り除いて整列
-//        $result = $this->fixDataBlank($craw_result);
-//        //var_dump($result);
-//        
-//        $result_s = array();    //節毎にデータ保持
-//        
-//        /*節毎にデータを分けて取得*/
-//        
-//        foreach($setu as $var){
-//            $pattern_begin = "/".$var."/";
-//            $pattern_end = "/第.+節$/";
-//            $result_s[] = $this->getIndividual($pattern_begin, $pattern_end, $result);
-//        }
-//
-//        //debug($result_s);
-//        $match_date = array();      //試合開催日をdate型に変換
-//        $match_date_s = array();    //曜日も含む文字列で試合開催日を保持
-//        $match_date_i = array();    //日付のデータの添え字番号を保持
-//        $temp_result = array();     //整理前のデータ（一時保管）
-//        //$date_count = 0;
-//        
-//        
-//        /*日にち毎に分割して取得*/
-//        foreach ($result_s as $var){
-//            $temp_result[] = $this->getDataByDate($var);
-//        }
-//
-//        
+        //debug($craw_result);
+        
+        //空白行を取り除いて整列
+        $result = $this->fixDataBlank($craw_result);
+        //debug($result);
+        
+        $preliminary_all = array(); //予選の全情報を保持
+        $quarter_finals = array();  //順々決勝の情報を保持
+        $semi_finals = array();     //準決勝の情報を保持
+        $finals = array();          //決勝の情報を保持
+        
+        $pattern_begin = "/.?準々決勝.?/";
+        $pattern_end = "/.?(準々決勝|準決勝|決勝|予選).?/";
+        /*トーナメントの段階毎にデータを整形*/
+        //準々決勝の情報を取得
+        $quarter_finals =  $this->getIndividual($pattern_begin, $pattern_end, $result);
+        //debug($quarter_finals);
+        //準決勝の情報を取得
+        $pattern_begin = "/.?準決勝.?/";
+        $semi_finals = $this->getIndividual($pattern_begin, $pattern_end, $result);
+        //debug($semi_finals);
+        //決勝の情報を取得
+        $pattern_begin = "/^決勝$/";
+        $finals = $this->getIndividual($pattern_begin, $pattern_end, $result);
+        //debug($finals);
+        
+        /*試合毎に分割*/
+        $tornament_section = $quarter_finals[0];    //準決勝を取得
+        array_shift($quarter_finals);
+        $temp_result[] = array_chunk($quarter_finals, count($item_name));
+        //$temp_result[] = $this->formatDataByDate($quarter_finals);
+        
+        debug($temp_result);
+
+        
 //        /*DB登録用にデータを整形*/
 //        foreach ($temp_result as $var){
 //            $match_info[] = $this->formatResult($var, $year, $month);
@@ -443,6 +436,41 @@ class MatchComponent extends Component{
          
      }
 
+    /*データ（配列）を日付で分割
+     * 現在未使用
+     * 使用する前に、動作確認を行う
+     *      */
+    public function formatDataByDate($result_s){
+        for($i = 0; $i < count($result_s);$i++){
+                /*日付のデータ探索*/
+                if(preg_match("#(.+月.+日(.+))|(\d+/\d+)#", $result_s[$i])){
+                    $match_date_i[] = $i;
+                    //debug($match_date_i);
+                    $match_date_s[] = $result_s[$i];
+                }
+
+        }
+        debug($match_date_s);
+        /*1節複数日開催の場合、日付別に分割（２日のみ対応）*/
+        if(count($match_date_i) !== 1){
+                foreach ($match_date_i as $var){
+                    if($var <> 1){
+                        $temp_result[] = array_slice($result_s,0,$var);
+                        $temp_result[] = array_slice($result_s,$var, count($result_s));
+                        //debug($temp_result);
+                        $result_t = array();
+                        foreach($temp_result as $var){
+                                $result_t[] = $var; 
+                        }
+                        $result = $result_t;
+                    }
+                }
+         }else{
+                $result = $result_s;
+         }
+         
+         return $result;
+    }
 
 
 
