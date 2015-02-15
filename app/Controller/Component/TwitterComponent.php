@@ -204,6 +204,11 @@ class TwitterComponent extends Component{
         }
 
     }
+    
+    /*ファイルからチームハッシュタグの取り出し
+　　 * ファイルから取得からDBから取得するよう変更する
+     * teamテーブル作成し、データを取得してくるようにする
+     *      */
     public function getTeamHashtag(){
     $handle = fopen(APP.'/Text/team_hashtag.txt','r');
        $hashtag_temp = array();

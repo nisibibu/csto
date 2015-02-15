@@ -253,7 +253,7 @@ class MatchComponent extends Component{
     
     //○月×日を日をDATE型に変換
     public function changeDateType($year,$str){
-        preg_match("/(?P<month>\d+)月(?P<date>\d+)日/", $str, $temp_date);
+        preg_match("#(?P<month>\d+)(/|月)(?P<date>\d+)#", $str, $temp_date);
         //debug($temp_date);
         
         $month_temp = $temp_date['month'];
@@ -267,6 +267,24 @@ class MatchComponent extends Component{
         return $date;
     }
     
+     //日付からを月を取得（日を返すように変更も可）
+    public function getMonthString($str){
+        preg_match("#(?P<month>\d+).+(?P<date>\d+)#", $str, $temp_date);
+        
+        $month = $temp_date['month'];
+        $date =$temp_date['date'];
+
+        return $month;
+    }
+    
+    //文字列から時刻（○○:○○)を取得
+    public function getTimesOfDayString($str){
+        preg_match("#\d{1,2}:+\d{1,2}#", $str, $temp_date);
+        
+        $times_of_day = $temp_date[0];
+
+        return $times_of_day;
+    }
     
     //受け取ったデータを同一日付別の排列にして返す
     public function getDateDifferent($result_s){
@@ -329,16 +347,16 @@ class MatchComponent extends Component{
         //順位を取得
         $crawler = $crawer->request('GET',$url);
         
-        $craw_result = array(); //取得結果を保持
+        $craw_result = array();     //取得結果を保持
         $item_name = array();   
-        $match_info = array();  //試合結果の保持
-        $year;                  //年度
-        $month;                 //月
-        $date;                  //日
+        $match_info = array();      //試合結果の保持
+        $year;                      //年度
+        $month;                      //月
+        $date;                      //日
         $now_date;
-        $tournament;            //トーナメントの状況（予選、準決勝、決勝etc...）
-        $data_time;             //データの年月日
-        
+        $tournament;                //トーナメントの状況（予選、準決勝、決勝etc...）
+        $data_time;                 //データの年月日
+        $nabisuco_result = array(); //ナビスコカップの結果を保持
         
         //更新日の取得（年度に使用）
         $now_date = date('Y-m-d');  //年月に使用
@@ -408,12 +426,48 @@ class MatchComponent extends Component{
         //debug($finals);
         
         /*試合毎に分割*/
-        $tornament_section = $quarter_finals[0];    //準決勝を取得
+        //準々決勝を取得
+        $tornament_section = $quarter_finals[0];
         array_shift($quarter_finals);
-        $temp_result[] = array_chunk($quarter_finals, count($item_name));
+        $temp_result[$tornament_section] = array_chunk($quarter_finals, count($item_name));
         //$temp_result[] = $this->formatDataByDate($quarter_finals);
+        //debug($temp_result);
+       
+        //準決勝を取得
+        $tornament_section = $semi_finals[0];
+        array_shift($semi_finals);
+        $temp_result[$tornament_section] = array_chunk($semi_finals, count($item_name));
+        //debug($temp_result);
         
-        debug($temp_result);
+        //決勝を取得
+        $tornament_section = $finals[0];
+        array_shift($finals);
+        $temp_result[$tornament_section] = array_chunk($finals, count($item_name));
+        //debug($temp_result);
+        
+        
+        /*DB登録用にデータを整形*/
+        
+        //予選
+        
+        //準々決勝
+        foreach($temp_result["準々決勝"] as $temp){
+            $d = $temp[0];
+            $start_time = $this->getTimesOfDayString($d);
+            $date = $this->changeDateType($year, $d);               //日付を取得
+            $month = $this->getMonthString($d);                     //月を取得
+            //$this->array_insert(&$temp, $date, 1);                //日付（DATE型)の挿入
+            //$arra_splice($var,$count($var)-2,0,$start_time);        //開始時自国の挿入
+            array_unshift($temp, "準々決勝");
+            array_push($temp, $year,$month,"ヤマザキナビスコカップ");
+            $nabisuco_result[] = $temp;
+        }
+        
+        debug($nabisuco_result);
+        
+        //準決勝
+        
+        //決勝
 
         
 //        /*DB登録用にデータを整形*/
@@ -426,6 +480,31 @@ class MatchComponent extends Component{
 //         
      }
 
+        /* [関数名] array_insert
+        * [機　能] 配列の任意の位置へ要素を挿入し、挿入後の配列を返す
+        * [引　数]
+        * @param array  &$array 挿入される配列（参照渡し）
+        * @param string $insert 挿入する値
+        * @param string $pos    挿入位置（先頭は0）
+        * [返り値]
+        * @return bool  $flag   成功した場合にTRUE、そうでないにFALSEを返す
+        * 
+        * 参考
+        * http://phpjavascriptroom.com/exp.php?f=include/php/tips_array/ainsert.inc&ttl=%E9%85%8D%E5%88%97%E3%81%AE%E4%BB%BB%E6%84%8F%E3%81%AE%E4%BD%8D%E7%BD%AE%E3%81%AB%E8%A6%81%E7%B4%A0%E3%82%92%E6%8C%BF%E5%85%A5
+        */
+    function array_insert ( &$array, $insert, $pos ) {
+           //引数$arrayが配列でない場合はFALSEを返す
+           if (!is_array($array)) return false;
+           //挿入する位置～末尾まで
+           $last = array_splice($array, $pos);
+           //先頭～挿入前位置までの配列に、挿入する値を追加
+           array_push($array, $insert);
+           //配列を結合
+           $array = array_merge($array, $last);
+           return true;
+    }
+     
+     
      /*天皇杯の情報を取得*/
      public function getEmperorCupInfo(){
          
