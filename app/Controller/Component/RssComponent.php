@@ -52,7 +52,7 @@ class RssComponent extends Component{
         $output = array();
         for($i = 0; $i < $items; $i++):
             if(is_object($xmlObject->channel->item->$i)){
-                $output[] = $xmlObject->channel->item->$i;
+                $output[] = (array)$xmlObject->channel->item->$i;
             }    
         endfor;
 
@@ -60,8 +60,33 @@ class RssComponent extends Component{
     }
     
     /*RSSフィード取得URLを取得する*/
-    public function get_feed_urls(){
+    public function getFeedUrls($result){
+        $url = $result['link'];
         
+        return $url;
     }
+    
+    /*RSSフィードからタイトルを抜き出す*/
+    public function getFeedTitle($result){
+        $title;
+        foreach($result as $var){
+            debug($var);
+            //$title[] = $var["title"];
+        }
+        
+        return $title;
+    }
+    
+    /*RSSフィードから記事本文を抜き出す*/
+    public function getFeedDescription($result){
+        $description;
+        foreach($result as $var){
+            $description[] = $var["description"];
+        }
+        
+        return $description;
+    }
+    
+    /*RSSフィードから日付を取り出す*/
     
 }

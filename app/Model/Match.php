@@ -43,4 +43,33 @@ class Match extends AppModel{
         
         
     }
+    
+    /*試合情報の取得（チーム）
+     * $team チーム名
+     * $item 過去何回かを取得
+     *      */
+    public function getMatchDataByTeam($team,$item){
+        $data = array(
+           "conditions" => array(
+                "AND" => array(
+                   "OR" => array(
+                         array(
+                             "home_team" => $team
+                         ),
+                         array(
+                             "away_team" => $team
+                         ),
+                     ),
+                ),
+           ),
+           'order' => array("match_date DESC"),
+           'limit' => (int)$item,      
+        );
+        
+        $result = $this->find("all",$data);
+        debug($result);
+        
+        return $result;
+    }
+    
 }

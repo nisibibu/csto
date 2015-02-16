@@ -11,3 +11,10 @@ Jリーグ - Number Web,http://feed.ismedia.jp/rss/number/jleague
 スポーツナビ＋(G大阪),http://www.plus-blog.sportsnavi.com/feed/stag/6/rss2_0.xml
 SoccerMagazine ZONE WEB,http://www.soccermagazine-zone.com/feed
 フットボールチャンネル,http://www.footballchannel.jp/feed/
+BLOGOLA全体,http://blogola.jp/feed
+BLOGOLA(仙台),http://blogola.jp/t/sendai/feed
+BLOGOLA(山形),http://blogola.jp/t/yamagata/feed
+BLOGOLA(鹿島),http://blogola.jp/t/kashima/feed
+BLOGOLA(浦和),http://blogola.jp/t/urawa/feed
+BLOGOLA(大宮),http://blogola.jp/t/omiya/feed
+BLOGOLA(柏),http://blogola.jp/t/kashiwa/feed

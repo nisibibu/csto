@@ -30,19 +30,38 @@ class MatchController extends AppController{
         */
          
         //ナビスコカップの情報を取得
-        $result_y = $this->Match->getYamazakiCupInfo();
+        /*実装中*/
+        //$result_y = $this->Match->getYamazakiCupInfo();
         
+        
+        /*チームの試合結果を指定した分だけ最新件数より取得する*/
+        $team ="C大阪";
+        $item = "3";
+        $this->getMatchByTeam($team, $item);
     }
     
     
     /*試合結果を登録（Jリーグ）*/
-    public function setMatchesInfoJLeague($league_info , $j_class,$data_item){
-        App::uses('Match','Model');     //モデルクラスにTeamTrendを指定
+    public function setMatchesInfoJLeague($match_info , $j_class,$data_item){
+        App::uses('Match','Model');     //モデルクラスにMatchを指定
         
         //モデルクラスのインスタンスを生成
-        $league = new Match('Match','matches');
-        $league->setMatchesDb($league_info, $j_class,$data_item);
+        $match = new Match('Match','matches');
+        $match->setMatchesDb($match_info, $j_class,$data_item);
     }
+    
+    /*チームの直近試合結果を件数指定して取得
+     * $team チーム
+     * $item 取得件数
+     *      */
+    public function getMatchByTeam($team,$item){
+         App::uses('Match','Model');     //モデルクラスにTeamTrendを指定
+        
+        //モデルクラスのインスタンスを生成
+        $match = new Match('Match','matches');
+        $match->getMatchDataByTeam($team, $item);
+    }
+    
     
 }
 
