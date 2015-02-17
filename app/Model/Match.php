@@ -67,9 +67,17 @@ class Match extends AppModel{
         );
         
         $result = $this->find("all",$data);
-        debug($result);
         
         return $result;
     }
     
+    
+    /*チームリストの取得*/
+    public function  getTeamList(){
+        $team_list = $this->Article->find("list",array(
+            'fields' => 'home_team',
+        ));
+        
+        return $team_list;
+    }
 }

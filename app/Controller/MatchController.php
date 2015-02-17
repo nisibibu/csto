@@ -6,11 +6,34 @@ use Goutte\Client;
 App::uses('Component', 'Controller');
 
 class MatchController extends AppController{
-    public $uses = array('POST','Match');    //使用するモデルを宣言
+    var $name = 'Match';                    //コントローラー名の指定
+    public $uses = array('Post','Match');    //使用するモデルを宣言
     public $components = array('Match');     //コンポーネントの指定
+    public $helpers = array("Form");         //ヘルパーの指定
+    
+    public $scaffold;
     
     /* index */
     public function index(){
+        
+        
+        if(!empty($form_data = $this->show())){
+            /*チームの試合結果を指定した分だけ最新件数より取得する*/
+            $team = $form_data['team'];
+            $item = $form_data['count'];
+            $match_result = $this->getMatchByTeam($team, $item);
+            //var_dump($match_result);
+            $this->set('match',$match_result);
+        }else{
+            /*POSTで指定されてこなかった場合の処理*/
+            $team ="C大阪";
+            $item = "3";
+            $match_result = $this->getMatchByTeam($team, $item);
+            //var_dump($match_result);
+            $this->set('match',$match_result);
+        }
+        
+
         //Jリーグの試合結果を取得
         $j_class = "j2";
         $year = "2014";
@@ -33,14 +56,54 @@ class MatchController extends AppController{
         /*実装中*/
         //$result_y = $this->Match->getYamazakiCupInfo();
         
+        //debug($this->request->data('Post.team'));
         
-        /*チームの試合結果を指定した分だけ最新件数より取得する*/
-        $team ="C大阪";
-        $item = "3";
-        $this->getMatchByTeam($team, $item);
+        /*画面表示テスト*/
+        //if($this->show()){
+            //Formからのデータ受け取り
+            //var_dump("POSTデータ受け取り");
+            ////$data = $this->show();
+            //debug($data);
+        //}
+       // else{
+            
+        //}
+        
+        /*ヘルパーに初期値をセットする
+         * 参照　CakePHP実践入門 p.139
+         * 
+         *          */    
+        //$id = $this->request->pass[0];  //
+        if($this->request->is('post')){
+            $data = array(
+                'team'  => $this->request->data['match']['team'],
+                'count' => $this->request->data['match']['count'],
+            );
+            if($this->Post->save($data)){
+                //debug("保存しました");
+                $this->Session->setFlash("保存しました");
+                $this->redirect('/match/index');
+            }
+        }else{
+            var_dump("POSTされていないので初期値を設定します");
+            $options = array(
+            'condtions' => array(
+                'matchTeam' => "C大阪",
+                'count' => "5",
+                )
+            );
+            $this->request->data = $this->Post->find(
+                    'first',
+                    $options
+            );
+        }   
+        //$this->request->data = $this->Post->find('team',$options);
+        //$this->request->data = array('team',$options);
     }
-    
-    
+
+
+
+
     /*試合結果を登録（Jリーグ）*/
     public function setMatchesInfoJLeague($match_info , $j_class,$data_item){
         App::uses('Match','Model');     //モデルクラスにMatchを指定
@@ -59,10 +122,24 @@ class MatchController extends AppController{
         
         //モデルクラスのインスタンスを生成
         $match = new Match('Match','matches');
-        $match->getMatchDataByTeam($team, $item);
+        $result =  $match->getMatchDataByTeam($team, $item);
+        return $result;
     }
     
-    
+    /*Formデータの受け取り、返却*/
+    public function show(){
+        //POSTが送信されたかどうか
+        if($this->request->is('POST')){
+            $team = $this->request->data['match']['team'];;
+            $count = $this->request->data["match"]['count'];
+            $data['team'] = $team;
+            $data['count'] = $count;
+        }
+        else{
+            return false;
+        }
+        return $data;
+    }
 }
 
 ?>
