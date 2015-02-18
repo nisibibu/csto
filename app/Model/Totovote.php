@@ -30,6 +30,31 @@ class Totovote extends AppModel{
         $this->saveAll($data);
     }
     
+    
+    public function setMiniVoteDb($statuses){
+        //debug($statuses);
+        foreach ($statuses as $status){
+            //debug($status);
+            
+            $data[] = array(
+                'held_time' => $status['held_time'],
+                'held_date' => $status['held_date'],
+                'no' => (int)$status['no'],
+                'home_team' => $status['home_team'],
+                'away_team' => $status['away_team'],
+                '1_vote' => $status['1_vote'],
+                '0_vote' => $status['0_vote'],
+                '2_vote' => $status['2_vote'],
+                'class' => $status['class'],
+            );
+            
+             
+        }
+        $result = $this->saveAll($data);
+        debug($result);
+    }
+
+
     public function setGoal3VoteDb($statuses){
         //debug($statuses);
         foreach ($statuses as $status){

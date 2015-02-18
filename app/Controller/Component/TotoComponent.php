@@ -282,6 +282,8 @@ class TotoComponent extends Component{
         //    $date[] = $this->changeDateType($year, $toto_mini_date[$i]);
         //}
         
+        $year = "2014"; //年を指定（後で動的に変更）
+        
         //データをDB登録形式に変換
         //A組のデータを生成
         if(count($mini_vote) === 10){
@@ -290,69 +292,65 @@ class TotoComponent extends Component{
                //A組の処理
                $tmp = $mini_vote[$i];
                foreach($h_data_a[$i] as $var){
+                   //日付ならdate型に変換
+                   if(preg_match('#(?P<month>\d+)(/|月)(?P<date>\d+)#', $var)){
+                       $var = $this->changeDateType($year, $var);
+                   }
                    array_unshift($tmp, $var);
                }
                array_push($tmp,"A");
+               array_unshift($tmp, $toto_mini_title,$i);
                $vote_result[] = $tmp;
             }
             for($i = 0; $i < count($h_data_b); $i++){
                //A組の処理
                $tmp = $mini_vote[$i];
                foreach($h_data_b[$i] as $var){
+                   //日付ならdate型に変換
+                   if(preg_match('#(?P<month>\d+)(/|月)(?P<date>\d+)#', $var)){
+                       $var = $this->changeDateType($year, $var);
+                   }
                    array_unshift($tmp, $var);
                }
                array_push($tmp,"B");
+               array_unshift($tmp, $toto_mini_title,$i);
                $vote_result[] = $tmp; 
             }
         }else{
             //単一組（A組）として処理
             /*記述する*/
         }
-        debug($vote_result);
+        //debug($vote_result);
+     
         
-            
-
-//        $j = 0;
-//        for($i = 0; $i < count($mini_vote); $i++){
-//            $class = "A";
-//            if($i % 2 === 0 && $i !== 0){
-//                $pos = "A";
-//                $j++;
-//            }else if($i % 2 === 1){
-//                $pos = "B";
-//            }
-//            $vote_result[] = $this->sortMiniData($mini_vote[$i], $toto_mini_title, $i+1, $toto_mini_team[$i], $pos,$date[$j]);
-//        }
-//        debug($vote_result);
-//        
-//        /*配列→連想配列*/
-//        foreach($vote_result as $var){
-//            $temp = array();
-//            for($i = 0; $i < count($var);$i++){
-//                if($i == 0){
-//                    $temp['held_time'] = $var[$i];
-//                }elseif($i == 1){
-//                    $temp['no'] = $var[$i];
-//                }elseif($i == 2){
-//                    $temp['position'] = $var[$i];
-//                }elseif($i == 3){
-//                    $temp['team'] = $var[$i];
-//                }elseif($i == 4){
-//                    $temp['held_date'] = $var[$i];
-//                }elseif($i == 5){
-//                    $temp['0_vote'] = $var[$i];
-//                }elseif($i == 6){
-//                    $temp['1_vote'] = $var[$i];
-//                }elseif($i == 7){
-//                    $temp['2_vote'] = $var[$i];
-//                }elseif($i == 8){
-//                    $temp['3_vote'] = $var[$i];
-//                }
-//            }
-//            $result[] = $temp;
-//        }
-//        //debug($result);
-//        return $result;
+        /*配列→連想配列*/
+        foreach($vote_result as $var){
+            $temp = array();
+            for($i = 0; $i < count($var);$i++){
+                if($i == 0){
+                    $temp['held_time'] = $var[$i];
+                }elseif($i == 1){
+                    $temp['no'] = $var[$i] +1;
+                }elseif($i == 2){
+                    $temp['away_team'] = $var[$i];
+                }elseif($i == 3){
+                    $temp['home_team'] = $var[$i];
+                }elseif($i == 4){
+                    $temp['held_date'] = $var[$i];
+                }elseif($i == 5){
+                    $temp['1_vote'] = $var[$i];
+                }elseif($i == 6){
+                    $temp['0_vote'] = $var[$i];
+                }elseif($i == 7){
+                    $temp['2_vote'] = $var[$i];
+                }elseif($i == 8){
+                    $temp['class'] = $var[$i];
+                }
+            }
+            $result[] = $temp;
+        }
+        //debug($result);
+        return $result;
     }
     
     /*配列の階層を返す*/

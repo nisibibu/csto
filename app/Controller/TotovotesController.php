@@ -51,13 +51,24 @@ class TotovotesController extends AppController{
         $param = "?id=0698";
         $vote_result = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ,$param);
         
-        $this->Toto->getMiniVoteByYJ();
-        
+        $m_vote_result = $this->Toto->getMiniVoteByYJ();
+        $this->setMiniVote($m_vote_result);
         //$g3_result = $this->Toto->getGoal3VoteByYJ();
         //$this->setGoal3Vote($g3_result);
     }
     
-    
+    //miniToto(A B)を登録
+    protected function setMiniVote($vote_result){
+        App::uses('Totovote','Model');     //モデルクラスにTeamTrendを指定
+        
+        //debug($vote_result);
+        
+        //モデルクラスのインスタンスを生成
+        $vote = new Totovote('Totovote','minivotes');
+        $vote->setMiniVoteDb($vote_result);
+    }
+
+
     //totoGoal3を登録
     protected function setGoal3Vote($vote_result){
          App::uses('Totovote','Model');     //モデルクラスにTeamTrendを指定
