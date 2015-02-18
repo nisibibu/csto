@@ -51,8 +51,10 @@ class TotovotesController extends AppController{
         $param = "?id=0698";
         $vote_result = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ,$param);
         
-        $g3_result = $this->Toto->getGoal3VoteByYJ();
-        $this->setGoal3Vote($g3_result);
+        $this->Toto->getMiniVoteByYJ();
+        
+        //$g3_result = $this->Toto->getGoal3VoteByYJ();
+        //$this->setGoal3Vote($g3_result);
     }
     
     
