@@ -6,12 +6,15 @@
 use Goutte\Client;
 require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
 /*定数*/
+//TOTOオフィシャルサイト
+define('TOTO_OFFICIAL','http://www.toto-dream.com/toto/');
 //totoOne
 define('TOTOONEURL', 'http://www.totoone.jp');
 //TOTOの投票率の取得用URL
-define('TOTO_VOTE', 'http://www.totoone.jp/blog/datawatch/');
+define('TOTO_VOTE_TOTO_ONE', 'http://www.totoone.jp/blog/datawatch/');
+define('TOTO_VOTE_YJ',"http://toto.yahoo.co.jp/vote/toto");
 //TOTOの投票率の過去取得用URL
-define('TOTO_VOTE_BACKNUMBER','http://www.totoone.jp/blog/datawatch/archives.php');
+define('TOTO_VOTE_TOTO_ONE_BACKNUMBER','http://www.totoone.jp/blog/datawatch/archives.php');
 //TOTOONEURL
 //define('TOT','http://www.totoone.jp/');
 
@@ -23,7 +26,295 @@ class TotoComponent extends Component{
     
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
     
-    public function getTotoVote($toto_vote_url = TOTO_VOTE){
+    /*toto公式サイトよりマッチ情報を取得*/
+    public function getTotoMatchInfo($url = TOTO_OFFICIAL,$param = ""){
+        
+    }
+
+
+
+
+    /*Yahhoより投票状況を取得
+     * TOTO ONE から取得するデータと共存しながら投票率のデータを使用する。
+     * 
+     *      */
+    public function getTotoVoteDetail($url = TOTO_VOTE_YJ,$param = ""){
+        $url = $url.$param;
+        
+        //Goutteオブジェクト生成
+        $client_vote = new Client();
+        $toto_vote = array();   //Toto投票率（全体）を格納
+        $miniA_vote = array();  //miniAの投票率を格納
+        $miniB_vote = array();  //miniBの投票率を格納
+        $goal2_vote = array();  //goal2の投票率を格納
+        $goal3_vote = array();  //goal3の投票率を格納
+        $count_time;            //開催回の保持
+        $count_item;            //開催回のTotoくじ種類を保持
+        //debug($url);
+
+        //totoマッチング、投票率HTMLを取得
+        $crawler_vote = $client_vote->request('GET', $url);
+        
+        
+        /*開催回（くじ種類）の取得*/
+        $crawler_vote->filter('.toto_result_wr_ttl p')->each(function( $node )use(&$count_item){
+            ##debug($node->text());
+            $count_item[] = trim($node->text());
+        });
+        //debug($count_item);
+        
+        if(isset($count_item[0])){
+            //var_dump("開催回の取得");
+            preg_match("/\d{2,4}/", $count_item[0],$m);
+            $count_time = (int)$m[0];  //開催回を保存
+        }
+        //debug($count_time);
+        
+        
+        //投票率の解析、取得
+        /*
+        $crawler_vote->filter('#data_check_box2 td')->each(function($node)use(&$toto_vote)
+        {
+                if($node->text() !== NULL){
+                    //echo (string)$node->text() . "<br />";
+                    //var_dump($node->text());
+                    $toto_vote[] =(string)$node->text();
+                }
+
+        });
+        */
+        
+        /*Goal3の情報を取得*/
+        $this->getGoal3VoteByYJ();
+    }
+    
+    
+    /*goal3の投票率を取得
+     * goal2にも対応
+     *
+     * *      */
+    public function getGoal3VoteByYJ(){
+        $url = "http://toto.yahoo.co.jp/vote/toto?id=0698";
+
+        //totoGOAL3マッチングと投票率を取得
+        /* Yahoo Japan toto より取得 */
+        $toto_goal3_title;               //開催回の取得
+        $toto_goal3_team =array();       //チーム
+        $toto_goal3_date =array();       //開催日
+        $toto_goal3_vote =array();       //Goal3投票率（加工前　○○% )
+        $count_time;
+        //今回のtotoマッチングと投票率の取得
+        //define('TOTO_GOAL3_VOTE', 'http://toto.yahoo.co.jp/vote/index.html');
+
+        //Goutteオブジェクト生成
+        $client_vote = new Client();
+
+        //totoマッチング、投票率HTMLを取得
+        $crawler_goal3_vote = $client_vote->request('GET', $url);
+
+        /*TotoGoal3のデータ全体の取得*/
+        /*
+        $all_data = array();  //開催日を保持
+        $crawler_goal3_vote->filter('')->each(function($node)use(&$all_data){
+                    $all_data[] = $node->text();
+        });
+        */
+        
+        
+        //開催回の格納
+        $crawler_goal3_vote->filter('.toto_result_wr_ttl p:nth-of-type(1)')->each(function($node)use(&$toto_goal3_title)
+        {
+                if(preg_match('/\d{2,4}/', $node->text(),$m)){
+                    //echo (string)$node->text() . "<br />";
+                    $toto_goal3_title = $m[0];
+                }
+
+        });
+
+        $h_and_a = array("H","A","H","A","H","A");
+        
+        //開催日の格納
+        $crawler_goal3_vote->filter('.bg_grn td')->each(function($node)use(&$toto_goal3_date)
+        {
+                if(preg_match('/^[0-9]+\/[0-9]+/', $node->text())){
+                    //echo (string)$node->text() . "<br />";
+                    //var_dump($node->text());
+                    $toto_goal3_date[] =(string)$node->text();
+                }
+
+        });
+        //debug($toto_goal3_date);
+
+        //対戦チームの格納
+        $crawler_goal3_vote->filter('.td_team td')->each(function($node)use(&$toto_goal3_team)
+        {
+                if($node->text() !== NULL){
+                    //echo (string)$node->text() . "<br />";
+                    //var_dump($node->text());
+                    $toto_goal3_team[] =(string)$node->text();
+                }
+
+        });
+        //debug($toto_goal3_team);
+        
+        //投票率の格納
+        $crawler_goal3_vote->filter('.td_vote02 img')->each(function($node)use(&$toto_goal3_vote)
+        {
+                if($node->attr('title') !== NULL){
+                    //echo (string)$node->attr('title') . "<br />";
+                    //var_dump($node->text());
+                    $toto_goal3_vote[] =(string)$node->attr('title');
+                }
+
+        });
+
+        //debug($toto_goal3_vote);
+        
+        /*投票率を処理して格納
+         * $goal3_vote          点数ごとの投票率を全て格納
+         * $toto_goal3_taam     チームを順番に格納  
+         * $team_goal3_vote     チーム毎に連想配列で得点別点数投票率を格納
+         */
+
+        //チーム毎に連想配列で得点別点数投票率を格納
+        $team_goal3_vote = array();
+        $goal3_vote = array();
+
+        for($i = 0; $i < count($toto_goal3_vote); $i++){
+            //投票率から%を取り除く
+            preg_match('/^[\d]{1,2}.\d{1,2}/', $toto_goal3_vote[$i],$m);
+            $goal3_vote[] = (float)$m[0];
+        }
+        
+        //debug($goal3_vote);
+        
+        $item_list = array(
+            "0","1","2","3more",
+        );
+        
+        /*各日付毎にデータを整形*/
+        $goal3_vote = array_chunk($goal3_vote, count($item_list));
+        
+        //debug($goal3_vote);
+        
+        //各チーム毎に配列（投票率）を作成
+        /* 
+         * array(
+         *      開催回
+         *      第何番目？
+         *      ホーム？アウェイ？
+         *      日付
+         *      日付（date型）
+         *      チーム名
+         *      0の投票率
+         *      1の投票率
+         *      2の投票率
+         *      3の投票率
+         * 
+         * 連想配列　に格納するか、
+         * 多重配列　に格納するか
+         * 検討
+         */         
+        $year = "2014";
+        $date = array();
+        $vote_result = array();
+        $result = array();
+        //日付の取得
+        for($i= 0; $i < count($toto_goal3_date); $i++){
+            $date[] = $this->changeDateType($year, $toto_goal3_date[$i]);
+        }
+        
+        //データをDB登録形式に変換
+        $j = 0;
+        for($i = 0; $i < count($goal3_vote); $i++){
+            $pos = "Home";
+            if($i % 2 === 0 && $i !== 0){
+                $pos = "Home";
+                $j++;
+            }else if($i % 2 === 1){
+                $pos = "Away";
+            }
+            $vote_result[] = $this->sortGoal3Data($goal3_vote[$i], $toto_goal3_title, $i+1, $toto_goal3_team[$i], $pos,$date[$j]);
+        }
+        //debug($vote_result);
+        
+        /*配列→連想配列*/
+        foreach($vote_result as $var){
+            $temp = array();
+            for($i = 0; $i < count($var);$i++){
+                if($i == 0){
+                    $temp['held_time'] = $var[$i];
+                }elseif($i == 1){
+                    $temp['no'] = $var[$i];
+                }elseif($i == 2){
+                    $temp['position'] = $var[$i];
+                }elseif($i == 3){
+                    $temp['team'] = $var[$i];
+                }elseif($i == 4){
+                    $temp['held_date'] = $var[$i];
+                }elseif($i == 5){
+                    $temp['0_vote'] = $var[$i];
+                }elseif($i == 6){
+                    $temp['1_vote'] = $var[$i];
+                }elseif($i == 7){
+                    $temp['2_vote'] = $var[$i];
+                }elseif($i == 8){
+                    $temp['3_vote'] = $var[$i];
+                }
+            }
+            $result[] = $temp;
+        }
+        //debug($result);
+        
+        
+        return $result;
+    }
+    
+    
+    /* GOAL3データ整形用関数
+     * $data        投票率の配列
+     * $m_count     開催回
+     * $s_count     何番目か
+     * $team        チーム名
+     * $date        日付
+     * $pos         ホーム　か　アウェイを表す
+     * 
+     *      
+     */
+    private function sortGoal3Data($data, $m_count, $s_count, $team, $pos, $date){
+        /*1チームのデータ処理*/
+        $temp_result = $data;
+        //debug($temp_result);
+        //$date = $this->changeDateType($year, $toto_goal3_date[0]);
+        array_unshift($temp_result, $m_count,$s_count,$pos,
+                        $team,$date);
+        $result = $temp_result;
+        //debug($vote_result);
+        
+        return $result;
+    }
+    
+    
+    //○月×日を日をDATE型に変換
+    public function changeDateType($year,$str){
+        preg_match("#(?P<month>\d+)(/|月)(?P<date>\d+)#", $str, $temp_date);
+        //debug($temp_date);
+        
+        $month_temp = $temp_date['month'];
+        $date_temp =$temp_date['date'];
+        
+        $date_s = $year."-".$month_temp."-".$date_temp;
+        //var_dump($date_s);
+        //日付の生成
+        $date = date("Y-m-d", strtotime($date_s));
+        
+        return $date;
+    }
+    
+    
+    
+    /*TOTOONEより投票率の結果を取得*/
+    public function getTotoVote($toto_vote_url = TOTO_VOTE_TOTO_ONE){
         //Goutteオブジェクト生成
         $client_vote = new Client();
         $toto_vote = array();   //Toto投票率を格納
@@ -195,13 +486,13 @@ class TotoComponent extends Component{
         $toto_vote = array();   //チーム情報を格納
 
         //totoマッチング、投票率HTMLを取得
-        $crawler_vote = $client_vote->request('GET', TOTO_VOTE);
+        $crawler_vote = $client_vote->request('GET', TOTO_VOTE_TOTO_ONE);
         
         
     }
     
     //過去の投票率の取得
-    public function getPastTotoVote($past_vote_url = TOTO_VOTE_BACKNUMBER){
+    public function getPastTotoVote($past_vote_url = TOTO_VOTE_TOTO_ONE_BACKNUMBER){
         
          //Goutteオブジェクト生成
         $client_vote = new Client();

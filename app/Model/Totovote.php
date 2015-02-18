@@ -30,7 +30,26 @@ class Totovote extends AppModel{
         $this->saveAll($data);
     }
     
-    //更新処理
+    public function setGoal3VoteDb($statuses){
+        //debug($statuses);
+        foreach ($statuses as $status){
+            $data[] = array(
+                'held_time' => $status['held_time'],
+                'held_date' => $status['held_date'],
+                'no' => $status['no'],
+                'team' => $status['team'],
+                'position' => $status['position'],
+                '0_vote' => $status['0_vote'],
+                '1_vote' => $status['1_vote'],
+                '2_vote' => $status['2_vote'],
+                '3_vote' => $status['3_vote'],
+            );
+        }
+        $result = $this->saveAll($data);
+        debug($result);
+    }
+
+        //更新処理
     public function upTotoVoteDb(){
         $data = array(
                 'helddate' => "'758'",

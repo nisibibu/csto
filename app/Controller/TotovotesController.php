@@ -43,11 +43,27 @@ class TotovotesController extends AppController{
         //$this->TotoResult->getTotoResult($url);
 
         /*League情報を取得*/
-        $league_info = $this->League->getJ1LeagueInfo();   //J1の情報を取得
-        debug($league_info);
+        //$league_info = $this->League->getLeagueInfo();   //J1の情報を取得
+        //debug($league_info);
         //$this->League->getGoalRanking();
+        
+        /*TOTO投票率の取得*/
+        $param = "?id=0698";
+        $vote_result = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ,$param);
+        
+        $g3_result = $this->Toto->getGoal3VoteByYJ();
+        $this->setGoal3Vote($g3_result);
     }
     
+    
+    //totoGoal3を登録
+    protected function setGoal3Vote($vote_result){
+         App::uses('Totovote','Model');     //モデルクラスにTeamTrendを指定
+        
+        //モデルクラスのインスタンスを生成
+        $vote = new Totovote('Totovote','goal3votes');
+        $vote->setGoal3VoteDb($vote_result);
+    }
     
     //toto投票率を登録
     public function setTotoVote($toto_vote){
