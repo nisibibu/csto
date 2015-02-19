@@ -79,6 +79,8 @@ class Totovote extends AppModel{
                 '0_vote' => $status['0_vote'],
                 '2_vote' => $status['2_vote'],
                 'class' => $status['class'],
+                'year' => $status['year'],
+                'month' => $status['month'],
             );
             
              
@@ -103,6 +105,8 @@ class Totovote extends AppModel{
                 '1_vote' => $status['1_vote'],
                 '2_vote' => $status['2_vote'],
                 '3_vote' => $status['3_vote'],
+                'year' => $status['year'],
+                'month' => $status['month'],
             );
         }
         $result = $this->saveAll($data);
@@ -131,28 +135,57 @@ class Totovote extends AppModel{
      * DB からの取得処理
      * **********************************/
     
-     /*今回（直近の）totoの試合情報（投票率含む）を取得
-     * $team チーム名
-     * $item 過去何回かを取得
-     *      */
-    public function getVoteTotoRecent(){
+    
+    /*DBに登録されている一番古い開催回の取得*/
+    public function getOldestTime(){
+        $old_held = array();
+        $data = array(
+            'fields' => array('MIN(held_time) AS old_held')
+            );
+        $result = $this->find('first',$data);
+        
+        if(isset($result[0]['old_held'])){
+            //var_dump("開催回取得");
+            $recent_held = $result[0]['old_held'];
+        }
+        
+        return $recent_held;
+    }
+    
+    /*今回（直近）の開催回を取得して返却*/
+    public function getRecentTime(){
+        $recent_held = array();
+        $data = array(
+            'fields' => array('MAX(held_time) AS recent_held')
+            );
+        $result = $this->find('first',$data);
+        
+        if(isset($result[0]['recent_held'])){
+            //var_dump("開催回取得");
+            $recent_held = $result[0]['recent_held'];
+        }
+        //$debug($recent_held);
+        return $recent_held;
+    }
+    
+    
+    
+     /*今回（直近の）totoの試合情報（投票率含む）を取得***
+     * 
+     *************************************************/
+    public function getVoteTotoRecent($held_time){
+        $result = array();
         $data = array(
            "conditions" => array(
                 "AND" => array(
-                   "OR" => array(
-                         array(
-                             "home_team" => $team
-                         ),
-                         array(
-                             "away_team" => $team
-                         ),
-                     ),
+                   "held_time" => $held_time
                 ),
            ),
-           'order' => array("match_date DESC"),  
+           'order' => array("no ASC"),  
         );
-        
+        //debug($data);
         $result = $this->find("all",$data);
+        //debug($result);
         
         return $result;
     }

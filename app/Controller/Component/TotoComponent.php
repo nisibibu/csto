@@ -485,7 +485,16 @@ class TotoComponent extends Component{
          *      2の投票率
          *      
          */         
-        $year = "2014";
+        $year;
+        if($toto_mini_title >= 750){
+            $year = "2015";
+        }else{
+            $year = "2014";
+        }
+        
+        /*動的に変更するよう記述変更*/
+        $month = "3";  
+        
         $date = array();
         $vote_result = array();
         $result = array();
@@ -494,7 +503,7 @@ class TotoComponent extends Component{
         //    $date[] = $this->changeDateType($year, $toto_mini_date[$i]);
         //}
         
-        $year = "2014"; //年を指定（後で動的に変更）
+        
         
         //データをDB登録形式に変換
         //A組のデータを生成
@@ -510,7 +519,7 @@ class TotoComponent extends Component{
                    }
                    array_unshift($tmp, $var);
                }
-               array_push($tmp,"A");
+               array_push($tmp,"A",$year,$month);
                array_unshift($tmp, $toto_mini_title,$i);
                $vote_result[] = $tmp;
             }
@@ -524,7 +533,7 @@ class TotoComponent extends Component{
                    }
                    array_unshift($tmp, $var);
                }
-               array_push($tmp,"B");
+               array_push($tmp,"B",$year,$month);
                array_unshift($tmp, $toto_mini_title,$i);
                $vote_result[] = $tmp; 
             }
@@ -557,6 +566,10 @@ class TotoComponent extends Component{
                     $temp['2_vote'] = $var[$i];
                 }elseif($i == 8){
                     $temp['class'] = $var[$i];
+                }elseif($i == 9){
+                    $temp['year'] = $var[$i];
+                }elseif($i == 10){
+                     $temp['month'] = $var[$i];
                 }
             }
             $result[] = $temp;
@@ -610,8 +623,8 @@ class TotoComponent extends Component{
      * goal2にも対応
      *
      * * **********************************************/
-    public function getGoal3VoteByYJ($url = "http://toto.yahoo.co.jp/vote/toto?id=0698" ){
-        $url = "http://toto.yahoo.co.jp/vote/toto?id=0698";
+    public function getGoal3VoteByYJ($param = ""){
+        $url = TOTO_VOTE_YJ.$param;
 
         //totoGOAL3マッチングと投票率を取得
         /* Yahoo Japan toto より取得 */
@@ -728,7 +741,16 @@ class TotoComponent extends Component{
          *      2の投票率
          *      3の投票率
          */         
-        $year = "2014";
+        $year;
+        if($toto_goal3_title >= 750){
+            $year = "2015";
+        }else{
+            $year = "2014";
+        }
+        
+        /*動的に変更するよう記述変更*/
+        $month = "3";
+        
         $date = array();
         $vote_result = array();
         $result = array();
@@ -747,7 +769,9 @@ class TotoComponent extends Component{
             }else if($i % 2 === 1){
                 $pos = "Away";
             }
-            $vote_result[] = $this->sortGoal3Data($goal3_vote[$i], $toto_goal3_title, $i+1, $toto_goal3_team[$i], $pos,$date[$j]);
+            $tmp_result = $this->sortGoal3Data($goal3_vote[$i], $toto_goal3_title, $i+1, $toto_goal3_team[$i], $pos,$date[$j]);
+            array_push($tmp_result, $year,$month);
+            $vote_result[] = $tmp_result;
         }
         //debug($vote_result);
         
@@ -773,7 +797,12 @@ class TotoComponent extends Component{
                     $temp['2_vote'] = $var[$i];
                 }elseif($i == 8){
                     $temp['3_vote'] = $var[$i];
+                }elseif($i == 9){
+                    $temp['year'] = $var[$i];
+                }elseif($i == 10){
+                    $temp['month'] = $var[$i];
                 }
+                
             }
             $result[] = $temp;
         }

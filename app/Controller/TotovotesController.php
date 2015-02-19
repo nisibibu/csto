@@ -56,18 +56,40 @@ class TotovotesController extends AppController{
         //$this->setTotoOnlyVote($t_result);
         
         /*miniの取得（テスト）*/
-        $m_vote_result = $this->Toto->getMiniVoteByYJ();
+        //$m_vote_result = $this->Toto->getMiniVoteByYJ();
         //debug($m_vote_result);
-        $this->setMiniVote($m_vote_result);
+        //$this->setMiniVote($m_vote_result);
         
         /*GOAL3の取得（テスト）*/
-        //$g3_result = $this->Toto->getGoal3VoteByYJ();
+        $g3_result = $this->Toto->getGoal3VoteByYJ();
+        //debug($g3_result);
         //$this->setGoal3Vote($g3_result);
+        
+        /*最新回の取得テスト*/
+        $db_name = "totovotes";
+        $held_time =  $this->getRecent($db_name);
+        //debug($heldtime);
+        $result = $this->getNowTotoVoteInfo($held_time);
+        debug($result);
     }
     
+    /*現在（直近）のTotoの情報（全て）を取得*/
+    protected function getNowTotoVoteInfo($held_time){
+         App::uses('Totovote','Model');     
+        
+        //debug($vote_result);
+        
+        //モデルクラスのインスタンスを生成
+        $vote = new Totovote('Totovote','totovotes');
+        $result =  $vote->getVoteTotoRecent($held_time);
+        
+        return $result;
+    }
+
+
     //Totoの投票率（のみ）を登録
     protected function setTotoOnlyVote($vote_result){
-         App::uses('Totovote','Model');     //モデルクラスにTeamTrendを指定
+         App::uses('Totovote','Model');     
         
         //debug($vote_result);
         
@@ -76,11 +98,35 @@ class TotovotesController extends AppController{
         $vote->setTotoOnlyVoteDb($vote_result);
     }
     
+    /*DBに登録されている開催回の一番古い数値を返す*/
+    protected function  getOldest($db_name){
+        App::uses('Totovote','Model');     
+        
+        //debug($vote_result);
+        
+        //モデルクラスのインスタンスを生成
+        $vote = new Totovote('Totovote',$db_name);
+        $result = $vote->getOldestTime();
+        
+        return $result;
+    }
+
+
+    /*開催回の最新回開催の数字を返す*/
+    protected function getRecent($db_name){
+        App::uses('Totovote','Model');     
+        
+        //モデルクラスのインスタンスを生成
+        $vote = new Totovote('Totovote',$db_name);
+        $result = $vote->getRecentTime();
+        
+        return $result;
+    }
 
 
     //miniToto(A B)を登録
     protected function setMiniVote($vote_result){
-        App::uses('Totovote','Model');     //モデルクラスにTeamTrendを指定
+        App::uses('Totovote','Model');
         
         //debug($vote_result);
         
@@ -92,14 +138,16 @@ class TotovotesController extends AppController{
 
     //totoGoal3を登録
     protected function setGoal3Vote($vote_result){
-         App::uses('Totovote','Model');     //モデルクラスにTeamTrendを指定
+         App::uses('Totovote','Model');    
         
         //モデルクラスのインスタンスを生成
         $vote = new Totovote('Totovote','goal3votes');
         $vote->setGoal3VoteDb($vote_result);
     }
     
-    //toto投票率を登録
+    /*toto投票率を登録
+     *
+     *      */
     public function setTotoVote($toto_vote){
         //debug($toto_vote);
         if($toto_vote[0]['held_time'] === 0){
