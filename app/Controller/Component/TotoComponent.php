@@ -88,10 +88,222 @@ class TotoComponent extends Component{
         
         
         /*Mini(A B)の投票率の取得*/
-        
+        $this->getMiniVoteByYJ();
         /*Goal3の投票率の取得*/
         $this->getGoal3VoteByYJ();
     }
+    
+    /* TOTOの投票率を取得する、
+     * 
+     * 
+     * 
+     *      */
+    public function getTotoVoteByYJ($param = ""){
+        $url = TOTO_VOTE_YJ.$param;
+
+        //totoマッチングと投票率を取得
+        /* Yahoo Japan toto より取得 */
+        $toto_title;               //開催回の取得
+        $toto_team =array();       //チーム
+        $toto_date =array();       //開催日
+        $miniA_date = array();          //miniAの開催日
+        $miniB_date = array();          //miniBの開催日
+        $toto_vote =array();       //Goal3投票率（加工前　○○% )
+        $count_time;
+        //今回のtotoマッチングと投票率の取得
+        //define('TOTO_GOAL3_VOTE', 'http://toto.yahoo.co.jp/vote/index.html');
+
+        //Goutteオブジェクト生成
+        $client_vote = new Client();
+
+        //totoマッチング、投票率HTMLを取得
+        $crawler_vote = $client_vote->request('GET', $url);
+        
+        //開催回の格納
+        $crawler_vote->filter('.toto_result_wr_ttl p:nth-of-type(1)')->each(function($node)use(&$toto_title)
+        {
+                if(preg_match('/\d{2,4}/', $node->text(),$m)){
+                    //echo (string)$node->text() . "<br />";
+                    $toto_title = $m[0];
+                }
+
+        });
+        //debug($toto_title);
+        
+        //開催日の格納
+        $crawler_vote->filter('.toto_result_wr1_tbl01 td')->each(function($node)use(&$toto_date)
+        {
+                if(preg_match('/^[0-9]+\/[0-9]+/', $node->text())){
+                    //echo (string)$node->text() . "<br />";
+                    //var_dump($node->text());
+                    $toto_date[] =(string)$node->text();
+                }
+
+        });
+        //debug($toto_date);
+      
+        //対戦チームの格納
+        $crawler_vote->filter('.bg_ylw td')->each(function($node)use(&$toto_team)
+        {
+                //$param = '/.?[ぁ-んァ-ヶー一-龠]*.+$/u';  //現在未使用
+                if($node->text() !== NULL && preg_match('/[^\x01-\x7E]+/u', $node->text(),$m)){
+                    //echo (string)$node->text() . "<br />";
+                    //var_dump($node->text());
+                    $toto_team[] =$m[0];
+                }
+
+        });
+        //debug($toto_team);
+        
+        //matac対戦カードの取得
+        
+        $match_card = array();
+        for($i = 0; $i < count($toto_date);$i++){
+            $j= $i+1;
+            $temp_card = array();
+            $filter_param = '.bg_ylw td:nth-of-type('.$j.')';
+            $crawler_vote->filter($filter_param)->each(function($node)use(&$match_card,&$temp_card)
+            {
+                //$param = '/.?[ぁ-んァ-ヶー一-龠]*.+$/u';  //現在未使用
+                if($node->text() !== NULL){
+                    //echo (string)$node->text() . "<br />";
+                    //var_dump($node->text());
+                    $temp_card[] =trim($node->text());
+                }
+            });
+            $match_card[] = $temp_card;
+        }
+        
+        //debug($match_card);
+        
+        
+        //投票率の格納
+        $crawler_vote->filter('.toto_result_wr1_tbl01 img')->each(function($node)use(&$toto_vote)
+        {
+                if($node->attr('title') !== NULL){
+                    //echo (string)$node->attr('title') . "<br />";
+                    //var_dump($node->text());
+                    $toto_vote[] =(string)$node->attr('title');
+                }
+
+        });
+
+        //debug($toto_vote);
+        
+        /*投票率を処理して格納
+         * $vote          点数ごとの投票率を全て格納
+         * $toto_taam     チームを順番に格納  
+         * $team_vote     チーム毎に連想配列で得点別点数投票率を格納
+         */
+
+        //チーム毎に連想配列で得点別点数投票率を格納
+        $team_vote = array();
+        $vote = array();
+
+        for($i = 0; $i < count($toto_vote); $i++){
+            //投票率から%を取り除く
+            preg_match('/^[\d]{1,2}.\d{1,2}/', $toto_vote[$i],$m);
+            $vote[] = (float)$m[0];
+        }
+        
+        //debug($vote);
+        
+        $item_list = array("0","1","2");    //データ切り分けに使用
+        
+        /*各対戦カード毎にデータを整形*/
+        $vote = array_chunk($vote, count($item_list));
+        
+        //debug($vote);
+        
+        $h_data_a = array();   //投票率の先頭に追加
+        $h_data_b = array();   //投票率の先頭に追加
+        
+        //各チーム毎に配列（投票率）を作成
+        /* 
+         * array(
+         *      開催回
+         *      第何番目？
+         *      ホームアウェイ
+         *      日付（date型）
+         *      チーム名
+         *      0の投票率
+         *      1の投票率
+         *      2の投票率
+         *      
+         */
+        
+        $year; //年を指定（後で動的に変更）
+        $month = "3";
+        
+        if((int)$toto_title >= 750 ){
+            $year = "2015";
+        }else{
+            $year = "2014";
+        }
+        $date = array();
+        $vote_result = array();
+        $result = array();
+        
+        
+        //データをDB登録形式に変換
+        if(count($vote) !== 0){
+            //A B 両方の組の処理
+            for($i = 0; $i < count($match_card);$i++){
+               //A組の処理
+               $tmp = $vote[$i];
+               foreach($match_card[$i] as $var){
+                   //日付ならdate型に変換
+                   if(preg_match('#(?P<month>\d+)(/|月)(?P<date>\d+)#', $var)){
+                       $var = $this->changeDateType($year, $var);
+                   }
+                   array_unshift($tmp, $var);
+               }
+               array_push($tmp,$year,$month);
+               array_unshift($tmp, $toto_title,$i);
+               $vote_result[] = $tmp;
+            }
+        }else{
+            //データ未取得の処理
+           /*記述する*/
+        }
+        //debug($vote_result);
+     
+        
+        /*配列→連想配列*/
+        foreach($vote_result as $var){
+            $temp = array();
+            for($i = 0; $i < count($var);$i++){
+                if($i == 0){
+                    $temp['held_time'] = $var[$i];
+                }elseif($i == 1){
+                    $temp['no'] = $var[$i] +1;
+                }elseif($i == 2){
+                    $temp['away_team'] = $var[$i];
+                }elseif($i == 3){
+                    $temp['home_team'] = $var[$i];
+                }elseif($i == 4){
+                    $temp['held_date'] = $var[$i];
+                }elseif($i == 5){
+                    $temp['1_vote'] = $var[$i];
+                }elseif($i == 6){
+                    $temp['0_vote'] = $var[$i];
+                }elseif($i == 7){
+                    $temp['2_vote'] = $var[$i];
+                }elseif($i == 8){
+                    $temp['year'] = $var[$i];
+                }
+                elseif($i == 9){
+                    $temp['month'] = $var[$i];
+                }
+            }
+            $result[] = $temp;
+        }
+        //debug($result);
+        return $result;
+    }
+    
+    
+    
     
     
     /* Mini A mini B 両方を取得し、

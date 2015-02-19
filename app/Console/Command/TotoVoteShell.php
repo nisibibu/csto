@@ -17,7 +17,7 @@ class TotoVoteShell extends AppShell{
     
     /*メイン処理*/
     public function main(){
-        //Toto投票率のDB登録
+        //Toto投票率のDB登録(ToToOne)
        $toto_vote =  $this->Toto->getTotoVote();
        $this->Totovote->setTotoVoteDb($toto_vote);
        //$this->Totovote->upTotoVoteDb();
