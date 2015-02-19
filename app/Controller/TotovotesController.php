@@ -52,12 +52,14 @@ class TotovotesController extends AppController{
         $vote_result = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ,$param);
         
         /*totoの投票率取得（テスト）*/
-        $t_result =  $this->Toto->getTotoVoteByYJ();
-        $this->setTotoOnlyVote($t_result);
+        //$t_result =  $this->Toto->getTotoVoteByYJ();
+        //$this->setTotoOnlyVote($t_result);
         
         /*miniの取得（テスト）*/
-        //$m_vote_result = $this->Toto->getMiniVoteByYJ();
-        //$this->setMiniVote($m_vote_result);
+        $m_vote_result = $this->Toto->getMiniVoteByYJ();
+        //debug($m_vote_result);
+        $this->setMiniVote($m_vote_result);
+        
         /*GOAL3の取得（テスト）*/
         //$g3_result = $this->Toto->getGoal3VoteByYJ();
         //$this->setGoal3Vote($g3_result);

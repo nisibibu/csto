@@ -312,8 +312,8 @@ class TotoComponent extends Component{
      * 単一取得する関数作成のこと
      * 
      *      */
-    public function getMiniVoteByYJ(){
-        $url = "http://toto.yahoo.co.jp/vote/toto?id=0698";
+    public function getMiniVoteByYJ($param = ""){
+        $url = TOTO_VOTE_YJ.$param;
 
         //totoGOAL3マッチングと投票率を取得
         /* Yahoo Japan toto より取得 */
@@ -516,7 +516,7 @@ class TotoComponent extends Component{
             }
             for($i = 0; $i < count($h_data_b); $i++){
                //A組の処理
-               $tmp = $mini_vote[$i];
+               $tmp = $mini_vote[$i+count($h_data_a)];
                foreach($h_data_b[$i] as $var){
                    //日付ならdate型に変換
                    if(preg_match('#(?P<month>\d+)(/|月)(?P<date>\d+)#', $var)){

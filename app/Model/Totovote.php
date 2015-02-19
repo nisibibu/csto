@@ -113,6 +113,7 @@ class Totovote extends AppModel{
      *
      * 
      *      */
+    //更新処理（テスト）
     public function upTotoVoteDb(){
         $data = array(
                 'held_date' => "'758'",
@@ -124,6 +125,36 @@ class Totovote extends AppModel{
                 'no' => 1,
             );
         $this->updateAll($data, $conditions);
+    }
+    
+    /************************************
+     * DB からの取得処理
+     * **********************************/
+    
+     /*今回（直近の）totoの試合情報（投票率含む）を取得
+     * $team チーム名
+     * $item 過去何回かを取得
+     *      */
+    public function getVoteTotoRecent(){
+        $data = array(
+           "conditions" => array(
+                "AND" => array(
+                   "OR" => array(
+                         array(
+                             "home_team" => $team
+                         ),
+                         array(
+                             "away_team" => $team
+                         ),
+                     ),
+                ),
+           ),
+           'order' => array("match_date DESC"),  
+        );
+        
+        $result = $this->find("all",$data);
+        
+        return $result;
     }
     
 }
