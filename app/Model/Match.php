@@ -44,6 +44,12 @@ class Match extends AppModel{
         
     }
     
+    /** *********  DBからの取得処理 *************
+     *
+     * 
+     * 
+     * *************************************** */
+    
     /*試合情報の取得（チーム）
      * $team チーム名
      * $item 過去何回かを取得
@@ -72,12 +78,15 @@ class Match extends AppModel{
     }
     
     
-    /*チームリストの取得*/
-    public function  getTeamList(){
-        $team_list = $this->Article->find("list",array(
-            'fields' => 'home_team',
-        ));
+    /*チームリストの取得(テスト)*/
+    public function  getTeamListByDb(){
+        $data = array(
+          'fields' => array('home_team','home_team'),
+        );
         
-        return $team_list;
+        $result = $this->find('list',$data);
+        //debug($result);
+        
+        return $result;
     }
 }

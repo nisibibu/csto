@@ -30,7 +30,7 @@
         'url' => array(
             'controller' => 'Match','action' => 'index'))); //指定アクションに送信
     echo $this->Form->label('team','チーム');
-    echo $this->Form->select('team', $team);
+    echo $this->Form->select('team', $team_list);
     echo $this->Form->label("count","取得件数");
     echo $this->Form->input('count',array(     
           "type" => "select", 
@@ -40,6 +40,8 @@
     echo $this->Form->submit("検索");
     echo $this->Form->end();
     
-    //echo $match['team'] の直近  回のデータ表示"."</br>";
-    var_dump($match);
+    //var_dump($team);
+    
+    echo "チームのデータ表示"."</br>";
+    //var_dump($match);
 ?>

@@ -16,7 +16,13 @@ class MatchController extends AppController{
     /* index */
     public function index(){
         
+        /*チームのリスト取得*/
+        $team_list = $this->getTeamList();
         
+        /*チームリストをビューへ渡す*/
+        $this->set('team_list',$team_list);
+        
+        /**/
         if(!empty($form_data = $this->show())){
             /*チームの試合結果を指定した分だけ最新件数より取得する*/
             $team = $form_data['team'];
@@ -42,8 +48,8 @@ class MatchController extends AppController{
         $data_item = array("section","date_s","match_date","home_team","score",
                              "home_score","away_score","away_team",
                              "start_time","stadium","match_year","match_month","league");
-        //$match_result_j1 = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT,$param);
-        //sdebug($match_result_j1);
+        //$match_result_j = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT,$param);
+        //debug($match_result_j);
         //$this->setMatchesInfoJLeague($match_result_j1[1], $j_class, $data_item);
         
         /* 月のデータを節ごとに保存処理
@@ -69,8 +75,8 @@ class MatchController extends AppController{
             
         //}
         
-        /*ヘルパーに初期値をセットする
-         * 参照　CakePHP実践入門 p.139
+        /*ヘルパーに初期値(前回入力値）をセットする
+         * 参照 CakePHP実践入門 p.139
          * 
          *          */    
         //$id = $this->request->pass[0];  //
@@ -85,7 +91,7 @@ class MatchController extends AppController{
                 $this->redirect('/match/index');
             }
         }else{
-            var_dump("POSTされていないので初期値を設定します");
+            //var_dump("POSTされていないので初期値を設定します");
             $options = array(
             'condtions' => array(
                 'matchTeam' => "C大阪",
@@ -99,10 +105,21 @@ class MatchController extends AppController{
         }   
         //$this->request->data = $this->Post->find('team',$options);
         //$this->request->data = array('team',$options);
+        
+        
     }
 
 
-
+    /*チーム一覧の取得*/
+    public function getTeamList(){
+         App::uses('Match','Model');     //モデルクラスにMatchを指定
+        
+        //モデルクラスのインスタンスを生成
+        $match = new Match('Match','matches');
+        $team_list = $match->getTeamListByDb();
+        
+        return $team_list;
+    }
 
     /*試合結果を登録（Jリーグ）*/
     public function setMatchesInfoJLeague($match_info , $j_class,$data_item){

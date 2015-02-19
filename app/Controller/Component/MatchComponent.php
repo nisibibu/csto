@@ -11,10 +11,13 @@ define("ALL_MATCH_THIS_MONTH","http://www.jleague.jp/match/");      //Jリーグ
 /*リーグ情報の取得、格納*/
 class MatchComponent extends Component{
     
-    /*J1の情報をスクレイピングで取得*/
+    /*Jリーグ試合結果の情報をスクレイピングで取得
+     * Ｊ１昇格、プレーオフ未対応
+     *      */
+    
     public function  getMatchInfoJleague($url = GAME_MATCH_RESULT,$param = "2014/j1/fixtures_results/03.html"){
         $url = $url.$param;
-        //debug($url);
+        debug($url);
         //Goutteオブジェクト生成
         $crawer = new Goutte\Client();
         
@@ -125,7 +128,7 @@ class MatchComponent extends Component{
         foreach ($result_s as $var){
             $temp_result[] = $this->getDataByDate($var);
         }
-
+        debug($temp_result);
         
         /*DB登録用にデータを整形*/
         foreach ($temp_result as $var){

@@ -66,21 +66,26 @@ class TotovotesController extends AppController{
         //$this->setGoal3Vote($g3_result);
         
         /*最新回の取得テスト*/
-        $db_name = "totovotes";
-        $held_time =  $this->getRecent($db_name);
+        $db_name = "goal3votes";
+        //$held_time =  $this->getRecent($db_name);
         //debug($heldtime);
-        $result = $this->getNowTotoVoteInfo($held_time);
+        $result = $this->getNowTotoVoteInfo($db_name);
         debug($result);
     }
     
-    /*現在（直近）のTotoの情報（全て）を取得*/
-    protected function getNowTotoVoteInfo($held_time){
-         App::uses('Totovote','Model');     
+    /*現在（直近）のTotoの情報（全て）を取得
+     * $db_name 対象テーブル名
+     * totovotes toto
+     * minivotes miniA and miniB
+     * goal3votes goal3 adn goal2
+     *      */
+    protected function getNowTotoVoteInfo($db_name){
+        App::uses('Totovote','Model');     
         
-        //debug($vote_result);
+        $held_time =  $this->getRecent($db_name);
         
         //モデルクラスのインスタンスを生成
-        $vote = new Totovote('Totovote','totovotes');
+        $vote = new Totovote('Totovote',$db_name);
         $result =  $vote->getVoteTotoRecent($held_time);
         
         return $result;
