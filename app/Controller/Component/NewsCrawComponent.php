@@ -202,10 +202,37 @@ class NewsCrawComponent extends Component{
             $next_page = trim($node->text());
         });
         debug($next_page);
-        
         /*記事の最後のページ（判定）*/
-        if(isset($next_page)){
-            //次のページへのリンク内なら記事最終ページ
+        if(!isset($next_page)){
+            var_dump("このページが最終ページ");
+            
+        }
+        else{
+            var_dump("次のページへ遷移");
+            /*次のページへリンク*/
+            /*Goutteライブらリを使用して次ページの遷移の場合*/
+            $link_craw_n = $client->click($link_craw->selectLink($next_page)->link());
+        }
+        
+        
+        /******* 2ページ目以降 ********/
+        $next_page_n;
+        $link_craw_n->filter('div.nextpage > a')->each(function( $node )use(&$next_page_n){
+                //debug($node->text());
+                $next_page_n = trim($node->text());
+         });
+         
+         
+        var_dump($next_page_n);
+        /*記事の最後のページ（判定）*/
+        if(!isset($next_page_n)){
+            var_dump("このページが最終ページ");
+            
+        }
+        else{
+            var_dump("次のページへ遷移");
+            /*次のページへリンク*/
+           
         }
         
     }
