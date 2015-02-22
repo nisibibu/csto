@@ -76,9 +76,12 @@ class MatchController extends AppController{
         //}
         
         /*ＤＢから取得テスト*/
-        $trend_g = $this->getTeamTrendGoal("鹿島", "2014");
-        $trend_l = $this->getTeamTrendLos("仙台", "2014");
-        $trend_w = $this->getTeamTrendWin("C大阪", "2014");
+        //$trend_g = $this->getTeamTrendGoal("鹿島", "2014");
+        //$trend_l = $this->getTeamTrendLos("仙台", "2014");
+        //$trend_w = $this->getTeamTrendWin("C大阪", "2014");
+        $goal_rank_t = $this->getGoalrankingByTeam("神戸", "5", "2014");
+        //var_dump($goal_rank_t);
+        $goal_rank = $this->getGoalRanking("2014");
         
         /*ヘルパーに初期値(前回入力値）をセットする
          * 参照 CakePHP実践入門 p.139
@@ -191,6 +194,27 @@ class MatchController extends AppController{
         $result = $trend_w->getTeamTrendWinDb($team,$year);
         return $result;
     }
+    
+    /*指定したチームの選手を得点ランキングに入っている選手を取得*/
+    public function getGoalrankingByTeam($team,$count,$year){
+        App::uses('Match','Model');    
+        
+        //モデルクラスのインスタンスを生成
+        $goal_ranking = new Match('Match','goalranking');
+        $result = $goal_ranking->getGoalrankingByTeamDb($team, $count, $year);
+        return $result;
+    }
+    
+    /*ゴールランキングの取得*/
+    public function getGoalRanking($year,$count = 20){
+        App::uses('Match','Model');    
+        
+        //モデルクラスのインスタンスを生成
+        $goal_ranking = new Match('Match','goalranking');
+        $result = $goal_ranking->getGoalRanking($year, $count);
+        return $result;
+    }
+    
 }
 
 ?>

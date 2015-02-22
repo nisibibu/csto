@@ -140,7 +140,40 @@ class Match extends AppModel{
         );
         
         $result = $this->find("all",$data);
-        debug($result);
+        //debug($result);
+        return $result;
+    }
+    
+    /*チームのゴールランキングの昇順に取得*/
+    public function getGoalrankingByTeamDb($team,$count,$year){
+        $data = array(
+           "conditions" => array(
+                             "team" => $team,
+                             "year" => $year,
+            ),
+           'order' => array("goal DESC"),
+           'limit' => (int)$count,      
+        );
+        //debug($data);
+        
+        $result = $this->find("all",$data);
+        //debug($result);
+        return $result;
+    }
+    
+    /*ゴールランキングの取得*/
+    public function getGoalRanking($year,$count){
+        $data = array(
+           "conditions" => array(
+               "year" => $year,
+               "rank ? BETWEEN ?" => array(1,$count), 
+                ),
+           'order' => array("goal DESC"),
+           //'limit' => (int)$count,      
+        );
+
+        $result = $this->find("all",$data);
+        //debug($result);
         return $result;
     }
     

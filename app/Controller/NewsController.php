@@ -29,7 +29,7 @@ class NewsController extends Controller{
             $output[] = $this->Rss->read($feed,3);
             //debug($output);
             $title = $this->Rss->getFeedTitle($output);
-            debug($title);
+            //debug($title);
         }
 
 
