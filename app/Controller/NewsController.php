@@ -15,7 +15,8 @@ class NewsController extends Controller{
         /**/
         public function index(){
             /*ニュースサイトからの情報取得（テスト）*/
-            $this->NewsCraw->getNewsInfoSoccerKing();
+            //$this->NewsCraw->getNewsInfoSoccerKing();   //サッカーキング
+            $this->NewsCraw->getNewsInfoFootBallChannel();  //フットボールチャンネル
            
            
         }
