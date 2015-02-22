@@ -185,7 +185,7 @@ class NewsCrawComponent extends Component{
         $linkCrawer = $crawler->selectLink($title_list[0]);
         $link_c = $linkCrawer->link();
         $uri = $link_c->getUri();
-        debug($uri);
+        //debug($uri);
         
         /*Goutteライブらリを使用して次ページの遷移の場合*/
         $link_craw = $client->click($crawler->selectLink($title_list[0])->link());
@@ -201,7 +201,7 @@ class NewsCrawComponent extends Component{
             //debug($node->text());
             $next_page = trim($node->text());
         });
-        debug($next_page);
+        //debug($next_page);
         /*記事の最後のページ（判定）*/
         if(!isset($next_page)){
             var_dump("このページが最終ページ");

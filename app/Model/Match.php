@@ -89,4 +89,59 @@ class Match extends AppModel{
         
         return $result;
     }
+    
+    /*TeamTrendGoalテーブルから指定した年度のチームの情報を取り出し
+     * チームの得点傾向の取得
+     *      */
+    public function getTeamTrendGoalDb($team,$year){
+        $data = array(
+           "conditions" => array(
+                "AND" => array(
+                        'team' => $team,
+                        'data_year' => $year,
+                     ),
+                ),
+        );
+        
+        $result = $this->find("all",$data);
+        //debug($result);
+        return $result;
+    }
+    
+    /*TeamTrendLosテーブルから指定した年度のチームの情報を取り出し
+     * チームの失点傾向の取得
+     *      */
+    public function getTeamTrendLosDb($team,$year){
+        $data = array(
+           "conditions" => array(
+                "AND" => array(
+                        'team' => $team,
+                        'data_year' => $year,
+                     ),
+                ),
+        );
+        
+        $result = $this->find("all",$data);
+        //debug($result);
+        return $result;
+    }
+    
+    /*TeamTrendWinningテーブルから指定した年度のチームの情報を取り出し
+     * チームの勝利傾向の取得
+     *      */
+    public function getTeamTrendWinDb($team,$year){
+        $data = array(
+           "conditions" => array(
+                "AND" => array(
+                        'team' => $team,
+                        'data_year' => $year,
+                     ),
+                ),
+        );
+        
+        $result = $this->find("all",$data);
+        debug($result);
+        return $result;
+    }
+    
 }

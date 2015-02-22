@@ -75,6 +75,11 @@ class MatchController extends AppController{
             
         //}
         
+        /*ＤＢから取得テスト*/
+        $trend_g = $this->getTeamTrendGoal("鹿島", "2014");
+        $trend_l = $this->getTeamTrendLos("仙台", "2014");
+        $trend_w = $this->getTeamTrendWin("C大阪", "2014");
+        
         /*ヘルパーに初期値(前回入力値）をセットする
          * 参照 CakePHP実践入門 p.139
          * 
@@ -105,7 +110,6 @@ class MatchController extends AppController{
         }   
         //$this->request->data = $this->Post->find('team',$options);
         //$this->request->data = array('team',$options);
-        
         
     }
 
@@ -156,6 +160,36 @@ class MatchController extends AppController{
             return false;
         }
         return $data;
+    }
+    
+    /*チームの得点傾向の取得*/
+    public function getTeamTrendGoal($team,$year){
+         App::uses('Match','Model');     
+        
+        //モデルクラスのインスタンスを生成
+        $trend_g = new Match('Match','teamtrendgoal');
+        $result = $trend_g->getTeamTrendGoalDb($team,$year);
+        return $result;
+    }
+    
+    /*チームの失点傾向の取得*/
+    public function getTeamTrendLos($team,$year){
+         App::uses('Match','Model');     
+        
+        //モデルクラスのインスタンスを生成
+        $trend_l = new Match('Match','teamtrendlos');
+        $result = $trend_l->getTeamTrendLosDb($team,$year);
+        return $result;
+    }
+    
+     /*チームの勝利傾向の取得*/
+    public function getTeamTrendWin($team,$year){
+         App::uses('Match','Model');    
+        
+        //モデルクラスのインスタンスを生成
+        $trend_w = new Match('Match','teamtrendwinning');
+        $result = $trend_w->getTeamTrendWinDb($team,$year);
+        return $result;
     }
 }
 
