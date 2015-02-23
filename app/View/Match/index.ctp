@@ -30,7 +30,12 @@
         'url' => array(
             'controller' => 'Match','action' => 'index'))); //指定アクションに送信
     echo $this->Form->label('team','チーム');
-    echo $this->Form->select('team', $team_list);
+    //echo $this->Form->select('team', $team_list);
+     echo $this->Form->input('team',array(     
+          "type" => "select", 
+          'options'=> $team_list,
+          //'selected' => $count["5"], //画面側で初期値の設定
+    ));
     echo $this->Form->label("count","取得件数");
     echo $this->Form->input('count',array(     
           "type" => "select", 
@@ -43,5 +48,7 @@
     //var_dump($team);
     
     echo "チームのデータ表示"."</br>";
-    //var_dump($match);
+    if(isset($match)){
+        //var_dump($match);
+    }
 ?>

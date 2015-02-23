@@ -76,13 +76,15 @@ class MatchController extends AppController{
         //}
         
         /*ＤＢから取得テスト*/
-        //$trend_g = $this->getTeamTrendGoal("鹿島", "2014");
-        //$trend_l = $this->getTeamTrendLos("仙台", "2014");
-        //$trend_w = $this->getTeamTrendWin("C大阪", "2014");
-        $goal_rank_t = $this->getGoalrankingByTeam("神戸", "5", "2014");
-        //var_dump($goal_rank_t);
-        $goal_rank = $this->getGoalRanking("2014");
+        //$trend_g = $this->getTeamTrendGoal("鹿島", "2014");   //得点傾向
+        //$trend_l = $this->getTeamTrendLos("仙台", "2014");    //失点傾向
+        //$trend_w = $this->getTeamTrendWin("C大阪", "2014");   //勝利傾向
+        //$goal_rank_t = $this->getGoalrankingByTeam("神戸", "5", "2014");  //指定チームのゴールランキング
+        //var_dump($goal_rank_t);                               
+        //$goal_rank = $this->getGoalRanking("2014");           //ゴールランキング
         //var_dump($goal_rank);
+        $league_ranking = $this->getLeagueRanking("2014", "j1");
+        //debug($league_ranking);
         
         /*ヘルパーに初期値(前回入力値）をセットする
          * 参照 CakePHP実践入門 p.139
@@ -151,6 +153,19 @@ class MatchController extends AppController{
         return $result;
     }
     
+    /*リーグの順位情報の取得
+     * $year    年度
+     * $league  リーグ（j1,j2などを指定）
+     *      */
+    public function getLeagueRanking($year,$league){
+        App::uses('Match','Model');     
+        
+        //モデルクラスのインスタンスを生成
+        $league_rank = new Match('Match','league');
+        $result = $league_rank->getLeagueRankingDb($year, $league);
+        return $result;
+    }
+    
     /*Formデータの受け取り、返却*/
     public function show(){
         //POSTが送信されたかどうか
@@ -168,7 +183,7 @@ class MatchController extends AppController{
     
     /*チームの得点傾向の取得*/
     public function getTeamTrendGoal($team,$year){
-         App::uses('Match','Model');     
+        App::uses('Match','Model');     
         
         //モデルクラスのインスタンスを生成
         $trend_g = new Match('Match','teamtrendgoal');

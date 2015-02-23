@@ -178,4 +178,21 @@ class Match extends AppModel{
         return $result;
     }
     
+    /*rリーグ順位の取得
+     * 指定した年度の指定したリーグの順位表情報を取得 
+     *      */
+    public function getLeagueRankingDb($year,$league){
+         $data = array(
+           "conditions" => array(
+                             "year" => $year,
+                             "league" => $league,
+            ),
+           'order' => array("ranking ASC"),    
+        );
+        //debug($data);
+        
+        $result = $this->find("all",$data);
+        //debug($result);
+        return $result;
+    }
 }
