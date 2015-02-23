@@ -162,13 +162,14 @@ class Match extends AppModel{
     }
     
     /*ゴールランキングの取得*/
-    public function getGoalRanking($year,$count){
+    public function getGoalRanking($year,$count,$league){
         $data = array(
            "conditions" => array(
                "year" => $year,
-               "rank ? BETWEEN ?" => array(1,$count), 
+               "league" => $league,
+               "rank  BETWEEN ? AND ?" => array(1,$count),
                 ),
-           'order' => array("goal DESC"),
+           //'order' => array("goal DESC"),
            //'limit' => (int)$count,      
         );
 

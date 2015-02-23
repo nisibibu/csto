@@ -82,6 +82,7 @@ class MatchController extends AppController{
         $goal_rank_t = $this->getGoalrankingByTeam("神戸", "5", "2014");
         //var_dump($goal_rank_t);
         $goal_rank = $this->getGoalRanking("2014");
+        //var_dump($goal_rank);
         
         /*ヘルパーに初期値(前回入力値）をセットする
          * 参照 CakePHP実践入門 p.139
@@ -206,12 +207,12 @@ class MatchController extends AppController{
     }
     
     /*ゴールランキングの取得*/
-    public function getGoalRanking($year,$count = 20){
+    public function getGoalRanking($year,$count = 20,$league = "j1"){
         App::uses('Match','Model');    
         
         //モデルクラスのインスタンスを生成
         $goal_ranking = new Match('Match','goalranking');
-        $result = $goal_ranking->getGoalRanking($year, $count);
+        $result = $goal_ranking->getGoalRanking($year, $count,$league);
         return $result;
     }
     
