@@ -9,8 +9,8 @@ App::uses('AppModel','Model');
 class News extends AppModel{
     
     
-    /*ニュース（記事）の登録*/
-    public function setOneNewsDb($statuses,$j_class){
+    /*ニュース（記事）の1記事の登録処理*/
+    public function setOneNewsDb($statuses){
         
         
     }

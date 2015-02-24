@@ -159,6 +159,8 @@ class NewsCrawComponent extends Component{
         //Goutteオブジェクト生成
         //$crawer = new Goutte\Client();
         
+        $news_info = array();   //返却用変数
+        $temp_info = array();   //一時格納用
         //Goutteオブジェクト生成
         $client = new Goutte\Client();
         //var_dump($client);
@@ -171,82 +173,155 @@ class NewsCrawComponent extends Component{
         
         $selecta_title = 'h2.contents_title > a';    //記事タイトルのCSSセレクタ
         /*記事タイトルのリスト取得*/
-        $crawer->filter($selecta_title)->each(function( $node )use(&$title_list){
-            //debug($node->text());
-            $title_list[] = trim($node->text());
-        });
+        $title_list = $this->getNewsTitleList($crawer, $selecta_title);
         //debug($title_list);
-        //debug($crawer);
-        $this->getNewsTitleList($crawer, $selecta_title);
         
         
-        /*遷移ページのＵＲＬを取得*/
-        /*Crawler(symfony2)のselectLinkを使用しての場合*/
-        /*使用する時は、遷移先のURLの取得に使用*/
-        $linkCrawer = $crawer->selectLink($title_list[0]);
-        $link_c = $linkCrawer->link();
-        $uri = $link_c->getUri();
+        /***  1ページ目  ***/
+        /*次ページのCrawerオブジェクトを取得*/
+        
+        
+        /*取得できたら情報取得*/
+         //$link_craw =  $this->getNextCraw($craw, $title_list[0]);
+         //var_dump($link_craw);
+         
+         
+        /*情報取得*/
+         $title = $title_list[0];
+         $page = 1;
+         $site = "フットボールチャンネル";
+         $page_info[] = $this->getOnePageInfoFootBallCh($crawer, $title, $page, $site);
+         
+         /*Goutteライブらリを使用して次ページの遷移の場合*/
+         $link_craw = $client->click($crawer->selectLink($title_list[0])->link());
+         $next_page_str = $this->getNextTitle($link_craw, "");
+         
+         
+         /*次ページの判定*/
+         if(!isset($next_page_str)){
+             //最終ページなら返却
+             return $page_info;
+         }
+         
+         /*次ページ取得*/
+         //$craw = $this->getNextCraw($link_craw, $next_page_str);
+         //debug($craw);
+         
+         $page = 2;
+         $page_info[] = $this->getOnePageInfoFootBallCh($link_craw, $next_page_str, $page, $site);
+         debug($page_info);
+         
+//        $next_page;
+//        //次のページのタイトルを取得
+//        $link_craw->filter('div.nextpage > a')->each(function( $node )use(&$next_page){
+//            //debug($node->text());
+//            $next_page = trim($node->text());
+//        });
+//        debug($next_page);
+//        /*記事の最後のページ（判定）*/
+//        if(!$this->judgmentLastPage($next_page)){
+//            /*Goutteライブらリを使用して次ページの遷移の場合*/
+//            $link_craw_n = $client->click($link_craw->selectLink($next_page)->link());
+//        }
+//        
+//        
+//        /******* 記事(2ページ目)以降 ********/
+//        $next_page_n;
+//        $link_craw_n->filter('div.nextpage > a')->each(function( $node )use(&$next_page_n){
+//                //debug($node->text());
+//                $next_page_n = trim($node->text());
+//         });
+                  
+        //var_dump($next_page_n);
+        /*最終ページの処理*/
+       
+        
+        
+        
+    }
+    
+    /*1ページ分の情報を取得
+     * フットボールチャンネルのみ対応
+     * 
+     *      */
+    private function getOnePageInfoFootBallCh($crawer,$title,$page,$site){
+        $uri = $this->getNextUri($crawer, $title);
         //debug($uri);
+        $temp_info['uri'] = $uri;
+        $temp_info['news_title'] = $title;
+        
+        //Goutteオブジェクト生成
+        $client = new Goutte\Client();
         
         /*Goutteライブらリを使用して次ページの遷移の場合*/
-        $link_craw = $client->click($crawer->selectLink($title_list[0])->link());
+        $link_craw = $client->click($crawer->selectLink($title)->link());
         
         
         /* 他サイトと同様にページの情報を取得
-         *
-         * 
-         *          */
+         *          *
+         */
         
-        //$this->getNewsBody($link_craw); //ページタイトルボックスの取得
+        //ページタイトルボックスの取得
+        $selecta_t_box = '#title_box';
+        $title_box = $this->getNewsTitlebox($link_craw,$selecta_t_box);
+        $temp_info['title_box'] = $title_box;
         
         /*記事の本文の取得*/
         $article_body;  //記事の本文の取得
         $selecta_body = ".entry_body";
-        $link_craw->filter($selecta_body)->each(function( $node )use(&$article_body){
-            //debug($node->text());
-            $text = trim($node->text());
-            /*記事本文の整形処理*/
-            $array = explode("\n", $text); // とりあえず行に分割
-            $array = array_map('trim', $array); // 各要素をtrim()にかける
-            $array = array_filter($array, 'strlen'); // 文字数が0のやつを取り除く
-            $array = array_values($array); // これはキーを連番に振りなおし
-            $article_body = $array;
-        });
+        
+        $article_body = $this->getNewsBody($link_craw, $selecta_body);
         //debug($article_body);
+        $temp_info['page_title'] = $article_body[0];
+        $temp_info['body'] = $article_body;        
+        
+        /*タグ（関連キーワードの取得*/
+        $selecta_tag = ".entry a";
+        $tag_list = array();
+        
+        $tag_list = $this->getTag($link_craw, $selecta_tag);
+        //debug($tag_list);
+        
+        $temp_info['tag'] = $tag_list;
         
         /*画像情報の取得*/
+        $selecta_photo = ".entry_body a, .entry_body img";
+                
+        $photo_info = $this->getPhotoInfo($link_craw,$selecta_photo);
+        //debug($photo_info);
+        $temp_info['photo'] = $photo_info;
         
+        /*ページを格納*/
+        $temp_info['page'] = $page;
+        /*サイト名を格納*/
+        $temp_info['site_name'] = $site;
         
-        
-       
-        
-        /*記事の次のページへ*/
-        $next_page;
-        //次のページのタイトルを取得
-        $link_craw->filter('div.nextpage > a')->each(function( $node )use(&$next_page){
-            //debug($node->text());
-            $next_page = trim($node->text());
-        });
-        debug($next_page);
-        /*記事の最後のページ（判定）*/
-        if(!$this->judgmentLastPage($next_page)){
-            /*Goutteライブらリを使用して次ページの遷移の場合*/
-            $link_craw_n = $client->click($link_craw->selectLink($next_page)->link());
-        }
-        
-        
-        /******* 記事(2ページ目)以降 ********/
-        $next_page_n;
-        $link_craw_n->filter('div.nextpage > a')->each(function( $node )use(&$next_page_n){
-                //debug($node->text());
-                $next_page_n = trim($node->text());
-         });
-                  
-        var_dump($next_page_n);
-        /*最終ページの処理*/
-       
-        
+        return $temp_info;
     }
+    
+    /*次ページのCrawオブジェクトを取得*/
+    protected function getNextCraw($craw,$title){
+         //Goutteオブジェクト生成
+        $client = new Goutte\Client();
+        
+        /*Goutteライブらリを使用して次ページの遷移の場合*/
+        $link_craw = $client->click($craw->selectLink($title)->link());
+        
+        return $link_craw;
+    }
+    
+    /*ゲキサカからニュースを取得*/
+    public function getNewsInfoGekiSaka($param = "news/category?category=domestic"){
+        $url = "http://web.gekisaka.jp/";
+        $url = $url.$param;
+    }
+    
+    /*サッカーダイジェストＷｅｂからニュースを取得*/
+    public function getNewsInfoSoccerDigest($param = "tag_list/tag_search=1&tag_id=50"){
+        $url = "http://www.soccerdigestweb.com/";
+        $url = $url.$param;
+    }
+    
     
     /*記事タイトルの一覧を取得して返す*/
     public function getNewsTitleList($crawer,$selecta_title){
@@ -259,27 +334,138 @@ class NewsCrawComponent extends Component{
         });
          
          
-        debug($title_list);
-        //return $title_list; 
+        //debug($title_list);
+        return $title_list; 
     }
     
+    /*タグ（関連キーワードの取得*/
+    public function getTag($crawer,$selecta_tag){
+        $tag_list = array();
+        $crawer->filter($selecta_tag)->each(function( $node )use(&$tag_list){
+            $tag_list[] = $node->text();
+        });
+        //debug(strlen($tag_list[5]));
+        $tag_list = array_filter($tag_list,"strlen");
+        $tag_list = array_values($tag_list);
+        
+        return $tag_list;
+    }
+
+
     /*記事のタイトルボックス（タイトルと付随文）を取得*/
-    public function getNewsTitlebox($crawler){
+    public function getNewsTitlebox($crawler,$selecta){
         //次のページのタイトルを取得
-        debug($crawler);
+        //debug($crawler);
         $title_box = array();
-        $selecta = '#title_box';
         $crawler->filter($selecta)->each(function( $node )use(&$title_box){
             //debug($node->text());
-            $title_box[] = trim($node->text());
+            $text = trim($node->text());
+            /*記事本文の整形処理*/
+            $array = explode("\n", $text); // とりあえず行に分割
+            $array = array_map('trim', $array); // 各要素をtrim()にかける
+            $array = array_filter($array, 'strlen'); // 文字数が0のやつを取り除く
+            $array = array_values($array); // これはキーを連番に振りなおし
+            //$array = $this->fixDataBlank($array);
+            $title_box[] = $array;
         });
-        debug($title_box); 
+        //debug($title_box); 
          
+        return $title_box;
     }
     
-    /*次のページのＵＲＩを取得*/
-    public function getNextUri(){
+    /*次ページのタイトルを取得*/
+    public function getNextTitle($crawer,$selecta_next){
+        $title;        //次ページのタイトル取得
+        //debug($crawler);
+        $selecta_next = ".nextpage a";
         
+        $crawer->filter($selecta_next)->each(function( $node )use(&$title){
+            //debug($node->text());
+            $title = trim($node->text());
+        });
+         
+         
+        //debug($title);
+        return $title; 
+    }
+    
+    /*空白のデータを削除して配列を整列しなおす
+     *  修正する
+     *      */
+    public function fixDataBlank($result){
+         
+        /*0のデータを消さないようにする*/
+         function even($var){
+                  return ($var<> '');
+         }
+         
+         //改行無しのスペース(＆ｎｂｓｐ；)を半角スペースに置換して削除
+         //参考URL
+         //http://nanoappli.com/blog/archives/5429
+         for ($i = 0 ; $i < count($result); $i++){
+                  $result[$i] = trim( $result[$i], chr(0xC2).chr(0xA0) );
+         }
+         
+         
+         //取得したデータから空の部分を詰めて配列添え直し
+          $result =  array_filter($result,'even');
+          $result = array_values($result);
+          
+
+          return $result;
+    }
+    
+    /*ページ本文の取得*/
+    public function getNewsBody($craw,$selecta_body){
+        $article_body;  //記事の本文の取得
+
+        $craw->filter($selecta_body)->each(function( $node )use(&$article_body){
+            //debug($node->text());
+            $text = trim($node->text());
+            /*記事本文の整形処理*/
+            $array = explode("\n", $text); // とりあえず行に分割
+            $array = array_map('trim', $array); // 各要素をtrim()にかける
+            $array = array_filter($array, 'strlen'); // 文字数が0のやつを取り除く
+            $array = array_values($array); // これはキーを連番に振りなおし
+            $article_body = $array;
+        });
+        
+        return $article_body;
+    }
+    
+    
+    /*次のページのＵＲＩを取得
+     * $crawer Craerオブジェクト
+     * $title  タイトルの文字列
+     *      */
+    public function getNextUri($crawer,$title){
+        $linkCrawer = $crawer->selectLink($title);
+        $link_c = $linkCrawer->link();
+        $uri = $link_c->getUri();
+        
+        return $uri;
+    }
+    
+    /*画像情報の取得*/
+    public function getPhotoInfo($craw,$selecta_phpto){
+        $photo_href = array();
+        $photo_src = array();
+        
+        //$selecta_photo = ".entry_body a, .entry_body img";
+        
+        $craw->filter($selecta_phpto)->each(function( $node )use(&$photo_href,&$photo_src){
+            $href_flag = $node->attr('href');
+            if(isset($href_flag)){
+                $photo_href['href'][] = $node->attr('href');
+            }
+            $src_flag = $node->attr('src');
+            if(isset($src_flag)){
+                $photo_src['src'][] = $node->attr('src');
+            }           
+        });
+        $photo_info = array_merge($photo_href, $photo_src);
+        
+        return $photo_info;
     }
     
     /*最終ページか判定する
