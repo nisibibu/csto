@@ -16,9 +16,9 @@ class NewsController extends Controller{
         public function index(){
             /*ニュースサイトからの情報取得（テスト）*/
             //$this->NewsCraw->getNewsInfoSoccerKing();   //サッカーキング
-            $this->NewsCraw->getNewsInfoFootBallChannel();  //フットボールチャンネル
-           
-           
+            $result_f = $this->NewsCraw->getNewsInfoFootBallChannel();  //フットボールチャンネル
+            //debug($page_info);
+            $this->setNews($result_f);
         }
         
         /*RSSからデータを取得*/
@@ -30,6 +30,16 @@ class NewsController extends Controller{
             //debug($output);
             $title = $this->Rss->getFeedTitle($output);
             //debug($title);
+        }
+        
+        /*ニュース登録用*/
+        public function setNews($page_info){
+             App::uses('News','Model');     //モデルクラスにMatchを指定
+        
+            //モデルクラスのインスタンスを生成
+            $news = new News('News','matches');
+            $result = $news->setOneNewsDb($page_info);
+            
         }
 
 

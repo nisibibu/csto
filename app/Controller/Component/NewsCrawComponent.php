@@ -209,35 +209,18 @@ class NewsCrawComponent extends Component{
          
          $page = 2;
          $page_info[] = $this->getOnePageInfoFootBallCh($link_craw, $next_page_str, $page, $site);
-         debug($page_info);
-         
-//        $next_page;
-//        //次のページのタイトルを取得
-//        $link_craw->filter('div.nextpage > a')->each(function( $node )use(&$next_page){
-//            //debug($node->text());
-//            $next_page = trim($node->text());
-//        });
-//        debug($next_page);
-//        /*記事の最後のページ（判定）*/
-//        if(!$this->judgmentLastPage($next_page)){
-//            /*Goutteライブらリを使用して次ページの遷移の場合*/
-//            $link_craw_n = $client->click($link_craw->selectLink($next_page)->link());
-//        }
-//        
-//        
-//        /******* 記事(2ページ目)以降 ********/
-//        $next_page_n;
-//        $link_craw_n->filter('div.nextpage > a')->each(function( $node )use(&$next_page_n){
-//                //debug($node->text());
-//                $next_page_n = trim($node->text());
-//         });
-                  
-        //var_dump($next_page_n);
-        /*最終ページの処理*/
-       
+         //debug($page_info);
+ 
+        /*最終処理*/
+        $news_title = $page_info[0]['news_title'];
+        $result;
+        foreach ($page_info as $var){
+            $var['news_title'] = $news_title;
+            $result[] = $var;
+        }
         
         
-        
+        return $result;
     }
     
     /*1ページ分の情報を取得
