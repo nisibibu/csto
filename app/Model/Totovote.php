@@ -10,7 +10,8 @@ class Totovote extends AppModel{
      * totoone
      *      */
     public function setTotoVoteDb($statuses){
-        /*DBへ保存*/
+        
+        /*DBへ保存（新規登録）*/
         //$data = array();
         //debug($statuses);
         foreach ($statuses as $status){
@@ -25,11 +26,14 @@ class Totovote extends AppModel{
                 '2_vote' => $status['2_vote'],
             );
         }
-        
-        //debug($data);
-        
-        
+
+            //debug($data);
+
+
         $this->saveAll($data);
+        
+        
+        
     }
     
     /*Totoの投票率（のみ）登録
@@ -37,28 +41,91 @@ class Totovote extends AppModel{
      * 
      *      */
      public function setTotoOnlyVoteDb($statuses){
-        //debug($statuses);
-        foreach ($statuses as $status){
-            //debug($status);
-            
-            $data[] = array(
-                'held_time' => $status['held_time'],
-                'held_date' => $status['held_date'],
-                'no' => (int)$status['no'],
-                'home_team' => $status['home_team'],
-                'away_team' => $status['away_team'],
-                '1_vote' => $status['1_vote'],
-                '0_vote' => $status['0_vote'],
-                '2_vote' => $status['2_vote'],
-                'year' => $status['year'],
-                'month' => $status['year'],
-            );
-            
-             
+         /*保存する前に同一データがないかチェックする*/
+        /* 新規ではない場合、1件ずつチェックして更新する
+         *
+         *          */
+        $held_time;
+        $no;
+        foreach($statuses as $status){
+            $held_time = $status['held_time'];
+            $no = $status['no'];
         }
+        
+        debug($held_time);
+        debug($no);
+        
+        //登録しようしているデータ（今回分）登録済みかチェック
+        $update_flag = FALSE;
+        
+        $options = array(
+          'conditions' => array(
+              'held_time' => $held_time,
+          ),
+        );
+
+        
+        $c_result = $this->find('count',$options);
+        debug($statuses[0]['held_date']);
+        
+        //return $result;
+        
+        if($no === (int)$c_result){
+            $update_flag = TRUE; 
+        }
+        
+        if($update_flag){
+            //更新
+            foreach($statuses as $status){
+                $conditions = array(
+                    'held_time' => $status['held_time'],
+                     'no' => $status['no'],
+                );
+
+                $today = date("Y-m-d H:i:s");
+                debug($today);
+                $data = array(
+                    'held_time' => $status['held_time'],
+                    'held_date' => "'".$status['held_date']."'",
+                    'no' => (int)$status['no'],
+                    'home_team' => "'". $status['home_team']."'",
+                    'away_team' => "'".$status['away_team']."'",
+                    '1_vote' => $status['1_vote'],
+                    '0_vote' => $status['0_vote'],
+                    '2_vote' => $status['2_vote'],
+                    'year' => $status['year'],
+                    'month' => $status['month'],
+                    'modified' => "'".$today."'",
+                );
+                
+                
+                $result = $this->updateAll($data,$conditions);
+            }
+           
+        }
+        else{
+            //debug($statuses);
+            foreach ($statuses as $status){
+                debug($status);
+            
+                $data[] = array(
+                    'held_time' => $status['held_time'],
+                    'held_date' => $status['held_date'],
+                    'no' => (int)$status['no'],
+                    'home_team' => $status['home_team'],
+                    'away_team' => $status['away_team'],
+                    '1_vote' => $status['1_vote'],
+                    '0_vote' => $status['0_vote'],
+                    '2_vote' => $status['2_vote'],
+                    'year' => $status['year'],
+                    'month' => $status['month'],
+                );
+            }
         $result = $this->saveAll($data);
-        debug($result);
+        }
+        return $result;
     }
+    
     
     
     /* miniの投票率を登録

@@ -3,6 +3,7 @@
 /*Toto投票率取得シェル*/
 App::uses('ComponentCollection','Controller');
 App::uses('TotoComponent','Controller/Component');
+App::uses('TotovotesController','Controller');
 
 class TotoVoteShell extends AppShell{
     public $uses = array('POST','Totovote');    //使用するモデルを宣言
@@ -13,19 +14,20 @@ class TotoVoteShell extends AppShell{
         $collection = new ComponentCollection();
         $this->Toto = new TotoComponent($collection);
         parent::startup();
+        $this->TotoController = new TotovotesController;
     }
     
     /*メイン処理*/
     public function main(){
-       //Toto投票率のDB登録(ToToOne)
-       $toto_vote =  $this->Toto->getTotoVote();
-       $this->Totovote->setTotoVoteDb($toto_vote);
-       //$this->Totovote->upTotoVoteDb();
+       
+       
     }
     
     /*Totoの投票率の取得・保存*/
     public function saveToto(){
-        
+       //Toto投票率のDB登録(ToToOne)
+       $toto_vote =  $this->Toto->getTotoVoteByYJ();
+       $this->TotoController->setTotoOnlyVote($toto_vote); 
         
     }
     

@@ -107,11 +107,30 @@ class TotoVotesComponent extends Component{
     /* totoの開催カードを取得 */
     public function getTotoMatchCard($craw){
         $match_info = array();  //対戦カード
-        $craw->filter('table.kobetsu-format3 td')->each(function( $node )use(&$match_info){
+        $craw->filter('.kobetsu-format3  td')->each(function( $node )use(&$match_info){
             $info = trim($node->text());
-            $match_info[] = $info;
+            $match_info[$info] = $info;
         });
-        debug($match_info);
+        
+        $toto_match = array_slice($match_info, 0, 103); //totoの情報だけ切り出し
+
+        unset($toto_match['VS']);
+        unset($toto_match['データ']);
+
+        $toto_match = array_values($toto_match);
+        
+        /*日付毎に分割*/
+        
+        /*先頭に日付を付加*/
+        
+        /*対戦ごとに分割*/
+        $size = 6;
+        $match = array_chunk($toto_match, $size);
+        
+        var_dump($match);
+        
+        return $match;
+        
     }
     
     
@@ -121,7 +140,7 @@ class TotoVotesComponent extends Component{
     }
     
     /*goal3の開催カードの取得*/
-    public function getGoal3MatchCard(){
+    public function getGoal3MatchCard($craw,$type=3){
         
     }
 

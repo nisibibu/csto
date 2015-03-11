@@ -1,6 +1,7 @@
 <?php
 App::uses('Folder','Utility');
 App::uses('File', 'Utility');
+App::uses('AppController','Controller');
 
 //Goutteの読み込み
 //require_once '../Vendor/goutte/goutte.phar';
@@ -48,12 +49,13 @@ class TotovotesController extends AppController{
         //$this->League->getGoalRanking();
         
         /*TOTO投票率の取得*/
-        $param = "?id=0698";
-        $vote_result = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ,$param);
+        //$param = "?id=0698";
+        //$vote_result = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ,$param);
         
         /*totoの投票率取得（テスト）*/
-        //$t_result =  $this->Toto->getTotoVoteByYJ();
-        //$this->setTotoOnlyVote($t_result);
+        $t_result =  $this->Toto->getTotoVoteByYJ();
+        //debug($t_result);
+        $this->setTotoOnlyVote($t_result);
         
         /*miniの取得（テスト）*/
         //$m_vote_result = $this->Toto->getMiniVoteByYJ();
@@ -74,7 +76,7 @@ class TotovotesController extends AppController{
         
         
         /*開催回情報の取得*/
-        $this->TotoVotes->getTotoMatchInfo();    //toto開催回（自体の情報）の取得
+        //$this->TotoVotes->getTotoMatchInfo();    //toto開催回（自体の情報）の取得
     }
     
     /*現在（直近）のTotoの情報（全て）を取得
@@ -97,7 +99,7 @@ class TotovotesController extends AppController{
 
 
     //Totoの投票率（のみ）を登録
-    protected function setTotoOnlyVote($vote_result){
+    public function setTotoOnlyVote($vote_result){
          App::uses('Totovote','Model');     
         
         //debug($vote_result);
