@@ -10,7 +10,7 @@ App::uses('Component', 'Controller');
 class TotovotesController extends AppController{
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
      /*コンポーネントの指定*/
-    public $components = array('Twitter','Toto','Rss','TeamTrend','TotoResult','League');
+    public $components = array('Twitter','Toto',"TotoVotes",'Rss','TeamTrend','TotoResult','League');
     
     /* index */
     public function index(){
@@ -61,16 +61,20 @@ class TotovotesController extends AppController{
         //$this->setMiniVote($m_vote_result);
         
         /*GOAL3の取得（テスト）*/
-        $g3_result = $this->Toto->getGoal3VoteByYJ();
+        //$g3_result = $this->Toto->getGoal3VoteByYJ();
         //debug($g3_result);
         //$this->setGoal3Vote($g3_result);
         
         /*最新回の取得テスト*/
-        $db_name = "goal3votes";
+        $db_name = "goal3votes";    //goal3のテスト
         //$held_time =  $this->getRecent($db_name);
         //debug($heldtime);
         $result = $this->getNowTotoVoteInfo($db_name);
-        debug($result);
+        //debug($result);
+        
+        
+        /*開催回情報の取得*/
+        $this->TotoVotes->getTotoMatchInfo();    //toto開催回（自体の情報）の取得
     }
     
     /*現在（直近）のTotoの情報（全て）を取得

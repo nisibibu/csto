@@ -25,13 +25,6 @@ $toto_vote_model = ClassRegistry::init('Totovote');
 class TotoComponent extends Component{
     
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
-    
-    /*toto公式サイトよりマッチ情報を取得*/
-    public function getTotoMatchInfo($url = TOTO_OFFICIAL,$param = ""){
-        
-    }
-
-
 
 
     /*Yahhoより投票状況を取得

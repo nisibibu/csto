@@ -49,6 +49,6 @@
     
     echo "チームのデータ表示"."</br>";
     if(isset($match)){
-        //var_dump($match);
+        var_dump($match);
     }
 ?>

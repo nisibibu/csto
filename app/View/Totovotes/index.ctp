@@ -1,6 +1,12 @@
 <?php
-    echo "toto投票率"
+    echo "toto"."<br />";
     
+    
+    echo "mini-a"."<br />";
+    
+    echo "mini-b"."<br />";
+    
+    echo "goal3"."<br />";
 
 
 ?>
