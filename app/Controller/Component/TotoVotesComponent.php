@@ -59,7 +59,7 @@ class TotoVotesComponent extends Component{
         preg_match('/\d+/', $held_time,$m);
         $held_time = $m[0];
         
-        var_dump($held_time);
+        //var_dump($held_time);
         
         /*開催回ページへ*/
         $craw =  $this->transionTotoPage($held_time);
@@ -80,12 +80,13 @@ class TotoVotesComponent extends Component{
         $held_lot = array_filter($held_lot,"strlen");
         $held_lot = array_unique($held_lot);
         
-        var_dump($held_lot);
+        //var_dump($held_lot);
         
+        $toto_match = array();  //Totoの試合情報の保持
         
         /*Toto(開催されている場合取得)*/
         if($held_lot['toto']){
-            $this->getTotoMatchCard($craw);
+             $toto_match = $this->getTotoMatchCard($craw);
         }
         
         
@@ -101,33 +102,85 @@ class TotoVotesComponent extends Component{
 //            $this->getGoal3MatchCard();
 //       }
        
-        
+        return $toto_match;
     }
+    
+    /*開催回の取得*/
+    public function getHeldTime(){
+        //Goutteオブジェクト生成
+        $client_vote = new Client(); 
+
+        /*Goutteライブらリを使用して次ページの遷移の場合*/
+        $client = new \Goutte\Client();
+        
+        //totoマッチング、投票率HTMLを取得
+        $crawler_vote = $client_vote->request('GET', TOTO_OFFICIAL);
+        
+        //debug($client_vote);
+        
+        $held_times;  //開催回の取得
+        
+        /*現在表示されている開催回取得*/
+        $crawler_vote->filter('.chancecopy img')->each(function( $node )use(&$held_times){
+            $held = trim($node->attr("alt"));
+            if($held){
+                $held_times = $held;
+            }
+        });
+        
+        //var_dump($held_times);
+        
+        /**開催回のテキストリンクを作成
+         * 
+         */
+        $pattern = "#(第\d{3}回)#";
+        preg_match_all($pattern, $held_times, $held_m);
+        //var_dump($held_m);
+        
+        $pre_held = $held_m[0][0];  //前回開催回の取得
+        $held_time = $held_m[0][1]; //今回開催回の取得
+        
+        var_dump($held_time);
+        
+        return $held_time;
+    }
+    
     
     /* totoの開催カードを取得 */
     public function getTotoMatchCard($craw){
         $match_info = array();  //対戦カード
-        $craw->filter('.kobetsu-format3  td')->each(function( $node )use(&$match_info){
+        $match_date = array();  //対戦日
+        $craw->filter('.kobetsu-format3  td')->each(function( $node )use(&$match_info,&$match_date){
             $info = trim($node->text());
-            $match_info[$info] = $info;
+            if(preg_match("#^\d{2}/\d{2}$#", $info)){
+                //対戦日の格納
+                $match_date[] = $info;
+            }
+                $match_info[] = $info;
         });
         
-        $toto_match = array_slice($match_info, 0, 103); //totoの情報だけ切り出し
+        //var_dump($match_info);
+        
+        $data_c = 8;
+        $match_c = 13;
+        $slice_count = $data_c * $match_c;
+        
+        $toto_match = array_slice($match_info, 0, $slice_count); //totoの情報だけ切り出し
 
-        unset($toto_match['VS']);
-        unset($toto_match['データ']);
+//        unset($toto_match['VS']);
+//        unset($toto_match['データ']);
 
+        //var_dump($toto_match);
+        
         $toto_match = array_values($toto_match);
-        
-        /*日付毎に分割*/
-        
-        /*先頭に日付を付加*/
+        //debug($toto_match);
+            
         
         /*対戦ごとに分割*/
-        $size = 6;
+        $size = 8;
         $match = array_chunk($toto_match, $size);
+        //var_dump($match);
         
-        var_dump($match);
         
         return $match;
         

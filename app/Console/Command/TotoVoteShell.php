@@ -31,6 +31,11 @@ class TotoVoteShell extends AppShell{
         
     }
     
+    /*Totoの試合情報の取得・保存*/
+    public function saveTotoMatch(){
+        
+    }
+    
     /*miniの投票率の取得・保存*/
     public function saveMini(){
         

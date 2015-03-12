@@ -53,9 +53,9 @@ class TotovotesController extends AppController{
         //$vote_result = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ,$param);
         
         /*totoの投票率取得（テスト）*/
-        $t_result =  $this->Toto->getTotoVoteByYJ();
+        //$t_result =  $this->Toto->getTotoVoteByYJ();
         //debug($t_result);
-        $this->setTotoOnlyVote($t_result);
+        //$this->setTotoOnlyVote($t_result);
         
         /*miniの取得（テスト）*/
         //$m_vote_result = $this->Toto->getMiniVoteByYJ();
@@ -68,16 +68,31 @@ class TotovotesController extends AppController{
         //$this->setGoal3Vote($g3_result);
         
         /*最新回の取得テスト*/
-        $db_name = "goal3votes";    //goal3のテスト
+        //$db_name = "goal3votes";    //goal3のテスト
         //$held_time =  $this->getRecent($db_name);
         //debug($heldtime);
-        $result = $this->getNowTotoVoteInfo($db_name);
+        //$result = $this->getNowTotoVoteInfo($db_name);
         //debug($result);
         
         
         /*開催回情報の取得*/
-        //$this->TotoVotes->getTotoMatchInfo();    //toto開催回（自体の情報）の取得
+        $match_info = $this->TotoVotes->getTotoMatchInfo();    //toto開催回（自体の情報）の取得
+        $held_time = $this->TotoVotes->getHeldTime();
+        //debug($held_time);
+        $this->setTotoMatch($match_info,$held_time);
     }
+    
+    /*今回のtotoの試合情報をセット*/
+    public function setTotoMatch($match_info,$held_time){
+        App::uses('Totovote','Model');     
+        
+        //debug($vote_result);
+        
+        //モデルクラスのインスタンスを生成
+        $match = new Totovote('Totovote','totovotes');
+        $match->setTotoMatchDb($match_info,$held_time);
+    }
+    
     
     /*現在（直近）のTotoの情報（全て）を取得
      * $db_name 対象テーブル名

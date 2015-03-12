@@ -126,6 +126,82 @@ class Totovote extends AppModel{
         return $result;
     }
     
+    /* totoの試合情報を登録
+     * 
+     *      */
+    public function setTotoMatchDb($statuses, $held){
+        /*情報を登録用に整形*/
+        $match_info = array();  //登録用データ
+        
+        if(!is_array($statuses)){
+            //配列入ってきていない場合
+            return;
+        }
+        
+        /*開催（数字）を取得*/
+        
+        
+        
+        foreach ($statuses as $status){
+            $temp = array();
+            for($i = 0; $i < count($status); $i++){
+                switch ($i){
+                    case 0:
+                        $temp['no'] = $status[$i];
+                        break;
+                    case 1:
+                         $temp['no'] = $status[$i];
+                        break;
+                    case 2:
+                         $temp['no'] = $status[$i];
+                        break;
+                    case 3:
+                         $temp['no'] = $status[$i];
+                        break;
+                    case 4:
+                         $temp['no'] = $status[$i];
+                        break;
+                    case 5:
+                         $temp['no'] = $status[$i];
+                        break;
+                    case 6:
+                         $temp['no'] = $status[$i];
+                        break;
+                    case 7:
+                         $temp['no'] = $status[$i];
+                        break;
+                }
+            }
+            /*先頭に開催回を追加*/
+            
+            $match_info[] = $temp;  /*登録用配列へ追加*/
+        }
+        debug($statuses);
+        
+          //debug($statuses);
+//        foreach ($statuses as $status){
+//            //debug($status);
+//            
+//            $data[] = array(
+//                'held_time' => $status['held_time'],
+//                'held_date' => $status['held_date'],
+//                'no' => (int)$status['no'],
+//                'home_team' => $status['home_team'],
+//                'away_team' => $status['away_team'],
+//                '1_vote' => $status['1_vote'],
+//                '0_vote' => $status['0_vote'],
+//                '2_vote' => $status['2_vote'],
+//                'class' => $status['class'],
+//                'year' => $status['year'],
+//                'month' => $status['month'],
+//            );
+//            
+//             
+//        }
+//        $result = $this->saveAll($data);
+//        debug($result);
+    }
+    
     
     
     /* miniの投票率を登録
