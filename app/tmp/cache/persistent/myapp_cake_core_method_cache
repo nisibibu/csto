@@ -1,0 +1,2 @@
+1426345936
+a:3:{i:0;b:0;s:4:"name";a:4:{s:32:"b0ae2799836db5ab320695a3bea81850";s:8:"`soccer`";s:32:"b18d6e1464d930fd98ed65e93e7ee62c";s:22:"`Totovote`.`held_time`";s:32:"1dfbf85e6b9536689799c85a455315b8";s:11:"`totovotes`";s:32:"dc601de2ea5a0ad4b7c1b3b952cb1303";s:10:"`Totovote`";}s:6:"fields";a:1:{s:32:"7e67de9b860a82e49215bd6ff65b4939";a:1:{i:0;s:29:"MAX(held_time) AS recent_held";}}}

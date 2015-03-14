@@ -36,9 +36,19 @@ class TotoVotesComponent extends Component{
         $held_time = $this->getHeldTime();
         //debug($held_time);
         
+        /*次の回の開催回のページがあるかチェック*/
+        $url_next = "http://www.toto-dream.com/dci/I/IPA/IPA01.do?op=disptotoLotInfo&holdCntId=0".$param;
+        try{
+            $craw = $client->request("GET", $url_next);
+        } catch (Exception $ex) {
+            /*official page より取得*/
+            $craw =  $this->transionTotoPage($held_time);
+        }  finally {
+            /**/
+        }
         
-        /*開催回ページへ*/
-        $craw =  $this->transionTotoPage($held_time);
+        
+        
         //debug($craw);
         
         
@@ -56,20 +66,24 @@ class TotoVotesComponent extends Component{
         $held_lot = array_filter($held_lot,"strlen");
         $held_lot = array_unique($held_lot);
         
-        //debug($held_lot);
+        debug($held_lot);
         
         $toto_match = array();  //Totoの試合情報の保持
+        $box_no = 1;            //テーブル番号の保持
         
         /*Toto(開催されている場合取得)*/
-//        if($held_lot['toto']){
-//             $toto_match = $this->getTotoMatchCard($craw);
-//        }
+        if(array_key_exists("toto", $held_lot)){
+             //var_dump("toto");
+             $toto_match = $this->getTotoMatchCard($craw);
+             $box_no++;
+        }
         
         
        /*mini(開催されている場合取得)*/
-//       if($held_lot["mini toto A組"]){
-//            $this->getMiniMatchCard();
-//       }
+       if(array_key_exists("mini toto A組", $held_lot)){
+           //何番目のテーブルか取得
+           $this->getMiniMatchCard($craw,"A",$box_no);
+       }
 //       if($held_lot["mini toto B組"]){
 //            $this->getMiniMatchCard();
 //       }
@@ -157,6 +171,7 @@ class TotoVotesComponent extends Component{
         
         $data_c = 8;
         $match_c = 13;
+      
         $slice_count = $data_c * $match_c;
         
         $toto_match = array_slice($match_info, 0, $slice_count); //totoの情報だけ切り出し
@@ -182,7 +197,52 @@ class TotoVotesComponent extends Component{
     
     
     /* miniの開催カードの取得 */
-    public function getMiniMatchCard($craw,$type){
+    public function getMiniMatchCard($craw,$type,$box_no){
+        $match_info = array();  //対戦カード
+        $match_date = array();  //対戦日
+        $mini_flag= FALSE;      //miniの情報を取り出すのに使用
+        debug($box_no);
+        $craw->filter('.kobetsu-format3 td')->each(function( $node )use(&$match_info,&$match_date,&$mini_flag){            
+            $info = trim($node->text());
+            $match_info[] = $info;    
+        });
+        //debug($match_info);
+        
+        //var_dump($match_info);
+        $data_c = 8;    //データの個数
+        $match_c = 5;
+        
+        /*取得テーブルを設定*/
+        $begin_no;
+        if($box_no === 1){
+            $begin_no = 0;  //toto未開催回
+        }else if($box_no === 2){
+            $begin_no = $data_c * 13;   //toto存在回(A組)
+        }else if($box_no === 3){
+            $begin_no = $data_c + 13 + $data_c * 5; //toto存在回(B組）
+        }
+        
+        $slice_count = $data_c * $match_c;        
+        
+        
+        $toto_match = array_slice($match_info, $begin_no, $slice_count); //miniの情報だけ切り出し
+        
+        $toto_match = array_values($toto_match);
+
+        /*対戦ごとに分割*/
+        $match = array_chunk($toto_match, $data_c);
+        //debug($match);
+        
+        /*各カードにA組 or B組を付与*/
+        $result = array();      //返却用
+        foreach($match as $var){
+            array_push($var, $type);
+            $result[] = $var;
+        }
+        
+        debug($result);
+        
+        return $result;
         
     }
     

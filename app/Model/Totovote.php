@@ -247,8 +247,8 @@ class Totovote extends AppModel{
 //            }
 //        
 //        }
+        
     }
-    
     
     
     /* miniの投票率を登録
