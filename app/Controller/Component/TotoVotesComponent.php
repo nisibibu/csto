@@ -75,6 +75,7 @@ class TotoVotesComponent extends Component{
         if(array_key_exists("toto", $held_lot)){
              //var_dump("toto");
              $toto_match = $this->getTotoMatchCard($craw);
+             //$box_no["toto"] = "toto";
              $box_no++;
         }
         
@@ -82,15 +83,21 @@ class TotoVotesComponent extends Component{
        /*mini(開催されている場合取得)*/
        if(array_key_exists("mini toto A組", $held_lot)){
            //何番目のテーブルか取得
-           $this->getMiniMatchCard($craw,"A",$box_no);
+           $mini_a_match = $this->getMiniMatchCard($craw,"A",$box_no);
+           //$box_no["mini-A"] = "mini-A";
+           $box_no++;
        }
-//       if($held_lot["mini toto B組"]){
-//            $this->getMiniMatchCard();
-//       }
-//       /*goal(開催されている場合取得)*/
-//       if($held_lot["totoGOAL3"]){
-//            $this->getGoal3MatchCard();
-//       }
+       if(array_key_exists("mini toto B組",$held_lot)){
+           $mini_b_match = $this->getMiniMatchCard($craw,"B",$box_no);
+           //$box_no["mini-B"] = "mini-B";
+           $box_no++;
+       }
+       /*goal(開催されている場合取得)*/
+       if(array_key_exists("totoGOAL3", $held_lot)){
+            $this->getGoal3MatchCard($craw);
+       }else if(array_key_exists("totoGOAL2", $held_lot)){
+            $this->getGoal3MatchCard($craw);
+       }
        
         return $toto_match;
     }
@@ -219,13 +226,14 @@ class TotoVotesComponent extends Component{
         }else if($box_no === 2){
             $begin_no = $data_c * 13;   //toto存在回(A組)
         }else if($box_no === 3){
-            $begin_no = $data_c + 13 + $data_c * 5; //toto存在回(B組）
+            $begin_no = $data_c * 13 + $data_c * 5; //toto存在回(B組）
         }
-        
+        //var_dump($begin_no);
         $slice_count = $data_c * $match_c;        
-        
+        //debug($match_info);
         
         $toto_match = array_slice($match_info, $begin_no, $slice_count); //miniの情報だけ切り出し
+        
         
         $toto_match = array_values($toto_match);
 
