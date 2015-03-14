@@ -33,37 +33,13 @@ class TotoVotesComponent extends Component{
         $crawler_vote = $client_vote->request('GET', $url);
         
         //debug($client_vote);
+        $held_time = $this->getHeldTime();
+        //debug($held_time);
         
-        $held_times;  //開催回の取得
-        
-        /*現在表示されている開催回取得*/
-        $crawler_vote->filter('.chancecopy img')->each(function( $node )use(&$held_times){
-            $held = trim($node->attr("alt"));
-            if($held){
-                $held_times = $held;
-            }
-        });
-        
-        //var_dump($held_times);
-        
-        /**開催回のテキストリンクを作成
-         * 
-         */
-        $pattern = "#(第\d{3}回)#";
-        preg_match_all($pattern, $held_times, $held_m);
-        //var_dump($held_m);
-        
-        $pre_held = $held_m[0][0];  //前回開催回の取得
-        $held_time = $held_m[0][1]; //今回開催回の取得
-        
-        preg_match('/\d+/', $held_time,$m);
-        $held_time = $m[0];
-        
-        //var_dump($held_time);
         
         /*開催回ページへ*/
         $craw =  $this->transionTotoPage($held_time);
-        
+        //debug($craw);
         
         
         /***** 遷移先から情報を取得  ****/
@@ -80,14 +56,14 @@ class TotoVotesComponent extends Component{
         $held_lot = array_filter($held_lot,"strlen");
         $held_lot = array_unique($held_lot);
         
-        //var_dump($held_lot);
+        //debug($held_lot);
         
         $toto_match = array();  //Totoの試合情報の保持
         
         /*Toto(開催されている場合取得)*/
-        if($held_lot['toto']){
-             $toto_match = $this->getTotoMatchCard($craw);
-        }
+//        if($held_lot['toto']){
+//             $toto_match = $this->getTotoMatchCard($craw);
+//        }
         
         
        /*mini(開催されている場合取得)*/
@@ -128,20 +104,38 @@ class TotoVotesComponent extends Component{
             }
         });
         
-        //var_dump($held_times);
         
-        /**開催回のテキストリンクを作成
+        
+        /*開催回上記で取得できなかった場合*/
+        if(!preg_match("#(第\d{3}回)#", $held_times)){
+            $crawler_vote->filter('.chancecopy p')->each(function( $node )use(&$held_times){
+            $held = trim($node->text());
+            if($held){
+                $held_times = $held;
+            }
+        });
+            $pattern = "#(第\d{3}回)#";
+            preg_match_all($pattern, $held_times, $held_m);
+            //debug($held_m);
+            $held_time = $held_m[0][0];
+            preg_match('/\d+/', $held_time,$m);
+            $held_time = $m[0];
+        
+        }else{
+         /* toto 開催回*/
+             /**開催回のテキストリンクを作成
          * 
          */
-        $pattern = "#(第\d{3}回)#";
-        preg_match_all($pattern, $held_times, $held_m);
-        //var_dump($held_m);
+            $pattern = "#(第\d{3}回)#";
+            preg_match_all($pattern, $held_times, $held_m);
+            $pre_held = $held_m[0][0];  //前回開催回の取得
+            $held_time = $held_m[0][1]; //今回開催回の取得
+
+            preg_match('/\d+/', $held_time,$m);
+            $held_time = $m[0];
+        }
         
-        $pre_held = $held_m[0][0];  //前回開催回の取得
-        $held_time = $held_m[0][1]; //今回開催回の取得
-        
-        var_dump($held_time);
-        
+        //var_dump($held_times);
         return $held_time;
     }
     

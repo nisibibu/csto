@@ -7,6 +7,7 @@
             <file>file:/C:/xampp/htdocs/cake/app/Controller/Component/TotoComponent.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Console/Command/TotoVoteShell.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Controller/LivesController.php</file>
+            <file>file:/C:/xampp/htdocs/cake/app/Controller/Component/NewsComponent.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Controller/TotovotesController.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/composer.json</file>
             <file>file:/C:/xampp/htdocs/cake/app/Model/Totovote.php</file>
@@ -15,9 +16,11 @@
             <file>file:/C:/xampp/htdocs/cake/app/Config/bootstrap.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Plugin/Opauth/Controller/OpauthAppController.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Controller/UsersController.php</file>
-            <file>file:/C:/xampp/htdocs/cake/app/Controller/Component/TeamTrendComponent.php</file>
-            <file>file:/C:/xampp/htdocs/cake/app/View/Totovotes/index.ctp</file>
+            <file>file:/C:/xampp/htdocs/cake/app/Model/Match.php</file>
+            <file>file:/C:/xampp/htdocs/cake/app/Console/Command/TotoResultShell.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Config/database.php</file>
+            <file>file:/C:/xampp/htdocs/cake/app/Controller/Component/NewsCrawComponent.php</file>
+            <file>file:/C:/xampp/htdocs/cake/app/Controller/Component/TotoVotesComponent.php</file>
         </group>
     </open-files>
 </project-private>

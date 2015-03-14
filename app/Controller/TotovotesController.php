@@ -78,8 +78,8 @@ class TotovotesController extends AppController{
         /*開催回情報の取得*/
         $match_info = $this->TotoVotes->getTotoMatchInfo();    //toto開催回（自体の情報）の取得
         $held_time = $this->TotoVotes->getHeldTime();
-        //debug($held_time);
-        $this->setTotoMatch($match_info,$held_time);
+        //debug($match_info);
+        //$this->setTotoMatch($match_info,$held_time);
     }
     
     /*今回のtotoの試合情報をセット*/

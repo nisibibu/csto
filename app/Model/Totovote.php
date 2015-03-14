@@ -132,6 +132,7 @@ class Totovote extends AppModel{
     public function setTotoMatchDb($statuses, $held){
         /*情報を登録用に整形*/
         $match_info = array();  //登録用データ
+        $held_time;             //開催回
         
         if(!is_array($statuses)){
             //配列入ってきていない場合
@@ -139,8 +140,8 @@ class Totovote extends AppModel{
         }
         
         /*開催（数字）を取得*/
-        
-        
+        preg_match("#\d+#", $held,$m);
+        $held_time = $m[0];
         
         foreach ($statuses as $status){
             $temp = array();
@@ -150,36 +151,57 @@ class Totovote extends AppModel{
                         $temp['no'] = $status[$i];
                         break;
                     case 1:
-                         $temp['no'] = $status[$i];
+                        /*日付に変換*/
+                        $now = date("Y--m-d",time());
+                        var_dump($now);
+                        $held_date;
+                        $temp['held_date'] = $status[$i];
                         break;
                     case 2:
-                         $temp['no'] = $status[$i];
+                         $temp['match_time'] = $status[$i];
                         break;
                     case 3:
-                         $temp['no'] = $status[$i];
+                         $temp['stadium'] = $status[$i];
                         break;
                     case 4:
-                         $temp['no'] = $status[$i];
+                         $temp['home_team'] = $status[$i];
                         break;
                     case 5:
-                         $temp['no'] = $status[$i];
+                         $temp['vs'] = $status[$i];
                         break;
                     case 6:
-                         $temp['no'] = $status[$i];
+                         $temp['away_team'] = $status[$i];
                         break;
                     case 7:
-                         $temp['no'] = $status[$i];
+                         $temp['data'] = $status[$i];
                         break;
                 }
             }
-            /*先頭に開催回を追加*/
+            /*配列に開催回を追加*/
+            $temp['held_time'] = $held_time;
             
             $match_info[] = $temp;  /*登録用配列へ追加*/
         }
-        debug($statuses);
+        //debug($match_info);
         
-          //debug($statuses);
-//        foreach ($statuses as $status){
+        /*開催回登録チェック*/
+        $update_flag = FALSE;
+        
+        $options = array(
+          'conditions' => array(
+              'held_time' => $held_time,
+          ),
+        );
+
+        
+        $c_result = $this->find('count',$options);
+        //debug($c_result);
+        
+        /*開催回未登録の場合*/
+//        if(count($match_info) !== (int)$c_result){
+//            var_dump(count($match_info));
+//             debug($statuses);
+//            foreach ($statuses as $status){
 //            //debug($status);
 //            
 //            $data[] = array(
@@ -194,12 +216,37 @@ class Totovote extends AppModel{
 //                'class' => $status['class'],
 //                'year' => $status['year'],
 //                'month' => $status['month'],
-//            );
+//                );
 //            
-//             
+//            }
+//            //$result = $this->saveAll($data);
+//            debug($result);
+//        }else{
+//        
+//        /*開催回登録済（更新処理）*/
+//        
+//        foreach($statuses as $status){
+//                $conditions = array(
+//                    'held_time' => $status['held_time'],
+//                     'no' => $status['no'],
+//                );
+//
+//                //$today = date("Y-m-d H:i:s");
+//                //debug($today);
+//                $data = array(
+//                    'held_time' => $status['held_time'],
+//                    //'held_date' => "'".$status['held_date']."'",
+//                    'match_time' => "'".$status['match_time']."'",
+//                    'no' => (int)$status['no'],
+//                    'home_team' => "'". $status['home_team']."'",
+//                    'away_team' => "'".$status['away_team']."'",
+//                    'stadium' => "'".$status['stadium']."'",
+//                );
+//                                
+//                $result = $this->updateAll($data,$conditions);
+//            }
+//        
 //        }
-//        $result = $this->saveAll($data);
-//        debug($result);
     }
     
     
