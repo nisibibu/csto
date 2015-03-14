@@ -66,17 +66,19 @@ class TotoVotesComponent extends Component{
         $held_lot = array_filter($held_lot,"strlen");
         $held_lot = array_unique($held_lot);
         
-        debug($held_lot);
+        //debug($held_lot);
         
-        $toto_match = array();  //Totoの試合情報の保持
-        $box_no = 1;            //テーブル番号の保持
+        $toto_match = array();      //Totoの試合情報の保持
+        $box_no = NULL;             //テーブル番号の識別
+        $result = array();          //返却用変数
         
         /*Toto(開催されている場合取得)*/
         if(array_key_exists("toto", $held_lot)){
              //var_dump("toto");
              $toto_match = $this->getTotoMatchCard($craw);
              //$box_no["toto"] = "toto";
-             $box_no++;
+             $box_no = "toto";
+             $result['toto'] = $toto_match;
         }
         
         
@@ -85,21 +87,28 @@ class TotoVotesComponent extends Component{
            //何番目のテーブルか取得
            $mini_a_match = $this->getMiniMatchCard($craw,"A",$box_no);
            //$box_no["mini-A"] = "mini-A";
-           $box_no++;
+           $box_no = $box_no."mini-A";
+           //debug($mini_a_match);
+           $result['mini-A'] = $mini_a_match;
        }
        if(array_key_exists("mini toto B組",$held_lot)){
            $mini_b_match = $this->getMiniMatchCard($craw,"B",$box_no);
            //$box_no["mini-B"] = "mini-B";
-           $box_no++;
+           $box_no = $box_no."mini-B";
+           //debug($mini_b_match);
+           $result['mini-B'] = $mini_b_match;
        }
        /*goal(開催されている場合取得)*/
        if(array_key_exists("totoGOAL3", $held_lot)){
-            $this->getGoal3MatchCard($craw);
+            $goal3_match = $this->getGoal3MatchCard($craw,3);
+            //debug($goal3_match);
+            $result['goal'] = $goal3_match;
        }else if(array_key_exists("totoGOAL2", $held_lot)){
-            $this->getGoal3MatchCard($craw);
+            $goal2_match = $this->getGoal3MatchCard($craw,2);
+            $result['goal'] = $goal2_match;
        }
        
-        return $toto_match;
+        return $result;
     }
     
     /*開催回の取得*/
@@ -208,7 +217,7 @@ class TotoVotesComponent extends Component{
         $match_info = array();  //対戦カード
         $match_date = array();  //対戦日
         $mini_flag= FALSE;      //miniの情報を取り出すのに使用
-        debug($box_no);
+        //debug($box_no);
         $craw->filter('.kobetsu-format3 td')->each(function( $node )use(&$match_info,&$match_date,&$mini_flag){            
             $info = trim($node->text());
             $match_info[] = $info;    
@@ -221,11 +230,13 @@ class TotoVotesComponent extends Component{
         
         /*取得テーブルを設定*/
         $begin_no;
-        if($box_no === 1){
-            $begin_no = 0;  //toto未開催回
-        }else if($box_no === 2){
+        if($box_no === NULL && $type === "A"){
+            $begin_no = 0;  //toto未開催回(A組）
+        }else if($box_no === NULL && $type === "B"){
+            $begin_no = $data_c * 5; //toto未開催回(B組）
+        }else if($box_no === "toto" && $type === "A"){
             $begin_no = $data_c * 13;   //toto存在回(A組)
-        }else if($box_no === 3){
+        }else if($box_no === "totomini-A" && $type === "B"){
             $begin_no = $data_c * 13 + $data_c * 5; //toto存在回(B組）
         }
         //var_dump($begin_no);
@@ -248,15 +259,47 @@ class TotoVotesComponent extends Component{
             $result[] = $var;
         }
         
-        debug($result);
+        //debug($result);
         
         return $result;
         
     }
     
     /*goal3の開催カードの取得*/
-    public function getGoal3MatchCard($craw,$type=3){
+    public function getGoal3MatchCard($craw,$type){
+        $match_info = array();  //対戦カード
+        $match_date = array();  //対戦日
+        //debug($box_no);
+        $craw->filter('.kobetsu-format3 td')->each(function( $node )use(&$match_info,&$match_date,&$mini_flag){            
+            $info = trim($node->text());
+            $match_info[] = $info;    
+        });
+        //debug($match_info);
         
+        //var_dump($match_info);
+        $data_c = 8;    //データの個数
+        $match_c = $type;
+        
+        /*取得テーブルを設定*/
+        $begin_no;
+        
+        $count = count($match_info);    //配列の個数
+        $begin_no = $count - $data_c * $match_c;
+        
+        //var_dump($begin_no);
+        $slice_count = $data_c * $match_c;        
+        //debug($match_info);
+//        
+        $toto_match = array_slice($match_info, $begin_no, $slice_count); //goalの情報だけ取り出し
+        //debug($toto_match);
+        
+        $toto_match = array_values($toto_match);
+
+        /*対戦ごとに分割*/
+        $result = array_chunk($toto_match, $data_c);
+        //debug($result);
+        
+        return $result;
     }
 
 
