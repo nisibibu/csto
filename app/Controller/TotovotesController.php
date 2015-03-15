@@ -90,6 +90,7 @@ class TotovotesController extends AppController{
     public function setTotoMatch($match_info){
         App::uses('Totovote','Model');     
         App::uses('Minivote','Model');
+        App::uses('Goal3vote','Model');
         
         /* 取得している情報をそれぞれ登録処理
          * くじの情報の存在チェック
@@ -101,13 +102,13 @@ class TotovotesController extends AppController{
         }
         if(array_key_exists("mini-A", $match_info)){
             //mini-Aの試合情報の登録
-            var_dump("mini-Aの登録処理");
+            //var_dump("mini-Aの登録処理");
             //モデルクラスのインスタンスを生成
             $mini_a = new Minivote();
             $status = array();
             $status['held_time'] = $match_info['held_time'];
             $status['mini-A'] = $match_info["mini-A"];
-            $mini_a->setMiniMatchDb($status);
+            //$mini_a->setMiniMatchDb($status);
         }
         if(array_key_exists("mini-B", $match_info)){
             //mini-Bの試合情報の登録
@@ -118,7 +119,12 @@ class TotovotesController extends AppController{
             //goal3(2)の試合情報の登録
             var_dump("goal3の登録処理");
             //モデルクラスのインスタンスを生成
-            //$mini_a = new Minivote();
+            $status = array();
+            $status['held_time'] = $match_info['held_time'];
+            $status['goal'] = $match_info["goal"];
+            //debug($status);
+            $goal3 = new Goal3vote();
+            $goal3->setGoal3MatchDb($status);
         }
         
        
