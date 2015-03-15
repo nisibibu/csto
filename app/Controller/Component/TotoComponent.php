@@ -27,7 +27,7 @@ class TotoComponent extends Component{
     public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
 
 
-    /*Yahhoより投票状況を取得
+    /* Yahhoより投票状況を取得
      * TOTO ONE から取得するデータと共存しながら投票率のデータを使用する。
      * 
      *      */
@@ -81,9 +81,11 @@ class TotoComponent extends Component{
         
         
         /*Mini(A B)の投票率の取得*/
-        $this->getMiniVoteByYJ();
+        //$this->getMiniVoteByYJ();
         /*Goal3の投票率の取得*/
-        $this->getGoal3VoteByYJ();
+        //$this->getGoal3VoteByYJ();
+        
+        return $count_item;
     }
     
     /* TOTOの投票率を取得する、

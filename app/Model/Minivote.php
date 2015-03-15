@@ -1,7 +1,7 @@
 <?php
 
-//App::uses('AppModel', 'Model');
-class Minivote extends AppModel{
+App::uses('Vote', 'Model');
+class Minivote extends Vote{
     /*totovotesテーブルにtoto投票率の登録*/
     public $useTable = 'minivotes';  //モデルがtotovoteテーブルを使用するように指定
     public $useDbConfig = 'default';    //defaultの接続設定を指定
@@ -245,10 +245,16 @@ class Minivote extends AppModel{
     
     
     
-     /*今回（直近の）totoの試合情報（投票率含む）を取得***
+     
+    /*今回（直近の）totoの試合情報（投票率含む）を取得***
      * 
      *************************************************/
-    public function getVoteTotoRecent($held_time){
+    public function getVoteTotoRecent($held_time=""){
+        /*指定回ではない場合、DBから最新回を取得*/
+        if(!isset($held_time)){
+           $held_time = $this->getRecentTime();
+        }
+        
         $result = array();
         $data = array(
            "conditions" => array(

@@ -9,7 +9,7 @@ use Goutte\Client;
 App::uses('Component', 'Controller');
 
 class TotovotesController extends AppController{
-    public $uses = array('POST','Live','Totovote',"Minivote");    //使用するモデルを宣言
+    public $uses = array('POST','Live','Totovote',"Minivote","Goal3vote");    //使用するモデルを宣言
      /*コンポーネントの指定*/
     public $components = array('Twitter','Toto',"TotoVotes",'Rss','TeamTrend','TotoResult','League');
     
@@ -49,23 +49,11 @@ class TotovotesController extends AppController{
         //$this->League->getGoalRanking();
         
         /*TOTO投票率の取得*/
-        //$param = "?id=0698";
-        //$vote_result = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ,$param);
         
-        /*totoの投票率取得（テスト）*/
-        //$t_result =  $this->Toto->getTotoVoteByYJ();
-        //debug($t_result);
-        //$this->setTotoOnlyVote($t_result);
+        /*開催しているくじのみ登録処理*/
+        $this->getHeldKind();
         
-        /*miniの取得（テスト）*/
-        //$m_vote_result = $this->Toto->getMiniVoteByYJ();
-        //debug($m_vote_result);
-        //$this->setMiniVote($m_vote_result);
-        
-        /*GOAL3の取得（テスト）*/
-        //$g3_result = $this->Toto->getGoal3VoteByYJ();
-        //debug($g3_result);
-        //$this->setGoal3Vote($g3_result);
+
         
         /*最新回の取得テスト*/
         //$db_name = "goal3votes";    //goal3のテスト
@@ -83,8 +71,46 @@ class TotovotesController extends AppController{
         
         $match_info = $this->TotoVotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);    //toto開催回（自体の情報）の取得
         //debug($match_info);
-        $this->setTotoMatch($match_info);
+        //$this->setTotoMatch($match_info);
     }
+    
+    /*直近回の開催くじの種類を取得*/
+    public function getHeldKind(){
+        $vote_kind = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ);
+        debug($vote_kind);
+        
+        $held_kind = array();   //返却用
+        /*開催くじ種類を連想配列に整形*/
+        
+        
+        
+        return $held_kind;
+    }
+    
+    /*Yahoo よりtoto投票率を取得*/
+    public function getTotoVoteByY(){
+        /*totoの投票率取得（テスト）*/
+        $t_result =  $this->Toto->getTotoVoteByYJ();
+        /*取得出来たら保存処理*/
+        //$this->setTotoOnlyVote($t_result);
+    }
+    
+    /*Yahoo よりmini投票率を取得*/
+    public function getMiniVoteByY(){
+         /*miniの取得（テスト）*/
+        $m_vote_result = $this->Toto->getMiniVoteByYJ();
+        debug($m_vote_result);
+        //$this->setMiniVote($m_vote_result);
+    }
+    
+    /*Yahoo よりgoal3投票率を取得*/
+    public function getGoal3VoteByY(){
+        /*GOAL3の取得（テスト）*/
+        //$g3_result = $this->Toto->getGoal3VoteByYJ();
+        //debug($g3_result);
+        //$this->setGoal3Vote($g3_result);
+    }
+    
     
     /*今回のtotoの試合情報をセット*/
     public function setTotoMatch($match_info){
@@ -124,12 +150,57 @@ class TotovotesController extends AppController{
             $status['goal'] = $match_info["goal"];
             //debug($status);
             $goal3 = new Goal3vote();
-            $goal3->setGoal3MatchDb($status);
+            //$goal3->setGoal3MatchDb($status);
         }
         
+        $held = $this->getRecentAll();  //最新回の取得
+        //debug($held);
        
         //$match->setTotoMatchAllDb($match_info);   //試合情報の登録
         //$match->isRecentlyset("minivotes", $match_info['held_time']);
+    }
+    
+    /*今回（最新回）の取得
+     * totovotesテーブル
+     * minivotesテーブル
+     * goal3votesテーブル
+     * から最新回を取得して、今回の回を特定
+     * 
+     *      */
+    public function getRecentAll(){
+        App::uses('Totovote','Model');
+        App::uses('Minivote','Model');
+        App::uses('Goal3vote','Model');
+        
+        $held_time_toto;
+        $held_time_mini;
+        $held_time_goal;
+        
+        //モデルクラスのインスタンスを生成
+        $toto = new Totovote();
+        $held_time_toto =  $toto->getRecentTime();
+        
+        $mini = new Minivote();
+        $held_time_mini = $mini->getRecentTime();
+        
+        $goal = new Goal3vote();
+        $held_time_goal = $goal->getRecentTime();
+        
+//        debug($held_time_toto);
+//        debug($held_time_mini);
+//        debug($held_time_goal);
+        
+        
+        $result = $held_time_toto;
+        if($result < $held_time_mini){
+            $result = $held_time_mini;
+        }elseif ($result < $held_time_goal) {
+            $result = $held_time_goal;
+        }
+        
+        
+        return $result;
+        
     }
     
     

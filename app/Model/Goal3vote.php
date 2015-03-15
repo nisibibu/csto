@@ -1,9 +1,9 @@
 <?php
 
-//App::uses('AppModel', 'Model');
-class Goal3vote extends AppModel{
+App::uses('Vote', 'Model');
+class Goal3vote extends Vote{
     /*totovotesテーブルにtoto投票率の登録*/
-    public $useTable = 'goal3votes';  //モデルがtotovoteテーブルを使用するように指定
+    public $useTable = 'goal3votes';    //モデルがtotovoteテーブルを使用するように指定
     public $useDbConfig = 'default';    //defaultの接続設定を指定
     
     /*Toto(Toto mini含む）登録処理

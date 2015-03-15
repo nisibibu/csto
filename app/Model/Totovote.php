@@ -1,7 +1,7 @@
 <?php
 
-//App::uses('AppModel', 'Model');
-class Totovote extends AppModel{
+App::uses('Vote', 'Model');
+class Totovote extends Vote{
     /*totovotesテーブルにtoto投票率の登録*/
     public $useTable = 'totovotes';  //モデルがtotovoteテーブルを使用するように指定
     public $useDbConfig = 'default';    //defaultの接続設定を指定
