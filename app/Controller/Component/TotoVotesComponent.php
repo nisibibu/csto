@@ -33,7 +33,7 @@ class TotoVotesComponent extends Component{
         $crawler_vote = $client_vote->request('GET', $url);
         
         //debug($client_vote);
-        $held_time = $this->getHeldTime();
+        $held_time = $param;
         //debug($held_time);
         
         /*次の回の開催回のページがあるかチェック*/
@@ -42,9 +42,13 @@ class TotoVotesComponent extends Component{
             $craw = $client->request("GET", $url_next);
         } catch (Exception $ex) {
             /*official page より取得*/
-            $craw =  $this->transionTotoPage($held_time);
+            $held_time_str = $this->getHeldTime();
+            preg_match("#\d+#", $held_time_str,$m);
+            $held_time = $m[0]; //開催回の数字を保存
+            $craw =  $this->transionTotoPage($held_time_str);
+            
         }  finally {
-            /**/
+            /*最終的な処理あれば*/
         }
         
         
@@ -71,6 +75,8 @@ class TotoVotesComponent extends Component{
         $toto_match = array();      //Totoの試合情報の保持
         $box_no = NULL;             //テーブル番号の識別
         $result = array();          //返却用変数
+        
+        $result['held_time'] = $held_time;
         
         /*Toto(開催されている場合取得)*/
         if(array_key_exists("toto", $held_lot)){

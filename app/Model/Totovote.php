@@ -126,6 +126,37 @@ class Totovote extends AppModel{
         return $result;
     }
     
+    
+    /*totoの試合情報の登録
+     * toto
+     * mini A mini B
+     * goal 3
+     * 存在するものを登録 
+     *      */
+//    public function setTotoMatchAllDb($statuses){
+//        /*くじの情報の存在チェック*/
+//        if(array_key_exists("toto", $statuses)){
+//            //totoの試合情報の登録
+//        }
+//        if(array_key_exists("mini-A", $statuses)){
+//            //mini-Aの試合情報の登録
+//            var_dump("mini-Aの登録処理");
+//        }
+//        if(array_key_exists("mini-B", $statuses)){
+//            //mini-Bの試合情報の登録
+//        }
+//        if(array_key_exists("goal", $statuses)){
+//            //goal3(2)の試合情報の登録
+//            var_dump("goal3の登録処理");
+//        }
+//        
+//        
+//        
+//    }
+    
+
+
+
     /* totoの試合情報を登録
      * 
      *      */
@@ -185,17 +216,7 @@ class Totovote extends AppModel{
         //debug($match_info);
         
         /*開催回登録チェック*/
-        $update_flag = FALSE;
         
-        $options = array(
-          'conditions' => array(
-              'held_time' => $held_time,
-          ),
-        );
-
-        
-        $c_result = $this->find('count',$options);
-        //debug($c_result);
         
         /*開催回未登録の場合*/
 //        if(count($match_info) !== (int)$c_result){
@@ -248,6 +269,25 @@ class Totovote extends AppModel{
 //        
 //        }
         
+    }
+    
+    //public $useTable = "minivotes";
+    
+    /* 登録回（最新回）の登録済みか判定 */
+    public function isRecentlyset($table,$held_time){
+        $useTable = $table; //使用するテーブルの指定 
+        
+        $update_flag = FALSE;
+        
+        $options = array(
+          'conditions' => array(
+              'held_time' => $held_time,
+          ),
+        );
+
+        
+        $c_result = $this->find('count',$options);
+        debug($c_result);
     }
     
     

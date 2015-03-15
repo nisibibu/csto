@@ -9,7 +9,7 @@ use Goutte\Client;
 App::uses('Component', 'Controller');
 
 class TotovotesController extends AppController{
-    public $uses = array('POST','Live','Totovote');    //使用するモデルを宣言
+    public $uses = array('POST','Live','Totovote',"Minivote");    //使用するモデルを宣言
      /*コンポーネントの指定*/
     public $components = array('Twitter','Toto',"TotoVotes",'Rss','TeamTrend','TotoResult','League');
     
@@ -82,20 +82,48 @@ class TotovotesController extends AppController{
         //debug($recent_held);
         
         $match_info = $this->TotoVotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);    //toto開催回（自体の情報）の取得
-        //$held_time = $this->TotoVotes->getHeldTime();
-        debug($match_info);
-        //$this->setTotoMatch($match_info,$held_time);
+        //debug($match_info);
+        $this->setTotoMatch($match_info);
     }
     
     /*今回のtotoの試合情報をセット*/
-    public function setTotoMatch($match_info,$held_time){
+    public function setTotoMatch($match_info){
         App::uses('Totovote','Model');     
+        App::uses('Minivote','Model');
         
-        //debug($vote_result);
+        /* 取得している情報をそれぞれ登録処理
+         * くじの情報の存在チェック
+         * */
+        if(array_key_exists("toto", $match_info)){
+            //totoの試合情報の登録
+             //モデルクラスのインスタンスを生成
+            $toto = new Totovote();
+        }
+        if(array_key_exists("mini-A", $match_info)){
+            //mini-Aの試合情報の登録
+            var_dump("mini-Aの登録処理");
+            //モデルクラスのインスタンスを生成
+            $mini_a = new Minivote();
+            $status = array();
+            $status['held_time'] = $match_info['held_time'];
+            $status['mini-A'] = $match_info["mini-A"];
+            $mini_a->setMiniMatchDb($status);
+        }
+        if(array_key_exists("mini-B", $match_info)){
+            //mini-Bの試合情報の登録
+            //モデルクラスのインスタンスを生成
+            $mini_b = new Minivote();
+        }
+        if(array_key_exists("goal", $match_info)){
+            //goal3(2)の試合情報の登録
+            var_dump("goal3の登録処理");
+            //モデルクラスのインスタンスを生成
+            //$mini_a = new Minivote();
+        }
         
-        //モデルクラスのインスタンスを生成
-        $match = new Totovote('Totovote','totovotes');
-        $match->setTotoMatchDb($match_info,$held_time);
+       
+        //$match->setTotoMatchAllDb($match_info);   //試合情報の登録
+        //$match->isRecentlyset("minivotes", $match_info['held_time']);
     }
     
     
