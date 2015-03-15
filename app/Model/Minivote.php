@@ -77,8 +77,29 @@ class Minivote extends AppModel{
         }else{
             /*更新処理*/
             var_dump("更新処理");
+             foreach($mini_data as $status){
+                $conditions = array(
+                    'held_time' => $held_time,
+                     'no' => $status['no'],
+                );
+
+                $today = date("Y-m-d H:i:s");
+                $data = array(
+                    'held_time' => $held_time,
+                    'held_date' => "'".$this->formatDate($status['held_date'])."'",
+                    'no' => (int)$status['no'],
+                    'match_time' => "'". $status['match_time']."'",
+                    'home_team' => "'". $status['home_team']."'",
+                    'away_team' => "'".$status['away_team']."'",
+                    'class' => "'".$status['class']."'",
+                    'stadium' => "'".$status['stadium']."'",
+                    'modified' => "'".$today."'",
+                );
+                                
+                $result = $this->updateAll($data,$conditions);
+            }
         }
-        
+        return $result;
     }    
     
     /*miniのデータ整形
