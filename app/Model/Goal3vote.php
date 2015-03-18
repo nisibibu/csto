@@ -232,10 +232,10 @@ class Goal3vote extends Vote{
         $recent_held = $this->getRecentTime();
         
         //debug($held_time);
-        if($held_time === (int)$recent_held){
+        if((int)$held_time === (int)$recent_held){
             $is_set = TRUE;
         }
-        debug($recent_held);
+        //debug($recent_held);
         return $is_set;
     }
     

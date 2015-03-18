@@ -67,7 +67,7 @@ class TotovotesController extends AppController{
         
         
         $recent_held = $this->getRecentHeld();
-        $recent_held = $recent_held +2;
+        $recent_held = $recent_held;
         //debug($recent_held);
         
         $match_info = $this->TotoVotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);    //toto開催回（自体の情報）の取得
@@ -142,32 +142,35 @@ class TotovotesController extends AppController{
             //totoの試合情報の登録
              //モデルクラスのインスタンスを生成
             $toto = new Totovote();
-            $status = array();
-            $status['held_time'] = $match_info['held_time'];
-            $status['toto'] = $match_info["toto"];
-            $toto->setTotoMatchDb($statuses, $held);
+            $toto_status = array();
+            $toto_status['held_time'] = $match_info['held_time'];
+            $toto_status['toto'] = $match_info["toto"];
+            $toto->setTotoMatchDb($toto_status);
         }
         if(array_key_exists("mini-A", $match_info)){
             //mini-Aの試合情報の登録
             //var_dump("mini-Aの登録処理");
             //モデルクラスのインスタンスを生成
             $mini_a = new Minivote();
-            $status = array();
-            $status['held_time'] = $match_info['held_time'];
-            $status['mini-A'] = $match_info["mini-A"];
-            $mini_a->setMiniMatchDb($status);
+            $mini_a_status = array();
+            $mini_a_status['held_time'] = $match_info['held_time'];
+            $mini_a_status['mini-A'] = $match_info["mini-A"];
+            //debug($mini_a_status);
+            $mini_a->setMiniMatchDb($mini_a_status);
         }
         if(array_key_exists("mini-B", $match_info)){
             //mini-Bの試合情報の登録
             //モデルクラスのインスタンスを生成
             $mini_b = new Minivote();
-            $status['held_time'] = $match_info['held_time'];
-            $status['mini-B'] = $match_info["mini-B"];
-            $mini_a->setMiniMatchDb($status);
+            $mini_b_status = array();
+            $mini_b_status['held_time'] = $match_info['held_time'];
+            $mini_b_status['mini-B'] = $match_info["mini-B"];
+            //debug($status);
+            $mini_b->setMiniMatchDb($mini_b_status);
         }
         if(array_key_exists("goal", $match_info)){
             //goal3(2)の試合情報の登録
-            var_dump("goal3の登録処理");
+            //var_dump("goal3の登録処理");
             //モデルクラスのインスタンスを生成
             $status = array();
             $status['held_time'] = $match_info['held_time'];
@@ -177,11 +180,11 @@ class TotovotesController extends AppController{
             $goal3->setGoal3MatchDb($status);
         }
         
-        $held = $this->getRecentAll();  //最新回の取得
-        //debug($held);
-       
-        //$match->setTotoMatchAllDb($match_info);   //試合情報の登録
-        //$match->isRecentlyset("minivotes", $match_info['held_time']);
+//        $held = $this->getRecentAll();  //最新回の取得
+//        //debug($held);
+//       
+//        //$match->setTotoMatchAllDb($match_info);   //試合情報の登録
+//        //$match->isRecentlyset("minivotes", $match_info['held_time']);
     }
     
     /*今回（最新回）の取得

@@ -5,7 +5,7 @@ App::uses('ComponentCollection','Controller');
 App::uses('TotoComponent','Controller/Component');
 //App::uses('TotoResult','Controller/Component');   //リファクタリングで分割
 
-class TotoVoteShell extends AppShell{
+class TotoResultShell extends AppShell{
     public $uses = array('POST','Totovote');    //使用するモデルを宣言
     
     /*TotoComponentの呼び出し*/

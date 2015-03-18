@@ -39,30 +39,15 @@ class TotoVoteShell extends AppShell{
     public function saveTotoAllMatch(){
         /*試合情報の一括取得*/
         $recent_held = $this->TotoController->getRecentHeld();
-        debug($recent_held);
-        $recent_held++;
+        //debug($recent_held);
+        //$recent_held++;
         $match_info = $this->Totovotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);
         //$vote = $this->Toto->getTotoVoteByYJ();
-        debug($match_info);
+        //debug($match_info['mini-B']);
         
+        /*情報を保存*/
         $this->TotoVotesController->setTotoMatch($match_info);
         
-//        $held_time = $match_info["held_time"];
-//        
-//        /*入っている情報のみ保存する*/
-//        if(array_key_exists("toto", $match_info)){
-//            $this->saveTotoMatch($match_info['toto'],$held_time);
-//        }
-//        if(array_key_exists("mini-A", $match_info)){
-//            //$this->saveMiniMatch($match_info);
-//            //$this->Minivote->
-//        }
-//        if(array_key_exists("mini-B", $match_info)){
-//            $this->saveMiniMatch($match_info['mini-B'],$held_time);
-//        }
-//        if(array_key_exists("goal", $match_info)){
-//            $this->saveGoal3Match($match_info['goal'],$held_time);
-//        }
     }
     
     

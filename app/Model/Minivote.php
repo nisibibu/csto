@@ -37,27 +37,40 @@ class Minivote extends Vote{
     
     /*miniの試合情報を登録*/
     public function setMiniMatchDb($statuses){
+        //debug($statuses);
         $type;  //A or B
         if(array_key_exists("mini-A", $statuses) && array_key_exists("held_time", $statuses)){
             $type = "mini-A";
-        }else if(array_key_exists("mini-B", $statuses) && array_key_exists("held_time", $statuses)){
+        }   
+        if(array_key_exists("mini-B", $statuses) && array_key_exists("held_time", $statuses)){
             $type = "mini-B";
-        }else{
+        }if(!isset($statuses)){
             /*データがわたってきていない場合、そのまま返す*/
             return;
         }
         //debug($statuses);
         $held_time = $statuses['held_time'];
         
-        $is_set = $this->isRecentlyset($held_time); //登録回登録済みかチェック
-        debug($is_set);
+        //debug($type);
+        
+        //debug($statuses);
+        if($type == "mini-A"){
+            $class = "A";
+        }else if($type == "mini-B"){
+            $class = "B";
+        }
+        
+        $is_set = $this->isRecentlyset($held_time, $class); //登録回登録済みかチェック
+        //debug($is_set);
         
         /*miniのデータ整形*/
         $mini_data=array();
+
         $mini_data = $this->formatMiniData($statuses[$type]);
+        //debug($mini_data);
         if(!$is_set){
             /*登録処理*/
-            var_dump("登録処理");
+            //var_dump("登録処理");
             foreach ($mini_data as $status){
                 $data[] = array(
                     'held_time' => $held_time,
@@ -75,12 +88,14 @@ class Minivote extends Vote{
             $result = $this->saveAll($data);
             //debug($result);
         }else{
+            //debug($mini_data);
             /*更新処理*/
-            var_dump("更新処理");
+            //var_dump("更新処理");
              foreach($mini_data as $status){
                 $conditions = array(
                     'held_time' => $held_time,
                      'no' => $status['no'],
+                     'class' => $status['class'],
                 );
 
                 $today = date("Y-m-d H:i:s");
@@ -147,15 +162,16 @@ class Minivote extends Vote{
     //public $useTable = "minivotes";
     
     /* 登録回（最新回）の登録済みか判定 */
-    public function isRecentlyset($held_time){
+    public function isRecentlyset($held_time,$class){
         $is_set = FALSE;    //登録回（最新回）登録済みか
-        $recent_held = $this->getRecentTime();
+        $recent_held = $this->getRecentTime($class);
         
         //debug($held_time);
-        if($held_time === (int)$recent_held){
+        //debug($recent_held);
+        if((int)$held_time === (int)$recent_held){
             $is_set = TRUE;
         }
-        debug($recent_held);
+        //debug($recent_held);
         return $is_set;
     }
     
@@ -228,9 +244,14 @@ class Minivote extends Vote{
     }
     
     /*今回（直近）の開催回を取得して返却*/
-    public function getRecentTime(){
+    public function getRecentTime($class = "A"){
         $recent_held = array();
         $data = array(
+            "conditions" => array(
+                "AND" => array(
+                   "class" => $class
+                ),
+            ),
             'fields' => array('MAX(held_time) AS recent_held')
             );
         $result = $this->find('first',$data);

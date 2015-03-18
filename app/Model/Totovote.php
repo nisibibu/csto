@@ -160,7 +160,7 @@ class Totovote extends Vote{
     /* totoの試合情報を登録
      * 
      *      */
-    public function setTotoMatchDb($statuses, $held){
+    public function setTotoMatchDb($statuses){
         /*情報を登録用に整形*/
         $match_info = array();  //登録用データ
         $held_time;             //開催回
@@ -176,120 +176,116 @@ class Totovote extends Vote{
         //preg_match("#\d+#", $held,$m);
         //$held_time = $m[0];
         
-        foreach ($statuses as $status){
-            $temp = array();
-            for($i = 0; $i < count($status); $i++){
-                switch ($i){
-                    case 0:
-                        $temp['no'] = $status[$i];
-                        break;
-                    case 1:
-                        /*日付に変換*/
-                        $now = date("Y--m-d",time());
-                        var_dump($now);
-                        $held_date;
-                        $temp['held_date'] = $status[$i];
-                        break;
-                    case 2:
-                         $temp['match_time'] = $status[$i];
-                        break;
-                    case 3:
-                         $temp['stadium'] = $status[$i];
-                        break;
-                    case 4:
-                         $temp['home_team'] = $status[$i];
-                        break;
-                    case 5:
-                         $temp['vs'] = $status[$i];
-                        break;
-                    case 6:
-                         $temp['away_team'] = $status[$i];
-                        break;
-                    case 7:
-                         $temp['data'] = $status[$i];
-                        break;
-                }
-            }
-            /*配列に開催回を追加*/
-            $temp['held_time'] = $held_time;
-            
-            $match_info[] = $temp;  /*登録用配列へ追加*/
-        }
-        debug($match_info);
+        $match_info = $this->formatTotoData($statuses);
+        //debug($toto_data);
+        
         
         /*開催回登録チェック*/
+        $is_set = $this->isRecentlyset($held_time);
         
-        
+         
         /*開催回未登録の場合*/
-//        if(count($match_info) !== (int)$c_result){
-//            var_dump(count($match_info));
-//             debug($statuses);
-//            foreach ($statuses as $status){
-//            //debug($status);
-//            
-//            $data[] = array(
-//                'held_time' => $status['held_time'],
-//                'held_date' => $status['held_date'],
-//                'no' => (int)$status['no'],
-//                'home_team' => $status['home_team'],
-//                'away_team' => $status['away_team'],
-//                '1_vote' => $status['1_vote'],
-//                '0_vote' => $status['0_vote'],
-//                '2_vote' => $status['2_vote'],
-//                'class' => $status['class'],
-//                'year' => $status['year'],
-//                'month' => $status['month'],
-//                );
-//            
-//            }
-//            //$result = $this->saveAll($data);
-//            debug($result);
-//        }else{
-//        
-//        /*開催回登録済（更新処理）*/
-//        
-//        foreach($statuses as $status){
-//                $conditions = array(
-//                    'held_time' => $status['held_time'],
-//                     'no' => $status['no'],
-//                );
-//
-//                //$today = date("Y-m-d H:i:s");
-//                //debug($today);
-//                $data = array(
-//                    'held_time' => $status['held_time'],
-//                    //'held_date' => "'".$status['held_date']."'",
-//                    'match_time' => "'".$status['match_time']."'",
-//                    'no' => (int)$status['no'],
-//                    'home_team' => "'". $status['home_team']."'",
-//                    'away_team' => "'".$status['away_team']."'",
-//                    'stadium' => "'".$status['stadium']."'",
-//                );
-//                                
-//                $result = $this->updateAll($data,$conditions);
-//            }
-//        
-//        }
-        
+        if(!$is_set){
+            foreach ($match_info as $status){
+            //debug($status);
+            
+            $data[] = array(
+                'held_time' => $held_time,
+                'held_date' => $this->formatDate($status['held_date']),
+                'match_time' => $status['match_time'],
+                'no' => (int)$status['no'],
+                'home_team' => $status['home_team'],
+                'away_team' => $status['away_team'],
+                'stadium' => $status['stadium'],
+                );
+            }
+            $result = $this->saveAll($data);
+            //debug($data);
+        }else{        
+        /*開催回登録済（更新処理）*/       
+            foreach($match_info as $status){
+                    $conditions = array(
+                        'held_time' => $held_time,
+                         'no' => $status['no'],
+                    );
+
+                    //$today = date("Y-m-d H:i:s");
+                    //debug($today);
+                    $data = array(
+                        'held_time' => $status['held_time'],
+                        'held_date' => "'".  $this->formatDate($status['held_date'])."'",
+                        'match_time' => "'".$status['match_time']."'",
+                        'no' => (int)$status['no'],
+                        'home_team' => "'". $status['home_team']."'",
+                        'away_team' => "'".$status['away_team']."'",
+                        'stadium' => "'".$status['stadium']."'",
+                    );
+                    //debug($data);
+                    $result = $this->updateAll($data,$conditions);
+                }
+
+            }
     }
+    
+    /*miniのデータ整形
+     * mini-A or mini-B のデータ配列を受け取り
+     * DB登録用に整形して返す
+     *      */
+    public function formatTotoData($statuses){
+        /*data部分は引数にするか検討*/
+        $data = array(
+            "no",
+            "held_date",
+            "match_time",
+            "stadium",
+            "home_team",
+            "VS",
+            "away_team",
+            "データ",
+        );
+        
+        $held_time = $statuses['held_time'];
+        $toto_status = $statuses['toto'];
+        //debug($statuses);
+        
+        $toto_data = array();
+        foreach($toto_status as $var){
+            $temp = array();
+            for($i = 0;  $i < count($var); $i++){
+                $temp[$data[$i]] = $var[$i];
+            }
+            $temp['held_time'] = $held_time;
+            $toto_data[] = $temp;
+        }
+        return $toto_data;
+    }
+    
     
     //public $useTable = "minivotes";
     
     /* 登録回（最新回）の登録済みか判定 */
-    public function isRecentlyset($table,$held_time){
-        $useTable = $table; //使用するテーブルの指定 
+    public function isRecentlyset($held_time){
+        $is_set = FALSE;    //登録回（最新回）登録済みか
+        $recent_held = $this->getRecentTime();
         
-        $update_flag = FALSE;
-        
-        $options = array(
-          'conditions' => array(
-              'held_time' => $held_time,
-          ),
-        );
-
-        
-        $c_result = $this->find('count',$options);
-        debug($c_result);
+        //debug($held_time);
+        if((int)$held_time === (int)$recent_held){
+            $is_set = TRUE;
+        }
+        //debug($recent_held);
+        return $is_set;
+    }
+    
+    /* 日付変換を行って返す
+     * str:  03/08  
+     * 
+     * return: 2015/03/18
+     *      */
+    public function formatDate($str){
+            $date_year = date("Y");
+            //debug($date);
+            $date = $date_year."/".$str;
+            return $date;            
     }
     
     

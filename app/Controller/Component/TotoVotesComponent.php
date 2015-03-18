@@ -35,11 +35,26 @@ class TotoVotesComponent extends Component{
         $crawler_vote = $client_vote->request('GET', $url);
         
         //debug($client_vote);
-        $held_time = $param;
+        $held_time = (int)$param + 1;
         //debug($held_time);
         
+        /*official page より取得*/
+        $held_time_o = $this->getHeldTime();
+        debug($held_time_o);
+        
+        /*取得ページの決定*/
+        if($held_time == $held_time_o){
+            /*DB＋1と最新回一緒(そのまま)*/
+        }else if($held_time < $held_time_o){
+            /*最新回取得の必要（Official Site）*/
+            $held_time = $held_time_o;
+        }else if($held_time > $held_time_o){
+            $held_time = $held_time_o;
+        }
+        //debug($held_time);
+        //$held_time = 754;
         /*次の回の開催回のページがあるかチェック*/
-        $url_next = "http://www.toto-dream.com/dci/I/IPA/IPA01.do?op=disptotoLotInfo&holdCntId=0".$param;
+        $url_next = "http://www.toto-dream.com/dci/I/IPA/IPA01.do?op=disptotoLotInfo&holdCntId=0".$held_time;
         try{
             $craw = $client->request("GET", $url_next);
         } catch (Exception $ex) {
@@ -72,7 +87,7 @@ class TotoVotesComponent extends Component{
         $held_lot = array_filter($held_lot,"strlen");
         $held_lot = array_unique($held_lot);
         
-        //debug($held_lot);
+        //var_dump($held_lot);
         
         $toto_match = array();      //Totoの試合情報の保持
         $box_no = NULL;             //テーブル番号の識別
@@ -142,9 +157,10 @@ class TotoVotesComponent extends Component{
             }
         });
         
+        debug($held_times);
         
         
-        /*開催回上記で取得できなかった場合*/
+        //
         if(!preg_match("#(第\d{3}回)#", $held_times)){
             $crawler_vote->filter('.chancecopy p')->each(function( $node )use(&$held_times){
             $held = trim($node->text());
@@ -152,6 +168,8 @@ class TotoVotesComponent extends Component{
                 $held_times = $held;
             }
         });
+        
+            debug($held_times);
             $pattern = "#(第\d{3}回)#";
             preg_match_all($pattern, $held_times, $held_m);
             //debug($held_m);
