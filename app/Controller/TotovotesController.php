@@ -8,6 +8,9 @@ App::uses('AppController','Controller');
 use Goutte\Client;
 App::uses('Component', 'Controller');
 
+/*shellからモデルを使用する*/
+//$toto_vote_model = ClassRegistry::init('Vote');
+
 class TotovotesController extends AppController{
     public $uses = array('POST','Live','Totovote',"Minivote","Goal3vote");    //使用するモデルを宣言
      /*コンポーネントの指定*/
@@ -51,8 +54,8 @@ class TotovotesController extends AppController{
         /*TOTO投票率の取得*/
         
         /*開催しているくじのみ登録処理*/
-        $this->getHeldKind();
-        
+        $held_kind = $this->getHeldKind();
+        //debug($held_kind);
 
         
         /*最新回の取得テスト*/
@@ -63,25 +66,39 @@ class TotovotesController extends AppController{
         //debug($result);
         
         
-        /*開催回情報の取得*/
-        $vote = new Totovote('Totovote',"totovotes");
-        $recent_held = (int)$vote->getRecentTime();
-        $recent_held = $recent_held +1;
+        $recent_held = $this->getRecentHeld();
+        $recent_held = $recent_held +2;
         //debug($recent_held);
         
         $match_info = $this->TotoVotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);    //toto開催回（自体の情報）の取得
         //debug($match_info);
-        //$this->setTotoMatch($match_info);
+        $this->setTotoMatch($match_info);
+    }
+    
+    /*DBから最新回を取得*/
+    public function getRecentHeld(){
+        /*開催回情報の取得*/
+        $vote = new Totovote('Totovote',"totovotes");
+        $recent_held = (int)$vote->getRecentTime();
+        
+        return $recent_held;
     }
     
     /*直近回の開催くじの種類を取得*/
     public function getHeldKind(){
         $vote_kind = $this->Toto->getTotoVoteDetail(TOTO_VOTE_YJ);
-        debug($vote_kind);
+        //debug($vote_kind);
         
         $held_kind = array();   //返却用
         /*開催くじ種類を連想配列に整形*/
-        
+        $pattern = "#(mini toto-A)|(mini toto-B)|(totoGOAL3)|(totoGOAL2)|(toto)#";
+        foreach($vote_kind as $var){
+            preg_match($pattern, $var,$m);
+            if(isset($m[0])){
+                $held_kind[$m[0]] = $var;
+            }
+            
+        }
         
         
         return $held_kind;
@@ -125,6 +142,10 @@ class TotovotesController extends AppController{
             //totoの試合情報の登録
              //モデルクラスのインスタンスを生成
             $toto = new Totovote();
+            $status = array();
+            $status['held_time'] = $match_info['held_time'];
+            $status['toto'] = $match_info["toto"];
+            $toto->setTotoMatchDb($statuses, $held);
         }
         if(array_key_exists("mini-A", $match_info)){
             //mini-Aの試合情報の登録
@@ -134,12 +155,15 @@ class TotovotesController extends AppController{
             $status = array();
             $status['held_time'] = $match_info['held_time'];
             $status['mini-A'] = $match_info["mini-A"];
-            //$mini_a->setMiniMatchDb($status);
+            $mini_a->setMiniMatchDb($status);
         }
         if(array_key_exists("mini-B", $match_info)){
             //mini-Bの試合情報の登録
             //モデルクラスのインスタンスを生成
             $mini_b = new Minivote();
+            $status['held_time'] = $match_info['held_time'];
+            $status['mini-B'] = $match_info["mini-B"];
+            $mini_a->setMiniMatchDb($status);
         }
         if(array_key_exists("goal", $match_info)){
             //goal3(2)の試合情報の登録
@@ -150,7 +174,7 @@ class TotovotesController extends AppController{
             $status['goal'] = $match_info["goal"];
             //debug($status);
             $goal3 = new Goal3vote();
-            //$goal3->setGoal3MatchDb($status);
+            $goal3->setGoal3MatchDb($status);
         }
         
         $held = $this->getRecentAll();  //最新回の取得

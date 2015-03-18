@@ -165,14 +165,16 @@ class Totovote extends Vote{
         $match_info = array();  //登録用データ
         $held_time;             //開催回
         
+        $held_time = $statuses['held_time'];
+        
         if(!is_array($statuses)){
             //配列入ってきていない場合
             return;
         }
         
         /*開催（数字）を取得*/
-        preg_match("#\d+#", $held,$m);
-        $held_time = $m[0];
+        //preg_match("#\d+#", $held,$m);
+        //$held_time = $m[0];
         
         foreach ($statuses as $status){
             $temp = array();
@@ -213,7 +215,7 @@ class Totovote extends Vote{
             
             $match_info[] = $temp;  /*登録用配列へ追加*/
         }
-        //debug($match_info);
+        debug($match_info);
         
         /*開催回登録チェック*/
         

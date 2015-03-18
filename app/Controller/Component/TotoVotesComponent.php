@@ -10,6 +10,8 @@ require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
 
 /*shellからモデルを使用する*/
 $toto_vote_model = ClassRegistry::init('Totovote');
+$toto_mini_model = ClassRegistry::init('Minivote');
+$toto_vote_model = ClassRegistry::init('Goal3vote');
 
 /*totoの投票率を返す*/
 class TotoVotesComponent extends Component{
