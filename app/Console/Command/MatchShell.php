@@ -2,7 +2,7 @@
 
 /*Toto投票率取得シェル*/
 App::uses('ComponentCollection','Controller');
-App::uses('MatchComponent','Controller/Component');
+App::uses('MatchesComponent','Controller/Component');
 App::uses('MatchController','Controller');
 
 class MatchShell extends AppShell{
@@ -12,7 +12,7 @@ class MatchShell extends AppShell{
     //コントローラーの現在のアクションハンドラの前に呼び出し
     public function startup() {
         $collection = new ComponentCollection();
-        $this->Match = new MatchComponent($collection);
+        $this->Matches = new MatchesComponent($collection);
         parent::startup();
         $this->MatchController = new MatchController();
     }
@@ -26,9 +26,15 @@ class MatchShell extends AppShell{
     
     /*Jリーグ(J1 J2)の試合結果を取得・保存*/
     public function saveJLeagueMatch(){
-        /*試合情報(j1 j2)の一括取得・保存*/
-        $this->MatchController->saveMatchJLeague();
+        /*J1の試合結果を取得・保存*/
+        $match_info_j1 = $this->Matches->getMatchInfoJleague(GAME_MATCH_RESULT); //J1の情報を取得
+        $result_j1 = $this->MatchController->setMatchesInfoJLeague($match_info_j1); //J1のの情報を保存
+        debug($result_j1);
         
+        /*J2の試合結果を取得*/
+        $match_info_j2 = $this->Matches->getMatchInfoJleague(GAME_MATCH_RESULT,"j2"); //J1の情報を取得
+        $result_j2 = $this->MatchController->setMatchesInfoJLeague($match_info_j2);  //J2の情報を保存
+        debug($result_j2);
     }
     
     /*ヤマザキナビスコカップの試合結果を保存*/

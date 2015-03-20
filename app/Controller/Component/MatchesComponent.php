@@ -9,7 +9,7 @@ define("ACL_MATCH_RESULT","http://sportsnavi.yahoo.co.jp/sports/soccer/jleague/2
 define('SCORE_QUICK_J1',"http://www.nikkansports.com/soccer/jleague/j1/score/j1-score.html");           //J1の速報
 define("ALL_MATCH_THIS_MONTH","http://www.jleague.jp/match/");      //Jリーグ公式サイト（当月）の試合
 /*リーグ情報の取得、格納*/
-class MatchComponent extends Component{
+class MatchesComponent extends Component{
     
     /*Jリーグ試合結果の情報をスクレイピングで取得
      * Ｊ１昇格、プレーオフ未対応 スポニチ

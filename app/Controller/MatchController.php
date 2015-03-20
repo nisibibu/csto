@@ -10,9 +10,9 @@ App::uses('Component', 'Controller');
 //$match_model = ClassRegistry::init('Match');
 
 class MatchController extends AppController{
-    var $name = 'Match';                    //コントローラー名の指定
+    //var $name = 'Match';                    //コントローラー名の指定
     public $uses = array('Post','Match');    //使用するモデルを宣言
-    public $components = array('Match');     //コンポーネントの指定
+    public $components = array('Matches');     //コンポーネントの指定
     public $helpers = array("Form");         //ヘルパーの指定
     
     public $scaffold;
@@ -44,7 +44,7 @@ class MatchController extends AppController{
         }
         
 
-        //$this->getMatchJLeague();
+        $this->saveMatchJLeague();
         
         
         //ナビスコカップの情報を取得
@@ -130,10 +130,12 @@ class MatchController extends AppController{
          *          */
         $match_info_j1 = $this->getMatchesJ1League();
         //debug($match_info);
-        $this->setMatchesInfoJLeague($match_info_j1); //j1を保存
+        $result_j1 = $this->setMatchesInfoJLeague($match_info_j1); //j1を保存
+        //debug($result_j1);
         $match_info_j2 = $this->getMatchesJ2League();
         //debug($match_info_j2);
-        $this->setMatchesInfoJLeague($match_info_j2,"j2");  //j2を保存
+        $result_j2 = $this->setMatchesInfoJLeague($match_info_j2,"j2");  //j2を保存
+        //debug($result_j2);
     }
 
 
@@ -142,14 +144,14 @@ class MatchController extends AppController{
     /*Jリーグの試合結果を登録*/
     public function getMatchesJ1League(){
         //Jリーグの試合結果を取得
-        $match_result_j = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT);
+        $match_result_j = $this->Matches->getMatchInfoJleague(GAME_MATCH_RESULT);
         //debug($match_result_j);
         return $match_result_j;
     }
     
     public function getMatchesJ2League(){
          //Jリーグの試合結果を取得
-        $match_result_j = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT,"j2");
+        $match_result_j = $this->Matches->getMatchInfoJleague(GAME_MATCH_RESULT,"j2");
         return $match_result_j;
     }
 
@@ -181,7 +183,9 @@ class MatchController extends AppController{
         //$match->setMatchesDb($match_info, $j_class,$data_item);
         $format_result = $match->formatMatces($match_info, $data_item);
         //debug($format_result);
-        $match->setMatces($format_result,$data_item,$league);
+        $result = $match->setMatches($format_result,$data_item,$league);
+        
+        return $result;
     }
     
     /*チームの直近試合結果を件数指定して取得

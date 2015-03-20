@@ -17,7 +17,7 @@ class Match extends AppModel{
     public function formatMatces($statuses,$data_item){
         $now_time;  //現在日時の保持
         $now_time = date("Y-m-d",time());
-        debug($now_time);
+        //debug($now_time);
         
         //debug($statuses);
         
@@ -43,7 +43,7 @@ class Match extends AppModel{
     }
     
     /*試合結果の保存*/
-    public function setMatces($statuses,$data_item,$j_class){
+    public function setMatches($statuses,$data_item,$j_class){
         /*１節まとめて登録*/
         //var_dump($statuses[0]);
         
