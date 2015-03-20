@@ -40,7 +40,7 @@ class TotoVotesComponent extends Component{
         
         /*official page より取得*/
         $held_time_o = $this->getHeldTime();
-        debug($held_time_o);
+        //debug($held_time_o);
         
         /*取得ページの決定*/
         if($held_time == $held_time_o){
@@ -157,7 +157,7 @@ class TotoVotesComponent extends Component{
             }
         });
         
-        debug($held_times);
+        //debug($held_times);
         
         
         //

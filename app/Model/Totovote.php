@@ -6,6 +6,39 @@ class Totovote extends Vote{
     public $useTable = 'totovotes';  //モデルがtotovoteテーブルを使用するように指定
     public $useDbConfig = 'default';    //defaultの接続設定を指定
     
+    /*バリデーションの設定*/
+    public $validate = array(
+            'held_time' => array(
+                'required' => true,
+                'allowEmpty' => false,
+            ),
+            'held_date' => array(
+                'required' => true,
+                'allowEmpty' => false,
+            ),
+            'no' => array(
+                'required' => true,
+                'allowEmpty' => false,
+            ),
+            'hometeam' => array(
+                'required' => true,
+                'allowEmpty' => false,
+            ),
+            'away_team' => array(
+                'required' => true,
+                'allowEmpty' => false,
+            ),
+        );
+    
+    /*アソシエーションの設定*/
+//    public $belongsTo = array(
+//        'Minivotes' => array(
+//            'className' => 'Minivote',
+//            'foregnKey' => 'held_time',
+//        ),
+//    );
+    
+    
     /*Toto(Toto mini含む）登録処理
      * totoone
      *      */
@@ -397,8 +430,8 @@ class Totovote extends Vote{
     }
     
     
-    
-     /*今回（直近の）totoの試合情報（投票率含む）を取得***
+     
+    /*今回（直近の）totoの試合情報（投票率含む）を取得***
      * 
      *************************************************/
     public function getVoteTotoRecent($held_time){

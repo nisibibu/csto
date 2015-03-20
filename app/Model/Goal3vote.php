@@ -43,7 +43,7 @@ class Goal3vote extends Vote{
     public function setGoal3MatchDb($statuses){
         $type;  //goal3 or goal2
         //debug($statuses);
-        debug(count($statuses['goal']));
+        //debug(count($statuses['goal']));
         if(array_key_exists("goal", $statuses) && array_key_exists("held_time", $statuses)){
             if(count($statuses['goal']) === 3){
                 $type = "goal3";
@@ -60,7 +60,7 @@ class Goal3vote extends Vote{
         $held_time = $statuses['held_time'];
         
         $is_set = $this->isRecentlyset($held_time); //登録回登録済みかチェック
-        debug($is_set);
+        //debug($is_set);
         
         /*goal3のデータ整形*/
         $goal3_data=array();

@@ -40,24 +40,14 @@ class MatchController extends AppController{
         }
         
 
-        //Jリーグの試合結果を取得
-        $j_class = "j2";
-        $year = "2014";
-        $month = "12";
-        $param = $year."/".$j_class. "/fixtures_results/".$month.".html";
-        $data_item = array("section","date_s","match_date","home_team","score",
-                             "home_score","away_score","away_team",
-                             "start_time","stadium","match_year","match_month","league");
-        //$match_result_j = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT,$param);
-        //debug($match_result_j);
-        //$this->setMatchesInfoJLeague($match_result_j1[1], $j_class, $data_item);
+        /*Jリーグ試合結果取得・保存
+         * from: suponichi
+         *          */
+        $match_info = $this->getMatchesJLeague();
+        //debug($match_info);
+        $this->setMatchesInfoJLeague($match_info);
         
-        /* 月のデータを節ごとに保存処理
-        foreach($match_result_j1 as $result){
-            $this->setMatchesInfoJLeague($result, $j_class, $data_item);
-        }
-        */
-         
+        
         //ナビスコカップの情報を取得
         /*実装中*/
         //$result_y = $this->Match->getYamazakiCupInfo();
@@ -131,13 +121,51 @@ class MatchController extends AppController{
         return $team_list;
     }
 
+    /*Jリーグの試合結果を登録*/
+    public function getMatchesJLeague(){
+        //Jリーグの試合結果を取得
+        
+        $match_result_j = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT);
+        //debug($match_result_j);
+        
+//        foreach($match_result_j1 as $result){
+//            $this->setMatchesInfoJLeague($result, $j_class, $data_item);
+//        }
+        
+        //$this->setMatchesInfoJLeague($match_result_j, $data_item);
+        
+        //$this->setMatchesInfoJLeague($match_result_j1, $j_class, $data_item);
+        return $match_result_j;
+    }
+    
     /*試合結果を登録（Jリーグ）*/
-    public function setMatchesInfoJLeague($match_info , $j_class,$data_item){
+    public function setMatchesInfoJLeague($match_info,$data_item=""){
         App::uses('Match','Model');     //モデルクラスにMatchを指定
+        
+        if(!$data_item){
+            $data_item = array("section",
+                               "date_s",
+                               "match_date",
+                               "home_team",
+                                "score",
+                                "home_score",
+                                "away_score",
+                                "away_team",
+                                "start_time",
+                                "stadium",
+                                "match_year",
+                                "match_month",
+                                "league");
+        }
+        
+        $j_class = "j1";
         
         //モデルクラスのインスタンスを生成
         $match = new Match('Match','matches');
-        $match->setMatchesDb($match_info, $j_class,$data_item);
+        //$match->setMatchesDb($match_info, $j_class,$data_item);
+        $format_result = $match->formatMatces($match_info, $data_item);
+        //debug($format_result);
+        $match->setMatces($format_result,$data_item,$j_class);
     }
     
     /*チームの直近試合結果を件数指定して取得
@@ -230,6 +258,7 @@ class MatchController extends AppController{
         $result = $goal_ranking->getGoalRanking($year, $count,$league);
         return $result;
     }
+    
     
 }
 

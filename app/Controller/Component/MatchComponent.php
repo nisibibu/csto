@@ -12,12 +12,29 @@ define("ALL_MATCH_THIS_MONTH","http://www.jleague.jp/match/");      //Jリーグ
 class MatchComponent extends Component{
     
     /*Jリーグ試合結果の情報をスクレイピングで取得
-     * Ｊ１昇格、プレーオフ未対応
-     *      */
-    
-    public function  getMatchInfoJleague($url = GAME_MATCH_RESULT,$param = "2015/j1/fixtures_results/03.html"){
+     * Ｊ１昇格、プレーオフ未対応 スポニチ
+     */
+    public function  getMatchInfoJleague($url = GAME_MATCH_RESULT,$j_class ="j1", $year ="", $month="" ){
+        
+        /*年度指定がない場合、今年の年度を設定*/
+        if(!$year){
+            $now_year = date("Y", time());
+            //debug($year);        
+            $year = $now_year;
+        }
+        /*月の指定がない場合、今月の月を設定*/
+        if(!$month){
+            $now_month = date("m", time());
+            //debug($month);
+            $month = $now_month;
+        }
+
+        /*URLに付与するパラメーターを設定*/
+        $param = $year."/".$j_class. "/fixtures_results/".$month.".html";
+        
+        
         $url = $url.$param;
-        debug($url);
+        //debug($url);
         //Goutteオブジェクト生成
         $crawer = new Goutte\Client();
         
@@ -40,15 +57,19 @@ class MatchComponent extends Component{
         });
         //var_dump($data_time);
         
+        //var_dump($year)
+        
         //年度の取得
         preg_match("/^\d{4}/", $data_time,$year);
         $year = $year[0];
         //月の取得
         $temp_m;
-        preg_match("/[0-9]+月/", $data_time,$temp_m);
+        preg_match("/[０-９]+月/", $data_time,$temp_m);
         //$month = preg_replace("/月/", "", $temp_m[0]);
         //debug($temp_m);
+        
         $month = str_replace("月","", $temp_m);
+        //debug($month);
         $month = mb_convert_kana($month[0],'n','UTF-8');
         //var_dump($year);
         //var_dump($month);
@@ -135,6 +156,10 @@ class MatchComponent extends Component{
             $match_info[] = $this->formatResult($var, $year, $month);
         } 
         //debug($match_info);
+        
+        /*リーグクラスの付与*/
+        $match_info['class'] = $j_class;
+        
         return $match_info;
 
     }
