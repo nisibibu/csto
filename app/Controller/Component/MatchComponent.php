@@ -705,16 +705,19 @@ class MatchComponent extends Component{
            /*共通化の処理を施す*/
     }
     
-    
+
+
     
     /*空白のデータを削除して配列を整列しなおす*/
     public function  fixDataBlank($result){
          
-        /*0のデータを消さないようにする*/
-         function even($var){
-                  return ($var<> '');
-         }
-         
+        /* コールバック関数（2回目の処理で再定義のエラー出る為未使用）
+        function even($var){
+            return ($var<> '');
+        }
+         */
+        
+        
          //改行無しのスペース(＆ｎｂｓｐ；)を半角スペースに置換して削除
          //参考URL
          //http://nanoappli.com/blog/archives/5429
@@ -723,9 +726,15 @@ class MatchComponent extends Component{
          }
          
          
-         //取得したデータから空の部分を詰めて配列添え直し
-          $result =  array_filter($result,'even');
-          $result = array_values($result);
+        //取得したデータから空の部分を詰めて配列添え直し
+        //$result =  array_filter($result,'even');  //コールバック関数未使用
+        $result =  array_filter($result,'MyClass::even');   //コールバックメソッド使用
+//          $result = array_filter($result, function($k) {
+//              return $k <> '';
+//          },
+//          ARRAY_FILTER_USE_BOTH);
+         
+         $result = array_values($result);
           
 
           return $result;
@@ -740,5 +749,13 @@ class MatchComponent extends Component{
         $no="";//削除用変数
         $string = str_replace(array($all,$half,$tab),$no,$string);
         return $string;
+    }
+    
+}
+
+/*コールバックメソッド*/
+class Myclass{
+    static function even($var){
+         return ($var<> '');
     }
 }

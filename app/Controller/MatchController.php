@@ -40,12 +40,7 @@ class MatchController extends AppController{
         }
         
 
-        /*Jリーグ試合結果取得・保存
-         * from: suponichi
-         *          */
-        $match_info = $this->getMatchesJLeague();
-        //debug($match_info);
-        $this->setMatchesInfoJLeague($match_info);
+        $this->getMatchJLeague();
         
         
         //ナビスコカップの情報を取得
@@ -121,25 +116,41 @@ class MatchController extends AppController{
         return $team_list;
     }
 
+    /*Jリーグの結果の取得
+     * J1
+     * J2
+     *      */
+    public function getMatchJLeague(){
+        /*Jリーグ試合結果取得・保存
+         * from: suponichi
+         *          */
+        $match_info_j1 = $this->getMatchesJ1League();
+        //debug($match_info);
+        //$this->setMatchesInfoJLeague($match_info_j1); //j1を保存
+        $match_info_j2 = $this->getMatchesJ2League();
+        //debug($match_info_j2);
+        $this->setMatchesInfoJLeague($match_info_j2,"j2");  //j2を保存
+    }
+
+
+
+
     /*Jリーグの試合結果を登録*/
-    public function getMatchesJLeague(){
+    public function getMatchesJ1League(){
         //Jリーグの試合結果を取得
-        
         $match_result_j = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT);
-        //debug($match_result_j);
-        
-//        foreach($match_result_j1 as $result){
-//            $this->setMatchesInfoJLeague($result, $j_class, $data_item);
-//        }
-        
-        //$this->setMatchesInfoJLeague($match_result_j, $data_item);
-        
-        //$this->setMatchesInfoJLeague($match_result_j1, $j_class, $data_item);
         return $match_result_j;
     }
     
+    public function getMatchesJ2League(){
+         //Jリーグの試合結果を取得
+        $match_result_j = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT,"j2");
+        return $match_result_j;
+    }
+
+
     /*試合結果を登録（Jリーグ）*/
-    public function setMatchesInfoJLeague($match_info,$data_item=""){
+    public function setMatchesInfoJLeague($match_info,$league="j1",$data_item=""){
         App::uses('Match','Model');     //モデルクラスにMatchを指定
         
         if(!$data_item){
@@ -158,14 +169,14 @@ class MatchController extends AppController{
                                 "league");
         }
         
-        $j_class = "j1";
+        //debug($league);
         
         //モデルクラスのインスタンスを生成
         $match = new Match('Match','matches');
         //$match->setMatchesDb($match_info, $j_class,$data_item);
         $format_result = $match->formatMatces($match_info, $data_item);
         //debug($format_result);
-        $match->setMatces($format_result,$data_item,$j_class);
+        $match->setMatces($format_result,$data_item,$league);
     }
     
     /*チームの直近試合結果を件数指定して取得

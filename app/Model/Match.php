@@ -8,6 +8,8 @@ App::uses('AppModel','Model');
 
 class Match extends AppModel{
     
+    //public $primaryKey = 'section';
+    
     /*Controllerクラスから受け取ったデータを
      * １節毎に分割
      * 現在日時より前の情報
@@ -50,13 +52,12 @@ class Match extends AppModel{
         $is_set = FALSE;    //登録対象データは登録済みか
 
         /*節で処理*/
-        $match_info = $statuses[0]['section'];
-        $this->setMatchesOneSection($match_info, $j_class, $data_item);
-        
-        
-        
-        
-
+        //$match_info = $statuses[0]['section'];
+        foreach ($statuses as $var){
+            $match_info = $var['section'];
+            $result[] = $this->setMatchesOneSection($match_info, $j_class, $data_item);
+        }    
+        return $result;
     }
     
     
@@ -67,13 +68,13 @@ class Match extends AppModel{
      * 
      *      */
     public function setMatchesOneSection($statuses,$j_class,$data_item){
-        $section = $statuses[0][0];
-        $year = $statuses[0][10];
+        $section = $statuses[0][0]; //始めのデータの節を取り出し
+        $year = $statuses[0][10];   //始めのデータの年を取り出し
         
         
         /*今回登録する部分の登録済み判定*/
-        $set_count = $this->isSetSecttion($section, $year);
-        debug($set_count);
+        $set_count = $this->isSetSecttion($section, $year,$j_class);
+        //debug($set_count);
         
             if($set_count === 0){
                 /*登録処理*/
@@ -99,14 +100,13 @@ class Match extends AppModel{
                 }
                 //var_dump($data);
             $result = $this->saveAll($data); 
-            }else if($set_count === 9){
-                /*更新処理*/
+            }else if($set_count > 8){
+                /*該当回が登録されていた場合何もしない*/
                 
                 
             }else{
-                /*不正データ削除*/
+                /*データ削除してから登録処理*/
                 
-                /*登録処理*/
                 
             }
             
@@ -152,7 +152,7 @@ class Match extends AppModel{
     }
     
     
-    /*チームリストの取得(テスト)*/
+    /*チームリストの取得*/
     public function  getTeamListByDb(){
         $data = array(
           'fields' => array('home_team','home_team'),
@@ -270,6 +270,8 @@ class Match extends AppModel{
         return $result;
     }
     
+    
+    /*セクションの設定個数を返却（該当セクションが登録されているか判定)*/
     public function isSetSecttion($section,$year,$league = "j1"){
         $recent_secttion = array();
         $is_set;
@@ -285,21 +287,19 @@ class Match extends AppModel{
             'fields' => array('section AS section')
             );
         $result = $this->find('count',$data);
-//        debug($result);
-//        if(isset($result[0]['section'])){
-//            //var_dump("開催回取得");
-//            //$recent_secttion = $result[0]['section'];
-//            $is_set = TRUE;
-//        }else{
-//            $is_set = FALSE;
-//        }
-        //$debug($recent_held);
+
         return $result;
     }
     
     /*指定した節のデータを消去*/
-    public function deleteOneSection($section,$year){
-        /*消去処理*/
+    public function deleteOneSection($section,$year,$league){        
+        /*直接SQL作成*/
+        $db = $this->getDataSource();
+        $db->fetchAll(
+                "DELETE FROM `matches` WHERE section = ? AND match_year = ? AND league = ?",
+                array($section, $year,$league)
+        );
+        
     }
     
 }
