@@ -1,9 +1,13 @@
 <?php
 App::uses('Folder','Utility');
 App::uses('File', 'Utility');
+App::uses('AppController','Controller');
 
 use Goutte\Client;
 App::uses('Component', 'Controller');
+
+/*shellからモデルを使用する*/
+//$match_model = ClassRegistry::init('Match');
 
 class MatchController extends AppController{
     var $name = 'Match';                    //コントローラー名の指定
@@ -40,7 +44,7 @@ class MatchController extends AppController{
         }
         
 
-        $this->getMatchJLeague();
+        //$this->getMatchJLeague();
         
         
         //ナビスコカップの情報を取得
@@ -120,13 +124,13 @@ class MatchController extends AppController{
      * J1
      * J2
      *      */
-    public function getMatchJLeague(){
+    public function saveMatchJLeague(){
         /*Jリーグ試合結果取得・保存
          * from: suponichi
          *          */
         $match_info_j1 = $this->getMatchesJ1League();
         //debug($match_info);
-        //$this->setMatchesInfoJLeague($match_info_j1); //j1を保存
+        $this->setMatchesInfoJLeague($match_info_j1); //j1を保存
         $match_info_j2 = $this->getMatchesJ2League();
         //debug($match_info_j2);
         $this->setMatchesInfoJLeague($match_info_j2,"j2");  //j2を保存
@@ -139,6 +143,7 @@ class MatchController extends AppController{
     public function getMatchesJ1League(){
         //Jリーグの試合結果を取得
         $match_result_j = $this->Match->getMatchInfoJleague(GAME_MATCH_RESULT);
+        //debug($match_result_j);
         return $match_result_j;
     }
     
