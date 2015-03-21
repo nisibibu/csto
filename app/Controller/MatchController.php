@@ -44,13 +44,13 @@ class MatchController extends AppController{
         }
         
 
-        $this->saveMatchJLeague();
+        //$this->saveMatchJLeague();
         
         
         //ナビスコカップの情報を取得
         /*実装中*/
-        //$result_y = $this->Match->getYamazakiCupInfo();
-        
+        $result_y = $this->Matches->getMatchInfoJleague(YAMAZAKI_MATCH_RESULT,"ヤマザキナビスコ杯");
+        debug($result_y);
         //debug($this->request->data('Post.team'));
         
         /*画面表示テスト*/

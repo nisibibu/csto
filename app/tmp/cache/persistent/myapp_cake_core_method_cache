@@ -1,2 +1,0 @@
-1426850923
-a:3:{i:0;b:0;s:4:"name";a:7:{s:32:"b0ae2799836db5ab320695a3bea81850";s:8:"`soccer`";s:32:"47eb7bb09414c64f779510914712b6ee";s:7:"`count`";s:32:"cfa847fa5e996d54e2e2b1640490fe29";s:9:"`matches`";s:32:"81b0fdc10e1a52bc423a91059e3207c3";s:9:"`section`";s:32:"5b9be55dee931fce885f9c9715196643";s:8:"`league`";s:32:"10e443e27203e7addfe3814134188959";s:12:"`match_year`";s:32:"cf0c79bf615ba316caca555fb492ac95";s:7:"`Match`";}s:6:"fields";a:1:{s:32:"9938b709e066909cb67173c75481e181";a:1:{i:0;s:19:"COUNT(*) AS `count`";}}}
