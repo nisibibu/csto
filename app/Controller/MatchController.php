@@ -49,9 +49,9 @@ class MatchController extends AppController{
         
         //ナビスコカップの情報を取得
         /*実装中*/
-        $nabisuko_result = $this->getMatcesNabisuko();
+        //$nabisuko_result = $this->getMatcesNabisuko();
         //debug($nabisuko_result);
-        $this->setMatchesNabisuko($nabisuko_result);
+        //$this->setMatchesNabisuko($nabisuko_result);
         
         
 
@@ -201,7 +201,7 @@ class MatchController extends AppController{
         
         $result = $match->setMatches($format_result,$data_item,$league);
         
-        //return $result;
+        return $result;
     }
     
     

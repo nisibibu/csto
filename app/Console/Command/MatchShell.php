@@ -38,8 +38,12 @@ class MatchShell extends AppShell{
     }
     
     /*ヤマザキナビスコカップの試合結果を保存*/
-    public function saveYamazakiMatch(){
-        
+    public function saveNabisukoMatch(){
+        /*ナビスコカップの試合結果を取得*/
+        $match_info_nabisuko = $this->Matches->getMatchInfoJleague(YAMAZAKI_MATCH_RESULT,"ヤマザキナビスコ杯");
+        //debug($match_info_nabisuko);
+        $result_nabisuko = $this->MatchController->setMatchesNabisuko($match_info_nabisuko);
+        //debug($result_nabisuko);
     }
     
     /*天皇杯の試合結果を保存*/
