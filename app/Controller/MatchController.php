@@ -49,9 +49,12 @@ class MatchController extends AppController{
         
         //ナビスコカップの情報を取得
         /*実装中*/
-        $result_y = $this->Matches->getMatchInfoJleague(YAMAZAKI_MATCH_RESULT,"ヤマザキナビスコ杯");
-        debug($result_y);
-        //debug($this->request->data('Post.team'));
+        $nabisuko_result = $this->getMatcesNabisuko();
+        //debug($nabisuko_result);
+        $this->setMatchesNabisuko($nabisuko_result);
+        
+        
+
         
         /*画面表示テスト*/
         //if($this->show()){
@@ -72,7 +75,7 @@ class MatchController extends AppController{
         //var_dump($goal_rank_t);                               
         //$goal_rank = $this->getGoalRanking("2014");           //ゴールランキング
         //var_dump($goal_rank);
-        $league_ranking = $this->getLeagueRanking("2014", "j1");
+        //$league_ranking = $this->getLeagueRanking("2014", "j1");
         //debug($league_ranking);
         
         /*ヘルパーに初期値(前回入力値）をセットする
@@ -155,6 +158,53 @@ class MatchController extends AppController{
         return $match_result_j;
     }
 
+    /* ナビスコ杯の試合情報を取得して返す
+     *
+     * 
+     * return : ナビスコ杯の試合情報（1P分）
+     *      */
+    public function getMatcesNabisuko(){
+        $result_y = $this->Matches->getMatchInfoJleague(YAMAZAKI_MATCH_RESULT,"ヤマザキナビスコ杯");
+        return $result_y;
+    }
+    
+    /*ナビスコ杯の試合結果を登録*/
+    public function setMatchesNabisuko($nabisuko_result,$data_item=""){
+        App::uses('Match','Model');     //モデルクラスにMatchを指定
+        
+        $data_item = $data_item;
+        
+        if(!$data_item){
+            $data_item = array("section",
+                               "match_date",
+                               "home_team",
+                                "score",
+                                "home_score",
+                                "away_score",
+                                "away_team",
+                                "start_time",
+                                "stadium",
+                                "match_year",
+                                "match_month",
+                                "league");
+        }
+        
+        //debug($data_item);
+        
+        //モデルクラスのインスタンスを生成
+        $match = new Match('Match','matches');
+        //$match->setMatchesDb($match_info, $j_class,$data_item);
+        $format_result = $match->formatMatces($nabisuko_result, $data_item);
+        //debug($format_result);
+        
+        $league = "ヤマザキナビスコ杯";
+        
+        $result = $match->setMatches($format_result,$data_item,$league);
+        
+        //return $result;
+    }
+    
+    
 
     /*試合結果を登録（Jリーグ）*/
     public function setMatchesInfoJLeague($match_info,$league="j1",$data_item=""){

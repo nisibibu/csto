@@ -27,18 +27,37 @@ class Match extends AppModel{
         
         /*取得データを整形*/
         
-        //開催されていない回のデータは捨てる
-        foreach ($statuses as $status){
-           //祭儀の試合の日付を確認し、日にちが現在以降ならば保持しない
-           $max = count($status) - 1;
-           if($status[$max][2] < $now_time){   //日付判定
-                $temp['section'] = $status;
-                $temp['first_date'] = $status[0][2];
-                $temp['last_date'] = $status[$max][2];
-                $result_info[] = $temp;
-           }
-        }
+        //debug($statuses[0]);
         
+        //開催されていない回のデータは捨てる
+        if($class === "ヤマザキナビスコ杯"){
+            foreach ($statuses as $status){
+               //祭儀の試合の日付を確認し、日にちが現在以降ならば保持しない
+               $max = count($status) - 1;
+               //debug($status[$max][1]);
+               if($status[$max][1] < $now_time){   //日付判定
+                    //var_dump("過去のデータ発見");
+                    $temp['section'] = $status;
+                    $temp['date'] = $status[0][1];
+                    //$temp['last_date'] = $status[$max][2];
+                    $result_info[] = $temp;
+               }
+            }
+        }
+        else{
+               foreach ($statuses as $status){
+               //祭儀の試合の日付を確認し、日にちが現在以降ならば保持しない
+               $max = count($status) - 1;
+               //debug($status[$max][2]);
+               if($status[$max][2] < $now_time){   //日付判定
+                    //var_dump("過去のデータ発見");
+                    $temp['section'] = $status;
+                    $temp['first_date'] = $status[0][2];
+                    $temp['last_date'] = $status[$max][2];
+                    $result_info[] = $temp;
+               }
+            }
+        }
         return $result_info;
     }
     
@@ -47,9 +66,9 @@ class Match extends AppModel{
         /*１節まとめて登録*/
         //var_dump($statuses[0]);
         
-        $info_flag = FALSE; //情報だけでも登録するか
-        $past_flag = FALSE; //過去分だけでも登録するか
-        $is_set = FALSE;    //登録対象データは登録済みか
+        $info_flag = FALSE; //情報だけでも登録するか(処理の判定に使用予定)
+        $past_flag = FALSE; //過去分だけでも登録するか(処理の判定に使用予定)
+        $is_set = FALSE;    //登録対象データは登録済みか(処理の判定に使用予定)
 
         /*節で処理*/
         //$match_info = $statuses[0]['section'];
@@ -62,6 +81,8 @@ class Match extends AppModel{
     
     
     /*試合情報の登録（１節）
+     * J1 J2 ナビスコカップ使用
+     * 
      * $statuses:   １節のデータ(配列)
      * $j_class:    league
      * $data_item:  整形用のデータ項目(配列)
@@ -69,14 +90,20 @@ class Match extends AppModel{
      *      */
     public function setMatchesOneSection($statuses,$j_class,$data_item){
         $section = $statuses[0][0]; //始めのデータの節を取り出し
-        $year = $statuses[0][10];   //始めのデータの年を取り出し
+        
+        if($j_class === "ヤマザキナビスコ杯"){
+            $year = $statuses[0][9];    //始めのデータの年を取り出し
+        }else{
+            $year = $statuses[0][10];   //始めのデータの年を取り出し
+        }
+        
         
         
         /*今回登録する部分の登録済み判定*/
         $set_count = $this->isSetSecttion($section, $year,$j_class);
         //debug($set_count);
         
-            if($set_count === 0){
+            if($set_count){
                 /*登録処理*/
                 $temp = array();
                 $j = 0;  
@@ -98,7 +125,7 @@ class Match extends AppModel{
                     $temp = array();
                     $j++;
                 }
-                //var_dump($data);
+                //debug($data);
             $result = $this->saveAll($data); 
             }else if($set_count > 8){
                 /*該当回が登録されていた場合何もしない*/
@@ -110,6 +137,7 @@ class Match extends AppModel{
                 
             }
             
+        return $result = null;
     }
     
     /*速報の登録*/

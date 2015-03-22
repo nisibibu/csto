@@ -40,7 +40,7 @@ class MatchesComponent extends Component{
         }
 
         
-        debug($url);
+        //debug($url);
         //Goutteオブジェクト生成
         $crawer = new Goutte\Client();
         
@@ -127,7 +127,7 @@ class MatchesComponent extends Component{
         $craw_result = array_values($craw_result);      //添え字を直す
 
         //debug($craw_result);
-        debug($j_class);
+        //debug($j_class);
         
         /*Jリーグのデータ取得の時の処理*/
         if($j_class === "j1" || $j_class === "j2"){
@@ -174,15 +174,17 @@ class MatchesComponent extends Component{
             } 
         }else if($j_class === "ヤマザキナビスコ杯"){
             /*ヤマザキナビスコ杯の時の処理*/
-            var_dump("ヤマザキナビスコ杯の時の処理");
+            //var_dump("ヤマザキナビスコ杯の時の処理");
             $group = array();
+            
+            /*日にちの取得*/
             for($i = 0; $i < count($craw_result); $i++){
                 if(preg_match("#^\d+月\d+日#",$craw_result[$i],$m)){
                     $group[$i] = $m[0];
                 }
             }
 
-            debug($group);
+            //debug($group);
 
             //空白行を取り除いて整列
             $result = $this->fixDataBlank($craw_result);
@@ -191,41 +193,109 @@ class MatchesComponent extends Component{
             $result_s = array();    //節毎にデータ保持
 
 
-            /*節毎にデータを分けて取得*/
+            /*日毎にデータを分けて取得*/
             foreach($group as $var){
                 $pattern_begin = "/".$var."/";
                 $pattern_end = "#.+月.+日.+#";
                 $result_s[] = $this->getIndividual($pattern_begin, $pattern_end, $result);
             }
 
-            debug($result_s);
-//            $match_date = array();      //試合開催日をdate型に変換
-//            $match_date_s = array();    //曜日も含む文字列で試合開催日を保持
-//            $match_date_i = array();    //日付のデータの添え字番号を保持
-//            $temp_result = array();     //整理前のデータ（一時保管）
-            //$date_count = 0;
+            
+            
+            //debug($result_s);
+            $match_date = array();      //試合開催日をdate型に変換
+            $match_date_s = array();    //曜日も含む文字列で試合開催日を保持
+            $match_date_i = array();    //日付のデータの添え字番号を保持
+            $temp_result = array();     //整理前のデータ（一時保管）
+            $date_count = 0;
 
 
-            /*日にち毎に分割して取得*/
-//            foreach ($result_s as $var){
-//                $temp_result[] = $this->getDataByDate($var);
-//            }
-//            //debug($temp_result);
-//
+            /*リーグステージ毎に分割して取得*/            
+            foreach($result_s as $var){
+                $result_g[] = $this->getDataByGroupStage($var);
+            }
+            //$result = $this->getDataByGroupStage($result_s[0]);
+            //debug($result_g);
+            //debug($temp_result);
+
 //            /*DB登録用にデータを整形*/
-//            foreach ($temp_result as $var){
-//                $match_info[] = $this->formatResult($var, $year, $month);
-//            } 
+            foreach ($result_g as $var){
+                //$match_info[] = $this->formatResultToNabisuko($result);
+                $match_info[] = $this->formatResultToNabisuko($var);
+            }
         }
         
         //debug($match_info);
         
+//        $test_array = array(
+//             "あ",
+//             "い",
+//             "う",
+//             "え",
+//             "お",
+//        );
+//        debug($test_array);
+//        $test = $this->sanitize($test_array);
+//        debug($test);       
+        
         /*リーグの付与*/
         $match_info['class'] = $j_class;
+        //debug($match_info);
         
         return $match_info;
 
     }
+    
+    /*日程毎の配列をDB登録用に整形して返す(ナビスコ杯使用)*/
+    public function formatResultToNabisuko($match_info){
+        foreach($match_info['match_info'] as $var){
+            if(preg_match("#\d{4}-\d{2}-\d{2}#", $var)){
+                $held_date = $var;
+            }
+        }
+        
+        //$held_date = $match_info['match_info'][1];  //開催日時の取得
+        
+        /*YamazakiNabisukoCup(suponichi)のデータ形式*/
+        $data_item = array(
+            "stage",
+            'home_team',
+            'score',
+            'home_score',
+            'away_score',
+            'away_team',
+            'match_time',
+            'stadium',
+        );
+        
+        /**/
+        foreach($match_info as $var){
+            //一番目の要素取り出し判定（ステージ情報かどうか）
+            //$i = 0;
+            $temp;
+            if(preg_match("#(予選リーグ|準々決勝|準決勝|決勝)#",$var[0])){
+                $stege = array_shift($var); //ステージ情報を取り出し
+                $temp = array_chunk($var, count($data_item) -1);
+                /*年月日の取り出し*/
+                preg_match("/(?P<year>\d{4}+)-(?P<month>\d{2}+)-(?P<day>\d{2}+)/", $held_date,$m);
+                $year = $m['year'];
+                $month = $m['month'];
+                
+                /*データ整形*/
+                foreach($temp as $v){
+                    array_unshift($v,$stege,$held_date);
+                    array_push($v,$year,$month);
+                    $result[] = $v;
+                    //$i++;
+                }
+            }
+        }
+        //debug($result);
+        
+        return $result;
+    }
+    
+    
     
     /*日程毎の配列をDB登録用に整形して返す(Jリーグ使用)*/
     public function formatResult($temp_result, $year, $month){
@@ -282,6 +352,95 @@ class MatchesComponent extends Component{
                 $result[] = $var;
             }  
         }
+        
+        return $result;
+    }
+    
+    /*再帰*/
+    function sanitize($value){
+        if(is_array($value)){
+            $sanitize_array = array();
+            foreach($value as $k => $v){
+                $sanitize_array[$k] = $this->sanitize($v);
+            }
+            return $sanitize_array;
+        }else{
+            return htmlspecialchars($value);
+        }
+    }
+
+    /*再帰での処理
+     * 実装途中。。。・
+     * 
+     * 必ず実装する。
+     * 
+     *      */
+    function getByGroup($match_info,$begin=0){
+        $pattern = "#(予選リーグ|準々決勝|準決勝|決勝)#";
+        if(is_array($match_info)){
+            for($i = $begin; $i < count($match_info); $i++){
+                if(preg_match($pattern, $match_info[$i])){
+                    $return_info[] = $this->getByGroup($match_info,$i);
+                }
+            }
+            return $return_info;
+        }else{
+            return array_slice($match_info, $begin);
+        }
+    }
+
+
+
+    /* ヤマザキナビスコ杯用
+     * グループステージの１節毎に試合結果を返す
+     * 予選のみ対応（suponiti)
+     * 
+     *      */
+    public function getDataByGroupStage($match_info,$begin=0){
+        $match_temp = array();
+        $tmp_count;     //分割に使用
+        /*リーグ別に分割*/
+        $tmp = array(); //一時保管用
+        $pattern = "#(予選リーグ|準々決勝|準決勝|決勝)#";
+        $flag = FALSE;
+        
+        
+        /*ステージの取得*/
+        for($i = 0; $i < count($match_info); $i++){
+                if(preg_match("#(予選リーグ|準々決勝|準決勝|決勝)#",$match_info[$i],$m)){
+                    $stage[$m[0]][] = $i;
+                }
+        }
+        //debug($stage);
+        
+         /*リーグ毎の処理の分割
+          * リーグ毎に処理を分ける場合
+          * array_key_exitesで判定を行い、処理を分ける
+          * 
+          *           */
+             $slice_count = array();
+             foreach($stage as $var){
+                 for($i = 0; $i < count($var);$i++){
+                     $slice_count[] = $var[$i];
+                 }
+             }
+             //debug($slice_count);
+             
+             /*返却用配列の作成*/
+             $result['match_info'] = array_slice($match_info,0,$slice_count[0]);
+             $match_count = count($result['match_info']);
+             for($i = 0; $i < count($slice_count); $i++){
+                 $next_i = $i + 1;
+                 if(!array_key_exists($next_i, $slice_count)){
+                     //最後のデータ
+                     //var_dump("最後のデータ");
+                     $result[] = array_slice($match_info,$slice_count[$i]);
+                 }else{
+                     $result[] = array_slice($match_info,$slice_count[$i],$slice_count[$i+1] - $match_count);
+                 }
+             }
+       
+        //debug($result);
         
         return $result;
     }
@@ -412,7 +571,7 @@ class MatchesComponent extends Component{
                         //var_dump($result[$i]);
                         //探す初めのデータかチェック         
                         if(preg_match($pattern_begin, $result[$i])){
-                            var_dump("データを発見");
+                            //var_dump("データを発見");
                             $j = $i;    //くじ結果の配列添え字番号を記録
                             //次の行の手前までデータを取得する
                             while(preg_match($pattern_end, $result[$j+1] ) == 0) {
