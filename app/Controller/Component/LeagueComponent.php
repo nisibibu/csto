@@ -19,7 +19,7 @@ class LeagueComponent extends Component{
         //Goutteオブジェクト生成
         $crawer = new Goutte\Client();
         $url = LEAG_RANKING.$status;
-        var_dump($url);
+        //var_dump($url);
         //順位を取得
         $crawler = $crawer->request('GET', LEAG_RANKING.$status);
         
@@ -32,28 +32,32 @@ class LeagueComponent extends Component{
         
         //更新日の取得（年度に使用）
         /*ゴールゴールランキングの部分を適用する*/
-         $crawler->filter('.grayBg2 p10p mb10p yjMS txt_c' )->each(function( $node )use(&$update_time){
-             var_dump($node->text());
+         $crawler->filter('p.updateDate' )->each(function( $node )use(&$update_time){
+             //var_dump($node->text());
             $update_time = trim($node->text());
         });
-
+        //debug($update_time);
+        
+         /*年度の取得*/
+        preg_match('/^[0-9]{4}/', $update_time,$year);
+        $year = $year[0];
         
         //項目名の取得
-         $crawler->filter('#team_ranking table th' )->each(function( $node )use(&$item_name){
+         $crawler->filter('#modSoccerStanding table thead th' )->each(function( $node )use(&$item_name){
             //debug($node->text());
             $item_name[] = trim($node->text());
         });
-        //var_dump($item_name);
+        //debug($item_name);
         
         //リーグの情報を取得
-       $crawler->filter('#team_ranking table td' )->each(function( $node )use(&$craw_result){
+       $crawler->filter('#modSoccerStanding table tbody td' )->each(function( $node )use(&$craw_result){
             //debug($node->text());
             $craw_result[] = trim($node->text());
         });
         
         //空白行を取り除いて整列
-        $result = $this->fixDataBlank($craw_result);
-        //var_dump($result);
+        //$result = $this->fixDataBlank($craw_result);
+        //debug($craw_result);
         
         //debug($result);
         
@@ -71,8 +75,17 @@ class LeagueComponent extends Component{
          *       失点
          *       得失点差
          *          */
-        $league_info = array_chunk($result, count($item_name));
+        $temp_info = array_chunk($craw_result, count($item_name));
+        foreach($temp_info as $var){
+            $tmp = array();
+            for($i = 0; $i < count($item_name); $i++){
+                $tmp[$item_name[$i]] = $var[$i];
+            }
+            $league_info[] = $tmp;
+        }
 
+        $league_info['year'] = $year;
+        
         return $league_info;
     }
     
@@ -214,7 +227,7 @@ class LeagueComponent extends Component{
           $result =  array_filter($result,'even');
           $result = array_values($result);
           
-          debug($result);
+          //debug($result);
 
           return $result;
     }

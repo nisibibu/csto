@@ -10,24 +10,64 @@ class League extends AppModel{
     
     /*リーグ情報の登録*/
     public function setLeagueDb($statuses,$j_class){
-        foreach ($statuses as $status){
+        //年の取り出し
+        $year = $statuses['year'];
+        unset($statuses['year']);
+        
+        $is_set = $this->is_setYear($j_class, $year);
+        
+        if($is_set === 0){
+            //登録処理
+             foreach ($statuses as $status){
                 $data[] = array(
-                    'team' => $status[1],
-                    'point' => $status[2],
-                    'v_count' => $status[3],
-                    'd_count' => $status[4],
-                    'l_count' => $status[5],
-                    'goal_point' => $status[6],
-                    'lose_point' => $status[7],
-                    'goal_difference' => $status[8],
-                    'year' => '2014',
-                    'ranking' => $status[0],
+                    'team' => $status["チーム名"],
+                    'point' => $status["勝点"],
+                    'v_count' => $status["勝数"],
+                    'd_count' => $status["引分数"],
+                    'l_count' => $status["敗数"],
+                    'goal_point' => $status["得点"],
+                    'lose_point' => $status["失点"],
+                    'goal_difference' => $status["得失点差"],
+                    'year' => $year,
+                    'ranking' => $status["順位"],
                     'league' => $j_class,
-            );
-        }
+                );
+            }
          
-         $result = $this->saveAll($data);
+            //debug($data);
+            $result = $this->saveAll($data);
+        }else{
+            //更新処理
+            foreach($statuses as $status){
+                $conditions = array(
+                    'team' => $status['チーム名'],
+                    'year' => $year,
+                    'league' => $j_class,
+                );
+
+                $today = date("Y-m-d H:i:s");
+                //debug($today);
+                $data = array(
+                    'team' => "'".$status["チーム名"]."'",
+                    'point' => $status["勝点"],
+                    'v_count' =>$status["勝数"],
+                    'd_count' => $status["引分数"],
+                    'l_count' => $status["敗数"],
+                    'goal_point' => $status["得点"],
+                    'lose_point' => $status["失点"],
+                    'goal_difference' => $status["得失点差"],
+                    'year' => $year,
+                    'ranking' => $status["順位"],
+                    'league' => "'".$j_class."'",
+                    'modified' => "'".$today."'",
+                );
+                //debug($data);
+                $result = $this->updateAll($data,$conditions);
+            }
+        }
+       
          //debug($result);
+        return $result;
     }
     
     /*ゴールランキングの登録*/
@@ -61,20 +101,17 @@ class League extends AppModel{
     }
     
     
-    /*設定個数を返却（該当セクションが登録されているか判定)*/
-    public function is_set($league,$year){
-//        $recent_secttion = array();
-//        $is_set;
+    /*設定個数を返却（年度)*/
+    public function is_setYear($league,$year){
              
             $data = array(
             "conditions" => array(
                 "AND" => array(
-                   'section' => $section,
-                   "match_date"  => $match_date,
+                   'year' => $year,
                    "league" => $league,
                 ),
             ),
-            'fields' => array('section AS section')
+            'fields' => array('team AS team')
             );
 
         
