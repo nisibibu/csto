@@ -19,14 +19,15 @@ class LeagueController extends AppController{
          *          */
         
         /*League情報を取得*/
-        $j_class = "j1";
-        $league_info_j1 = $this->League->getLeagueInfo($j_class);   //J1の情報を取得
+        //$j_class = "j1";
+        //$league_info_j1 = $this->League->getLeagueInfo($j_class);   //J1の情報を取得
         //debug($league_info_j1);
-        $this->setLeagueInfo($league_info_j1, $j_class);;
+        //$this->setLeagueInfo($league_info_j1, $j_class);
         //J2のリーグ情報を登録
         //$j_class = "j2";
         
-        //$league_info_j2 = $this->League->getLeagueInfo($j_class); 
+        //$league_info_j2 = $this->League->getLeagueInfo($j_class);
+        //debug($league_info_j2);
         //$this->setLeagueInfo($league_info_j2, $j_class);
         
         /*ゴールランキングの取得*/
