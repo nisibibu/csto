@@ -372,7 +372,7 @@ class MatchesComponent extends Component{
     /*再帰での処理
      * 実装途中。。。・
      * 
-     * 必ず実装する。
+     * 実装する。
      * 
      *      */
     function getByGroup($match_info,$begin=0){

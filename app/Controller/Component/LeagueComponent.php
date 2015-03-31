@@ -77,11 +77,11 @@ class LeagueComponent extends Component{
     }
     
     /*得点ランキングの取得*/
-    public function getGoalRanking($url = GOAL_RANKING_J1,$param = "1"){
+    public function getGoalRanking($url = GOAL_RANKING_J1,$param ="1"){
         //Goutteオブジェクト生成
            $crawer = new Goutte\Client();
            $url = $url.$param;
-           //var_dump($url);
+           //debug($url);
 
            //HTMLを取得
            $crawler = $crawer->request('GET',$url);
@@ -94,22 +94,26 @@ class LeagueComponent extends Component{
            $links = array();
            
            //更新日の取得（年度に使用）
-           $crawler->filter('.yjSt' )->each(function( $node )use(&$update_time){
-                var_dump($node->text());
+           $crawler->filter('p.updateDate' )->each(function( $node )use(&$update_time){
+                //var_dump($node->text());
                 $update_time = trim($node->text());
             });
            //var_dump($update_time);
             /*年度の取得*/
            preg_match('/^[0-9]{4}/', $update_time,$year);
            $year = $year[0];
-           //var_dump($year);
+           //debug($year);
            
           //項目の取得
-          $crawler->filter('#personal_record table th' )->each(function( $node )use(&$item_name){
-               //debug($node->text());
-               $item_name[] = trim($node->text());
+          $crawler->filter('#modSoccerStats table th' )->each(function( $node )use(&$item_name){
+               if(trim($node->text()) === "選手名"){
+                    $item_name[] = trim($node->text());
+                    $item_name[] = "ベストゴール動画";
+               }else{
+                   $item_name[] = trim($node->text());
+               }              
            });
-           //var_dump($item_name);
+           //debug($item_name);
            
            
            //リンク（ランキングページ）の取得
@@ -120,21 +124,22 @@ class LeagueComponent extends Component{
            $links = array_unique($links);//重複するリンクを削除
            
            /*リンクを利用して処理するよう記述
+            * 複数ページ取得
             *
-            *
+            * 未実装
             */
            
            
             //情報の取得
-          $crawler->filter('#personal_record table td' )->each(function( $node )use(&$craw_result){
+           $crawler->filter('#modSoccerStats table tbody td' )->each(function( $node )use(&$craw_result){
                //debug($node->text());
                $craw_result[] = trim($node->text());
            });
-           //var_dump($craw_result);
+           //debug($craw_result);
            
            //データの整形
-           $result = $this->fixDataBlank($craw_result);
-           //var_dump($result);
+//           $result = $this->fixDataBlank($craw_result);
+//           debug($result);
            //var_dump($goal_ranking_info);
            
          //個別に分けて保持
@@ -155,7 +160,7 @@ class LeagueComponent extends Component{
          *      退場
           *     年度
          *          */
-        $goal_result = array_chunk($result, count($item_name));
+        $goal_result = array_chunk($craw_result, count($item_name));
         //var_dump($goal_result);
         //debug($goal_ranking_info);
         
@@ -209,6 +214,7 @@ class LeagueComponent extends Component{
           $result =  array_filter($result,'even');
           $result = array_values($result);
           
+          debug($result);
 
           return $result;
     }

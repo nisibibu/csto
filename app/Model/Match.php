@@ -107,7 +107,7 @@ class Match extends AppModel{
             $set_count = $this->isSetSecttion($section, $year,$j_class);
         }
         
-        debug($set_count);
+        //debug($set_count);
         
             if($set_count === 0){
                 /*登録処理*/
