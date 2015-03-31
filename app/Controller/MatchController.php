@@ -109,6 +109,10 @@ class MatchController extends AppController{
         //$this->request->data = $this->Post->find('team',$options);
         //$this->request->data = array('team',$options);
         
+        
+        $result_n = $this->getMatcesNabisuko();
+        
+        $this->setMatchesNabisuko($result_n);
     }
 
 

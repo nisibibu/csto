@@ -93,6 +93,7 @@ class Match extends AppModel{
         
         if($j_class === "ヤマザキナビスコ杯"){
             $year = $statuses[0][9];    //始めのデータの年を取り出し
+            $match_date = $statuses[0][1];  //始めのデータの日付取り出し
         }else{
             $year = $statuses[0][10];   //始めのデータの年を取り出し
         }
@@ -100,8 +101,13 @@ class Match extends AppModel{
         
         
         /*今回登録する部分の登録済み判定*/
-        $set_count = $this->isSetSecttion($section, $year,$j_class);
-        //debug($set_count);
+        if($j_class === "ヤマザキナビスコ杯"){
+           $set_count = $this->isSetSecttion($section, $year,$j_class,$match_date);
+        }else{
+            $set_count = $this->isSetSecttion($section, $year,$j_class);
+        }
+        
+        debug($set_count);
         
             if($set_count === 0){
                 /*登録処理*/
@@ -300,11 +306,24 @@ class Match extends AppModel{
     
     
     /*セクションの設定個数を返却（該当セクションが登録されているか判定)*/
-    public function isSetSecttion($section,$year,$league = "j1"){
-        $recent_secttion = array();
-        $is_set;
+    public function isSetSecttion($section,$year,$league = "j1",$match_date=""){
+//        $recent_secttion = array();
+//        $is_set;
         
-        $data = array(
+        
+        if($league === "ヤマザキナビスコ杯"){
+            $data = array(
+            "conditions" => array(
+                "AND" => array(
+                   'section' => $section,
+                   "match_date"  => $match_date,
+                   "league" => $league,
+                ),
+            ),
+            'fields' => array('section AS section')
+            );
+        }else{
+            $data = array(
             "conditions" => array(
                 "AND" => array(
                    'section' => $section,
@@ -314,6 +333,8 @@ class Match extends AppModel{
             ),
             'fields' => array('section AS section')
             );
+        }
+        
         $result = $this->find('count',$data);
 
         return $result;

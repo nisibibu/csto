@@ -74,7 +74,6 @@ echo "チーム選択"."</br>";
     <![endif]-->
   </head>
   <body>
-    <h1>Hello, world!</h1>
     <?php echo $this->BootstrapForm->input('name'); ?>
     
     
