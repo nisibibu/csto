@@ -159,25 +159,122 @@
         ]
     },
     {
-        "name": "opauth/twitter",
-        "version": "0.3.0",
-        "version_normalized": "0.3.0.0",
+        "name": "composer/installers",
+        "version": "v1.0.21",
+        "version_normalized": "1.0.21.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/opauth/twitter.git",
-            "reference": "4fe4226a3844aa08e2c3c5c3597db5e86c9fe3dd"
+            "url": "https://github.com/composer/installers.git",
+            "reference": "d64e23fce42a4063d63262b19b8e7c0f3b5e4c45"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/opauth/twitter/zipball/4fe4226a3844aa08e2c3c5c3597db5e86c9fe3dd",
-            "reference": "4fe4226a3844aa08e2c3c5c3597db5e86c9fe3dd",
+            "url": "https://api.github.com/repos/composer/installers/zipball/d64e23fce42a4063d63262b19b8e7c0f3b5e4c45",
+            "reference": "d64e23fce42a4063d63262b19b8e7c0f3b5e4c45",
+            "shasum": ""
+        },
+        "replace": {
+            "roundcube/plugin-installer": "*",
+            "shama/baton": "*"
+        },
+        "require-dev": {
+            "composer/composer": "1.0.*@dev",
+            "phpunit/phpunit": "4.1.*"
+        },
+        "time": "2015-02-18 17:17:01",
+        "type": "composer-installer",
+        "extra": {
+            "class": "Composer\\Installers\\Installer",
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Composer\\Installers\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Kyle Robinson Young",
+                "email": "kyle@dontkry.com",
+                "homepage": "https://github.com/shama"
+            }
+        ],
+        "description": "A multi-framework Composer library installer",
+        "homepage": "http://composer.github.com/installers/",
+        "keywords": [
+            "Craft",
+            "Dolibarr",
+            "Hurad",
+            "MODX Evo",
+            "OXID",
+            "SMF",
+            "Thelia",
+            "WolfCMS",
+            "agl",
+            "aimeos",
+            "annotatecms",
+            "bitrix",
+            "cakephp",
+            "chef",
+            "codeigniter",
+            "concrete5",
+            "croogo",
+            "dokuwiki",
+            "drupal",
+            "elgg",
+            "fuelphp",
+            "grav",
+            "installer",
+            "joomla",
+            "kohana",
+            "laravel",
+            "lithium",
+            "magento",
+            "mako",
+            "mediawiki",
+            "modulework",
+            "moodle",
+            "phpbb",
+            "piwik",
+            "ppi",
+            "puppet",
+            "roundcube",
+            "shopware",
+            "silverstripe",
+            "symfony",
+            "typo3",
+            "wordpress",
+            "zend",
+            "zikula"
+        ]
+    },
+    {
+        "name": "opauth/twitter",
+        "version": "0.3.1",
+        "version_normalized": "0.3.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/opauth/twitter.git",
+            "reference": "24792d512ccc67e7d11e9249737616f039551c11"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/opauth/twitter/zipball/24792d512ccc67e7d11e9249737616f039551c11",
+            "reference": "24792d512ccc67e7d11e9249737616f039551c11",
             "shasum": ""
         },
         "require": {
             "opauth/opauth": ">=0.2.0",
             "php": ">=5.2.0"
         },
-        "time": "2012-10-28 04:47:51",
+        "time": "2013-06-12 07:50:11",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -205,27 +302,24 @@
         ]
     },
     {
-        "name": "guzzlehttp/streams",
-        "version": "2.1.0",
-        "version_normalized": "2.1.0.0",
+        "name": "react/promise",
+        "version": "v2.2.0",
+        "version_normalized": "2.2.0.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/guzzle/streams.git",
-            "reference": "f91b721d73f0e561410903b3b3c90a5d0e40b534"
+            "url": "https://github.com/reactphp/promise.git",
+            "reference": "365fcee430dfa4ace1fbc75737ca60ceea7eeeef"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/guzzle/streams/zipball/f91b721d73f0e561410903b3b3c90a5d0e40b534",
-            "reference": "f91b721d73f0e561410903b3b3c90a5d0e40b534",
+            "url": "https://api.github.com/repos/reactphp/promise/zipball/365fcee430dfa4ace1fbc75737ca60ceea7eeeef",
+            "reference": "365fcee430dfa4ace1fbc75737ca60ceea7eeeef",
             "shasum": ""
         },
         "require": {
             "php": ">=5.4.0"
         },
-        "require-dev": {
-            "phpunit/phpunit": "~4.0"
-        },
-        "time": "2014-08-17 21:15:53",
+        "time": "2014-12-30 13:32:42",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -235,11 +329,57 @@
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
-                "GuzzleHttp\\Stream\\": "src/"
+                "React\\Promise\\": "src/"
             },
             "files": [
-                "src/functions.php"
+                "src/functions_include.php"
             ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jan Sorgalla",
+                "email": "jsorgalla@googlemail.com"
+            }
+        ],
+        "description": "A lightweight implementation of CommonJS Promises/A for PHP"
+    },
+    {
+        "name": "guzzlehttp/streams",
+        "version": "3.0.0",
+        "version_normalized": "3.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/guzzle/streams.git",
+            "reference": "47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/guzzle/streams/zipball/47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5",
+            "reference": "47aaa48e27dae43d39fc1cea0ccf0d84ac1a2ba5",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~4.0"
+        },
+        "time": "2014-10-12 19:18:40",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "3.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GuzzleHttp\\Stream\\": "src/"
+            }
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
@@ -252,7 +392,7 @@
                 "homepage": "https://github.com/mtdowling"
             }
         ],
-        "description": "Provides a simple abstraction over streams of data (Guzzle 4+)",
+        "description": "Provides a simple abstraction over streams of data",
         "homepage": "http://guzzlephp.org/",
         "keywords": [
             "Guzzle",
@@ -260,23 +400,75 @@
         ]
     },
     {
-        "name": "guzzlehttp/guzzle",
-        "version": "4.2.3",
-        "version_normalized": "4.2.3.0",
+        "name": "guzzlehttp/ringphp",
+        "version": "1.0.7",
+        "version_normalized": "1.0.7.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/guzzle/guzzle.git",
-            "reference": "66fd916e9f9130bc22c51450476823391cb2f67c"
+            "url": "https://github.com/guzzle/RingPHP.git",
+            "reference": "52d868f13570a9a56e5fce6614e0ec75d0f13ac2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/66fd916e9f9130bc22c51450476823391cb2f67c",
-            "reference": "66fd916e9f9130bc22c51450476823391cb2f67c",
+            "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/52d868f13570a9a56e5fce6614e0ec75d0f13ac2",
+            "reference": "52d868f13570a9a56e5fce6614e0ec75d0f13ac2",
             "shasum": ""
         },
         "require": {
-            "ext-json": "*",
-            "guzzlehttp/streams": "~2.1",
+            "guzzlehttp/streams": "~3.0",
+            "php": ">=5.4.0",
+            "react/promise": "~2.0"
+        },
+        "require-dev": {
+            "ext-curl": "*",
+            "phpunit/phpunit": "~4.0"
+        },
+        "suggest": {
+            "ext-curl": "Guzzle will use specific adapters if cURL is present"
+        },
+        "time": "2015-03-30 01:43:20",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.0-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GuzzleHttp\\Ring\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Michael Dowling",
+                "email": "mtdowling@gmail.com",
+                "homepage": "https://github.com/mtdowling"
+            }
+        ],
+        "description": "Provides a simple API and specification that abstracts away the details of HTTP into a single PHP function."
+    },
+    {
+        "name": "guzzlehttp/guzzle",
+        "version": "5.2.0",
+        "version_normalized": "5.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/guzzle/guzzle.git",
+            "reference": "475b29ccd411f2fa8a408e64576418728c032cfa"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/guzzle/guzzle/zipball/475b29ccd411f2fa8a408e64576418728c032cfa",
+            "reference": "475b29ccd411f2fa8a408e64576418728c032cfa",
+            "shasum": ""
+        },
+        "require": {
+            "guzzlehttp/ringphp": "~1.0",
             "php": ">=5.4.0"
         },
         "require-dev": {
@@ -284,24 +476,18 @@
             "phpunit/phpunit": "~4.0",
             "psr/log": "~1.0"
         },
-        "suggest": {
-            "ext-curl": "Guzzle will use specific adapters if cURL is present"
-        },
-        "time": "2014-10-05 19:29:14",
+        "time": "2015-01-28 01:03:29",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "4.2-dev"
+                "dev-master": "5.0-dev"
             }
         },
         "installation-source": "dist",
         "autoload": {
             "psr-4": {
                 "GuzzleHttp\\": "src/"
-            },
-            "files": [
-                "src/functions.php"
-            ]
+            }
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
@@ -327,129 +513,32 @@
         ]
     },
     {
-        "name": "symfony/process",
-        "version": "v2.6.3",
-        "version_normalized": "2.6.3.0",
-        "target-dir": "Symfony/Component/Process",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Process.git",
-            "reference": "319794f611bd8bdefbac72beb3f05e847f8ebc92"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Process/zipball/319794f611bd8bdefbac72beb3f05e847f8ebc92",
-            "reference": "319794f611bd8bdefbac72beb3f05e847f8ebc92",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "time": "2015-01-06 22:47:52",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Process\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony Process Component",
-        "homepage": "http://symfony.com"
-    },
-    {
-        "name": "symfony/finder",
-        "version": "v2.6.3",
-        "version_normalized": "2.6.3.0",
-        "target-dir": "Symfony/Component/Finder",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/Finder.git",
-            "reference": "16513333bca64186c01609961a2bb1b95b5e1355"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/Finder/zipball/16513333bca64186c01609961a2bb1b95b5e1355",
-            "reference": "16513333bca64186c01609961a2bb1b95b5e1355",
-            "shasum": ""
-        },
-        "require": {
-            "php": ">=5.3.3"
-        },
-        "time": "2015-01-03 08:01:59",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\Component\\Finder\\": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "Symfony Finder Component",
-        "homepage": "http://symfony.com"
-    },
-    {
         "name": "symfony/dom-crawler",
-        "version": "v2.6.3",
-        "version_normalized": "2.6.3.0",
+        "version": "v2.6.5",
+        "version_normalized": "2.6.5.0",
         "target-dir": "Symfony/Component/DomCrawler",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/DomCrawler.git",
-            "reference": "26a9eb302decd828990e1015afaa11b78b016073"
+            "reference": "896d1fb78832e8c4a4e4e8565ffdf668a53e518f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/DomCrawler/zipball/26a9eb302decd828990e1015afaa11b78b016073",
-            "reference": "26a9eb302decd828990e1015afaa11b78b016073",
+            "url": "https://api.github.com/repos/symfony/DomCrawler/zipball/896d1fb78832e8c4a4e4e8565ffdf668a53e518f",
+            "reference": "896d1fb78832e8c4a4e4e8565ffdf668a53e518f",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
         "require-dev": {
-            "symfony/css-selector": "~2.3"
+            "symfony/css-selector": "~2.3",
+            "symfony/phpunit-bridge": "~2.7"
         },
         "suggest": {
             "symfony/css-selector": ""
         },
-        "time": "2015-01-03 08:01:59",
+        "time": "2015-03-12 10:28:44",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -481,24 +570,27 @@
     },
     {
         "name": "symfony/css-selector",
-        "version": "v2.6.3",
-        "version_normalized": "2.6.3.0",
+        "version": "v2.6.5",
+        "version_normalized": "2.6.5.0",
         "target-dir": "Symfony/Component/CssSelector",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/CssSelector.git",
-            "reference": "3f80ecc614fec68d5b4a84a0703db3fdf5ce8584"
+            "reference": "86cf0aa16065ffc4545374e9479dd7878bf1d90f"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/CssSelector/zipball/3f80ecc614fec68d5b4a84a0703db3fdf5ce8584",
-            "reference": "3f80ecc614fec68d5b4a84a0703db3fdf5ce8584",
+            "url": "https://api.github.com/repos/symfony/CssSelector/zipball/86cf0aa16065ffc4545374e9479dd7878bf1d90f",
+            "reference": "86cf0aa16065ffc4545374e9479dd7878bf1d90f",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.3"
         },
-        "time": "2015-01-03 08:01:59",
+        "require-dev": {
+            "symfony/phpunit-bridge": "~2.7"
+        },
+        "time": "2015-02-24 11:52:21",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -534,18 +626,18 @@
     },
     {
         "name": "symfony/browser-kit",
-        "version": "v2.6.3",
-        "version_normalized": "2.6.3.0",
+        "version": "v2.6.5",
+        "version_normalized": "2.6.5.0",
         "target-dir": "Symfony/Component/BrowserKit",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/BrowserKit.git",
-            "reference": "2ecec44ed5047020c65dd6e4a4b2f3cf13ae3c04"
+            "reference": "329bdc10bff1e365abb8a3388d60a65630daf705"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/BrowserKit/zipball/2ecec44ed5047020c65dd6e4a4b2f3cf13ae3c04",
-            "reference": "2ecec44ed5047020c65dd6e4a4b2f3cf13ae3c04",
+            "url": "https://api.github.com/repos/symfony/BrowserKit/zipball/329bdc10bff1e365abb8a3388d60a65630daf705",
+            "reference": "329bdc10bff1e365abb8a3388d60a65630daf705",
             "shasum": ""
         },
         "require": {
@@ -554,12 +646,13 @@
         },
         "require-dev": {
             "symfony/css-selector": "~2.0,>=2.0.5",
+            "symfony/phpunit-bridge": "~2.7",
             "symfony/process": "~2.0,>=2.0.5"
         },
         "suggest": {
             "symfony/process": ""
         },
-        "time": "2015-01-03 08:01:59",
+        "time": "2015-03-13 13:21:46",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -591,30 +684,27 @@
     },
     {
         "name": "fabpot/goutte",
-        "version": "v2.0.0",
-        "version_normalized": "2.0.0.0",
+        "version": "v2.0.3",
+        "version_normalized": "2.0.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/FriendsOfPHP/Goutte.git",
-            "reference": "268a8d77e176d33816030cb89235b6e5dfc9cc2d"
+            "reference": "65ab61eae03d670b93a9044ad2328eb81aa1bde5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/FriendsOfPHP/Goutte/zipball/268a8d77e176d33816030cb89235b6e5dfc9cc2d",
-            "reference": "268a8d77e176d33816030cb89235b6e5dfc9cc2d",
+            "url": "https://api.github.com/repos/FriendsOfPHP/Goutte/zipball/65ab61eae03d670b93a9044ad2328eb81aa1bde5",
+            "reference": "65ab61eae03d670b93a9044ad2328eb81aa1bde5",
             "shasum": ""
         },
         "require": {
-            "ext-curl": "*",
-            "guzzlehttp/guzzle": "4.*",
+            "guzzlehttp/guzzle": ">=4,<6",
             "php": ">=5.4.0",
             "symfony/browser-kit": "~2.1",
             "symfony/css-selector": "~2.1",
-            "symfony/dom-crawler": "~2.1",
-            "symfony/finder": "~2.1",
-            "symfony/process": "~2.1"
+            "symfony/dom-crawler": "~2.1"
         },
-        "time": "2014-05-08 06:57:32",
+        "time": "2014-11-28 09:48:17",
         "type": "application",
         "extra": {
             "branch-alias": {
@@ -623,8 +713,8 @@
         },
         "installation-source": "dist",
         "autoload": {
-            "psr-0": {
-                "Goutte": "."
+            "psr-4": {
+                "Goutte\\": "Goutte"
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -638,9 +728,52 @@
             }
         ],
         "description": "A simple PHP Web Scraper",
-        "homepage": "https://github.com/fabpot/Goutte",
+        "homepage": "https://github.com/FriendsOfPHP/Goutte",
         "keywords": [
             "scraper"
+        ]
+    },
+    {
+        "name": "slywalker/boost_cake",
+        "version": "1.0.6",
+        "version_normalized": "1.0.6.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/slywalker/cakephp-plugin-boost_cake.git",
+            "reference": "bb1fa0d96b2c2c8fad7b0ccfab2ca2f231f66c3e"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/slywalker/cakephp-plugin-boost_cake/zipball/bb1fa0d96b2c2c8fad7b0ccfab2ca2f231f66c3e",
+            "reference": "bb1fa0d96b2c2c8fad7b0ccfab2ca2f231f66c3e",
+            "shasum": ""
+        },
+        "require": {
+            "composer/installers": "*",
+            "php": ">=5.3.0"
+        },
+        "suggest": {
+            "twbs/bootstrap": "Bootstrap framework"
+        },
+        "time": "2014-11-07 10:36:43",
+        "type": "cakephp-plugin",
+        "installation-source": "dist",
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Yasuo Harada",
+                "email": "slywalker.net@gmail.com"
+            }
+        ],
+        "description": "BoostCake is a plugin for CakePHP using Bootstrap",
+        "homepage": "http://slywalker.github.io/cakephp-plugin-boost_cake/",
+        "keywords": [
+            "bootstrap",
+            "cakephp",
+            "twitter"
         ]
     }
 ]

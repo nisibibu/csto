@@ -1,8 +1,9 @@
 {
     "require":{
-	"monolog/monolog":"1.6.*",
-        "opauth/twitter" :"0.3,*",
-        "fabpot/goutte" :"2.0,*"
+	     "monolog/monolog":"1.6.*",
+        "opauth/twitter" :"0.3.*",
+        "fabpot/goutte" :"2.0.*",
+        "slywalker/boost_cake": "*"
     },
     "config": {
         "vendor-dir": "Vendor"

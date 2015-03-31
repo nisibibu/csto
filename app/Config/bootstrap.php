@@ -133,3 +133,4 @@ define('CONSUMER_KEY',        'pkOywXf82gAyn1hnpqgzShmHX');
 define('CONSUMER_SECRET',     'ajN7sqnlvJEmqgQyaXRZ7m2bkSGWGIcsWF6ft9Alm0jmpuGlgE');
 define('ACCESS_TOKEN',        '2537332975-vf1gxhneO73mBA5gfk7zx0XvemitEvF46aGQqdk');
 define('ACCESS_TOKEN_SECRET', 'uM7isfBEUZmDRQ9IdD6pEgiKCNhYRdd2e1eYT8Pmdyk0r');
+CakePlugin::load(array('TwitterBootstrap'));

@@ -83,7 +83,8 @@ class TotovotesController extends AppController{
         $toto_vote = new Totovote();
         $recent_time = $toto_vote->getRecentTime();
         $result = $toto_vote->getVoteTotoRecent($recent_time);
-        debug($result);
+        //debug($result);
+        return $result;
     }
     
     /*DBから最新回を取得*/
@@ -127,7 +128,7 @@ class TotovotesController extends AppController{
     public function getMiniVoteByY(){
          /*miniの取得（テスト）*/
         $m_vote_result = $this->Toto->getMiniVoteByYJ();
-        debug($m_vote_result);
+        //debug($m_vote_result);
         //$this->setMiniVote($m_vote_result);
     }
     

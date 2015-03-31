@@ -54,6 +54,12 @@ Make requests with the ``request()`` method:
 The method returns a ``Crawler`` object
 (``Symfony\Component\DomCrawler\Crawler``).
 
+Fine-tune cURL options:
+
+.. code-block:: php
+
+    $client->getClient()->setDefaultOption('config/curl/'.CURLOPT_TIMEOUT, 60);
+
 Click on links:
 
 .. code-block:: php
@@ -94,8 +100,7 @@ Technical Information
 
 Goutte is a thin wrapper around the following fine PHP libraries:
 
-* Symfony Components: BrowserKit, ClassLoader, CssSelector, DomCrawler, Finder,
-  and Process;
+* Symfony Components: BrowserKit, CssSelector and DomCrawler;
 
 *  `Guzzle`_ HTTP Component.
 

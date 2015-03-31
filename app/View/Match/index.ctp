@@ -49,6 +49,10 @@
     
     echo "チームのデータ表示"."</br>";
     if(isset($match)){
-        var_dump($match);
+//        foreach($match as $var){
+//        echo $var['section']. "  ". $var['match_date']." :".$var['home_team']."  ". $var['score'] . $var['away_team'] ;
+//            
+//        }
+        debug($match);
     }
 ?>

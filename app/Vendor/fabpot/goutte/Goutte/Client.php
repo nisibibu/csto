@@ -79,14 +79,19 @@ class Client extends BaseClient
     {
         $headers = array();
         foreach ($request->getServer() as $key => $val) {
-            $key = implode('-', array_map('ucfirst', explode('-', strtolower(str_replace(array('_', 'HTTP-'), array('-', ''), $key)))));
-            if (!isset($headers[$key]) && !empty($val)) {
+            $key = strtolower(str_replace('_', '-', $key));
+            $contentHeaders = array('content-length' => true, 'content-md5' => true, 'content-type' => true);
+            if (0 === strpos($key, 'http-')) {
+                $headers[substr($key, 5)] = $val;
+            }
+            // CONTENT_* are not prefixed with HTTP_
+            elseif (isset($contentHeaders[$key])) {
                 $headers[$key] = $val;
             }
         }
 
         $body = null;
-        if (!in_array($request->getMethod(), array('GET','HEAD'))) {
+        if (!in_array($request->getMethod(), array('GET', 'HEAD'))) {
             if (null !== $request->getContent()) {
                 $body = $request->getContent();
             } else {
@@ -126,6 +131,9 @@ class Client extends BaseClient
             $response = $this->getClient()->send($guzzleRequest);
         } catch (RequestException $e) {
             $response = $e->getResponse();
+            if (null === $response) {
+                throw $e;
+            }
         }
 
         return $this->createResponse($response);
@@ -141,7 +149,7 @@ class Client extends BaseClient
             if (is_array($info)) {
                 if (isset($info['tmp_name'])) {
                     if ('' !== $info['tmp_name']) {
-                        $request->getBody()->addFile(new PostFile($name, fopen($info['tmp_name'], 'r')));
+                        $request->getBody()->addFile(new PostFile($name, fopen($info['tmp_name'], 'r'), isset($info['name']) ? $info['name'] : null));
                     } else {
                         continue;
                     }

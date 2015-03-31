@@ -17,8 +17,8 @@ class NewsController extends Controller{
             /*ニュースサイトからの情報取得（テスト）*/
             //$this->NewsCraw->getNewsInfoSoccerKing();   //サッカーキング
             $result_f = $this->NewsCraw->getNewsInfoFootBallChannel();  //フットボールチャンネル
-            //debug($page_info);
-            $this->setNews($result_f);
+            //debug($result_f);
+            //$this->setNews($result_f);
         }
         
         /*RSSからデータを取得*/
