@@ -66,11 +66,11 @@ class TotovotesController extends AppController{
         //debug($result);
         
         
-        $recent_held = $this->getRecentHeld();
-        $recent_held = $recent_held;
+        //$recent_held = $this->getRecentHeld();
+        //$recent_held = $recent_held;
         //debug($recent_held);
         
-        $match_info = $this->TotoVotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);    //toto開催回（自体の情報）の取得
+        //$match_info = $this->TotoVotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);    //toto開催回（自体の情報）の取得
         
         //debug($match_info);
         //$this->setTotoMatch($match_info);
@@ -83,7 +83,10 @@ class TotovotesController extends AppController{
         $toto_vote = new Totovote();
         $recent_time = $toto_vote->getRecentTime();
         $result = $toto_vote->getVoteTotoRecent($recent_time);
-        //debug($result);
+        
+        //試合情報のみ取り出し
+        $result = $toto_vote->getTotoMatchInfoOnly($result);
+        
         return $result;
     }
     

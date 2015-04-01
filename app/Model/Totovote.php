@@ -451,4 +451,14 @@ class Totovote extends Vote{
         return $result;
     }
     
+    /*今回の試合情報のみ取り出し（toto)
+     * (画面表示用に整形）
+     **********************************/
+    public function getTotoMatchInfoOnly($match_info){
+        //debug($match_info);
+        
+        return $match_info;
+    }
+    
+    
 }

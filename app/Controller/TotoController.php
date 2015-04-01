@@ -68,7 +68,7 @@ class TotoController extends AppController{
         
         /*チームのリスト取得*/
         $team_list = $match_controller->getTeamList();
-        
+        //debug($team_list);
         /*チームリストをビューへ渡す*/
         $this->set('team_list',$team_list);
         
@@ -84,8 +84,10 @@ class TotoController extends AppController{
             $team = $form_data['team'];
             $item = $form_data['count'];
             $match_result = $match_controller->getMatchByTeam($team, $item);
-            //var_dump($match_result);
+            $ranking = $match_controller->getTeamRanking($team);
+            debug($ranking);
             $this->set('match',$match_result);
+            $this->set('ranking',$ranking);
         }else{
             /*POSTで指定されてこなかった場合の処理*/
             $team ="C大阪";

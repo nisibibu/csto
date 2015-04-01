@@ -144,8 +144,6 @@ class MatchController extends AppController{
     }
 
 
-
-
     /*Jリーグの試合結果を登録*/
     public function getMatchesJ1League(){
         //Jリーグの試合結果を取得
@@ -265,6 +263,22 @@ class MatchController extends AppController{
         $result = $league_rank->getLeagueRankingDb($year, $league);
         return $result;
     }
+    
+     /*指定チームの年度ランキング情報を取得*/
+    public function  getTeamRanking($name,$year=""){
+        App::uses('Match','Model');
+        
+        if($year == ""){
+             $date = date("Y", time());//今年の年度を付与
+             $year = $date;
+        }
+        
+        //モデルクラスのインスタンスを生成
+        $league_rank = new Match('Match','league');
+        $result = $league_rank->getTeamRankingDb($name, $year);
+        return $result;
+    }
+    
     
     /*Formデータの受け取り、返却*/
     public function show(){

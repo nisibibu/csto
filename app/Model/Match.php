@@ -304,6 +304,162 @@ class Match extends AppModel{
         return $result;
     }
     
+     //チーム、年度を指定してランキング関連情報を取得
+    public function getTeamRankingDb($name, $year){
+        $name = $this->formatTeamName($name);
+        
+        $data = array(
+           "conditions" => array(
+                             "team" => $name,
+                             "year" => $year,
+            ),   
+        );
+        //debug($data);
+        
+        $result = $this->find("all",$data);
+        //debug($result);
+        return $result;
+    }
+    
+    /*チーム名の変換
+     * 仙台　→　ベガルタ仙台
+     * 
+     * 全ての登録時に必ず正式名称に変換して登録する
+     * 
+     * 
+     *      */
+    public function formatTeamName($name){
+        if($name === '仙台'){
+            $name = 'ベガルタ仙台';
+        }
+        if($name === '甲府'){
+            $name = 'ヴァンフォーレ甲府';
+        }
+	if($name === '名古屋'){
+            $name = '名古屋グランパス';
+        }
+	if($name === 'C大阪'){
+            $name = 'セレッソ大阪';
+        }
+	if($name === '鳥栖'){
+            $name = 'サガン鳥栖';
+        }
+	if($name === '柏'){
+            $name = '柏レイソル';
+        }
+	if($name === 'G大阪'){
+            $name = 'ガンバ大阪';
+        }
+	if($name  === '横浜'){
+            $name = '横浜 Ｆ・マリノス';
+        }
+	if($name === '川崎F'){
+            $name = '川崎フロンターレ';
+        }
+	if($name === 'FC東京'){
+            $name = 'ＦＣ東京';
+        }
+	if($name === '鹿島'){
+            $name = '鹿島アントラーズ';
+        }
+	if($name === '新潟'){
+            $name = 'アルビレックス新潟';
+        }
+	if($name === '千葉'){
+            $name = 'ジェフユナイテッド市原・千葉';
+        }
+	if($name === '大分'){
+            $name = '大分トリニータ';
+        }
+        if($name === '熊本'){
+            $name = 'ロアッソ熊本';
+        }
+	if($name === '広島'){
+            $name = 'サンフレッチェ広島';
+        }
+	if($name === '神戸'){
+            $name = 'ヴィッセル神戸';
+        }
+	if($name === '徳島'){
+            $name = '徳島ヴォルティス';
+        }
+	if($name === '浦和'){
+            $name = '浦和レッズ';
+        }
+	if($name === '大宮'){
+            $name = '大宮アルディージャ';
+        }
+	if($name === '清水'){
+            $name = '清水エスパルス';
+        }
+	if($name === '栃木'){
+            $name = '栃木ＳＣ';
+        }
+	if($name === '東京V'){
+            $name = '東京ヴェルディ1969';
+        }
+	if($name === '岐阜'){
+            $name = 'ＦＣ岐阜';
+        }
+	if($name === '磐田'){
+            $name = 'ジュビロ磐田';
+        }
+	if($name === '水戸'){
+            $name = '水戸ホーリーホック';
+        }
+	if($name === '横浜FC'){
+            $name = '横浜ＦＣ';
+        }
+	if($name === '岡山'){
+            $name = 'ファジアーノ岡山';
+        }
+	if($name === '北九州'){
+            $name = 'キラヴァンツ北九州';
+        }
+	if($name === '湘南'){
+            $name = '湘南ベルマーレ';
+        }
+	if($name === '長崎'){
+            $name = 'Ｖ・ファーレン長崎';
+        }
+	if($name === '福岡'){
+            $name = 'アビスパ福岡';
+        }
+	if($name === '愛媛'){
+            $name = '愛媛ＦＣ';
+        }
+	if($name === '讃岐'){
+            $name = 'カマタマーレ讃岐';
+        }
+	if($name === '群馬'){
+            $name = 'ザスパクサツ群馬';
+        }
+	if($name === '札幌'){
+            $name = 'コンサドーレ札幌';
+        }
+	if($name === '山形'){
+            $name = 'モンテディオ山形';
+        }
+	if($name === '松本'){
+            $name = '松本山雅ＦＣ';
+        }
+	if($name === '富山'){
+            $name = 'カターレ富山';
+        }
+	if($name === '京都'){
+            $name = '京都サンガF.C.';
+        }
+	if($name === '長野'){
+            $name = 'ＡＣ長野パルセイロ';
+        }
+	if($name === '金沢'){
+            $name = 'ツエーゲン金沢';
+        }
+         
+        return $name;
+    }
+    
+    
     
     /*セクションの設定個数を返却（該当セクションが登録されているか判定)*/
     public function isSetSecttion($section,$year,$league = "j1",$match_date=""){

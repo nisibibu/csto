@@ -119,5 +119,11 @@ class League extends AppModel{
 
         return $result;
     }
+    
+    /*********************DBから情報取り出し処理*******************************/
+   
+    
+    
+    
 }
 
