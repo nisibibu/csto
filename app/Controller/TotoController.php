@@ -89,7 +89,7 @@ class TotoController extends AppController{
             //debug($ranking);
             $this->set('match',$match_result);
             $this->set('ranking',$ranking);
-        }else if(!empty($form_data) && array_key_exists('home_team', $form_data)){
+        }else if(!empty($form_data) && array_key_exists('home_team', $form_data) && array_key_exists('away_team', $form_data)){
             //debug($form_data);
             $home_team_info = $form_data['home_team'];
             $this->set('home_team_info',$home_team_info);

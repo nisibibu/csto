@@ -67,7 +67,7 @@
     );
     */
     
-    echo "第".$held_time."toto情報"."</br>";
+    echo "第".$held_time."回toto"."</br>";
     
     /*分けて記述*/
     echo $this->Html->div('panel panel-default');
@@ -88,7 +88,7 @@
         $temp_4 = $this->Form->submit("詳細");
         //debug($temp_2);
         $options = array(
-        'label' => 'Update',
+        'label' => '詳細',
         'div' => array(
             'class' => 'glass-pill',
             )
@@ -132,7 +132,10 @@
   </head>
   <body>
     <?php //echo $this->BootstrapForm->input('name'); 
-        echo 'ホーム：'. $home_team_info. "<br />". 'アフェイ：'. $away_team_info.'<br />';
+        if($home_team_info){
+             echo 'ホーム：'. $home_team_info. "<br />". 'アフェイ：'. $away_team_info.'<br />';
+        }
+               
     ?>
     
     
@@ -197,9 +200,9 @@
     	</nav>
     	
     	<!-- ラベル -->
-    	<p>Product<span class="label label-primary">NEW!</span></p>
+    	<!--<p>Product<span class="label label-primary">NEW!</span></p>-->
     	<!-- badge -->
-    	<p>Inbox<span class="badge">5</span></p><!--中身がない場合バッジ表示されない -->
+    	<!--<p>Inbox<span class="badge">5</span></p><!--中身がない場合バッジ表示されない -->
 
     	<!-- panel -->
     	<div class="panel panel-primary">
