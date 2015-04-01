@@ -78,16 +78,23 @@ class TotoController extends AppController{
         $this->set('recent_toto_info',$recent_toto_info);
         
         
-        /**/
-        if(!empty($form_data = $this->show())){
+        /*POSTデータの判定、データの取り出し→画面へセット*/
+        $form_data = $this->show();
+        if(!empty($form_data) && array_key_exists('team', $form_data)){
             /*チームの試合結果を指定した分だけ最新件数より取得する*/
             $team = $form_data['team'];
             $item = $form_data['count'];
             $match_result = $match_controller->getMatchByTeam($team, $item);
             $ranking = $match_controller->getTeamRanking($team);
-            debug($ranking);
+            //debug($ranking);
             $this->set('match',$match_result);
             $this->set('ranking',$ranking);
+        }else if(!empty($form_data) && array_key_exists('home_team', $form_data)){
+            //debug($form_data);
+            $home_team_info = $form_data['home_team'];
+            $this->set('home_team_info',$home_team_info);
+            $away_team_info = $form_data['away_team'];
+            $this->set('away_team_info',$away_team_info);
         }else{
             /*POSTで指定されてこなかった場合の処理*/
             $team ="C大阪";
@@ -112,14 +119,16 @@ class TotoController extends AppController{
          *          */    
         //$id = $this->request->pass[0];  //
         if($this->request->is('post')){
-            $data = array(
+            if(array_key_exists('match', $this->request->data)){
+                $data = array(
                 'team'  => $this->request->data['match']['team'],
                 'count' => $this->request->data['match']['count'],
-            );
-            if($this->Post->save($data)){
-                //debug("保存しました");
-                $this->Session->setFlash("保存しました");
-                $this->redirect('/toto/index');
+                );
+                if($this->Post->save($data)){
+                    //debug("保存しました");
+                    $this->Session->setFlash("保存しました");
+                    $this->redirect('/toto/index');
+                } 
             }
         }else{
             //var_dump("POSTされていないので初期値を設定します");
@@ -143,10 +152,16 @@ class TotoController extends AppController{
     public function show(){
         //POSTが送信されたかどうか
         if($this->request->is('POST')){
-            $team = $this->request->data['match']['team'];;
-            $count = $this->request->data["match"]['count'];
-            $data['team'] = $team;
-            $data['count'] = $count;
+            if(array_key_exists('match', $this->request->data)){
+                $team = $this->request->data['match']['team'];
+                $count = $this->request->data["match"]['count'];
+                $data['team'] = $team;
+                $data['count'] = $count;
+            }
+            if(array_key_exists('card', $this->request->data)){
+                $data['home_team'] = $this->request->data['card']['home_team'];
+                $data['away_team'] = $this->request->data["card"]['away_team'];
+            }
         }
         else{
             return false;

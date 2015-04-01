@@ -1,11 +1,10 @@
 <?php
-echo "チーム選択"."</br>";
     
     
     /*** Formの作成 **
      * find('list')のデータを渡すことで
      * リスト生成可能（書きかえる）
-     *      */
+     *      
     $team = array(
         "FC東京"=> "FC東京",
         "浦和"=>"浦和",
@@ -46,35 +45,70 @@ echo "チーム選択"."</br>";
     echo $this->Form->end();
     
     //var_dump($team);
-    
+    */
+    /*
     echo "第".$recent_toto_info[0]['Totovote']['held_time']."回 totoの組み合わせ情報"."<br />";
     foreach($recent_toto_info as $toto_info){
         echo  $toto_info['Totovote']['no']."   " .$toto_info['Totovote']['home_team'] .
                     " VS ". $toto_info['Totovote']['away_team']."  ".$toto_info['Totovote']['stadium']."<br />";
     }
-    
-    
+    */
+    $held_time = $recent_toto_info['held_time'];
+    unset($recent_toto_info['held_time']);
+    /*
     $table_header = $this->Html->tableHeaders(
-            array("no","試合日","開始時刻","ホーム","アウェイ","会場"));
+            array("開催日","開始時刻","No","ホーム","アウェイ","会場"));
     $table_cells = $this->Html->tableCells(
-            array("1","4/5","15:00","ベガルタ仙台","清水エスパルス","ユアスタ"));
+            //array("1","4/5","15:00","ベガルタ仙台","清水エスパルス","ユアスタ"));
+            $recent_toto_info);
     
     echo $this->Html->div('panel panel-default',
             $this->Html->tag("table",$table_cells,$table_header)
     );
+    */
     
+    echo "第".$held_time."toto情報"."</br>";
     
-    
+    /*分けて記述*/
+    echo $this->Html->div('panel panel-default');
     echo $this->Html->tag('table');
-    echo $this->Html->tableHeaders(array('ID','名字','名前'));
-    echo $this->Html->tableCells(array('1','山田','太郎'));
-    echo $this->Html->tableCells(array('2','佐藤','次郎'));
+    echo $this->Html->tableHeaders(array("開催日","開始時刻","No","ホーム","アウェイ","会場","詳細"));
+    foreach($recent_toto_info as $toto_info){
+        $temp = $this->Form->create('card',array(
+        'type' => 'POST',
+        'url' => array(
+            'controller' => 'Toto','action' => 'index'))); //指定アクションに送信
+        //debug($temp);
+        $temp_2 = $this->Form->hidden('home_team',
+                array('value' => $toto_info['home_team']));
+        //debug($temp_4);
+        $temp_3 = $this->Form->hidden('away_team',
+                array('value' => $toto_info['away_team']));
+        //debug($temp_5);
+        $temp_4 = $this->Form->submit("詳細");
+        //debug($temp_2);
+        $options = array(
+        'label' => 'Update',
+        'div' => array(
+            'class' => 'glass-pill',
+            )
+        );
+        $temp_5 = $this->Form->end();
+        //debug($temp_3);
+        //$toto_info[] = $detail;
+        $temp_str = $temp. $temp_2. $temp_3. $temp_4. $temp_5;
+        $toto_info[] = $temp_str;
+        echo $this->Html->tableCells($toto_info);
+         
+    }
     echo $this->Html->tag('/table');
+    echo $this->Html->tag('/div');
     
+    /*
     if(count($match) === 1){
         debug($match);
     }
-    
+    */
 ?>
 
 <!DOCTYPE html>
@@ -98,7 +132,7 @@ echo "チーム選択"."</br>";
   </head>
   <body>
     <?php //echo $this->BootstrapForm->input('name'); 
-        debug($recent_toto_info);
+        echo 'ホーム：'. $home_team_info. "<br />". 'アフェイ：'. $away_team_info.'<br />';
     ?>
     
     

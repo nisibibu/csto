@@ -453,11 +453,50 @@ class Totovote extends Vote{
     
     /*今回の試合情報のみ取り出し（toto)
      * (画面表示用に整形）
+     * 
+     * array(
+     *      no
+     *      held_date
+     *      match_time
+     *      home_team
+     *      away_team
+     *      stadium
+     * )
+     * 'held_time' =>
+     * .
+     * .
+     * 
+     * 
      **********************************/
     public function getTotoMatchInfoOnly($match_info){
         //debug($match_info);
+        $result = array();
+        $held_time = $match_info[0]['Totovote']['held_time'];
         
-        return $match_info;
+        foreach($match_info as $match){
+            $temp = array();
+            $var = $match['Totovote'];
+            foreach ($var as $key => $value) {
+                if($key === 'held_date'){
+                    $temp[$key] = $value;
+                }else if($key === 'match_time'){
+                    $temp[$key] = $value;
+                }else if($key === 'no'){
+                    $temp[$key] = $value;
+                }else if($key === 'home_team'){
+                    $temp[$key] = $value;
+                }else if($key === 'away_team'){
+                    $temp[$key] = $value;
+                }else if($key === 'stadium'){
+                    $temp[$key] = $value;
+                }
+            }
+            $result[] = $temp;
+        }
+        
+        $result['held_time'] = $held_time;//開催回の追加
+        //debug($result);
+        return $result;
     }
     
     
