@@ -88,7 +88,7 @@ class MatchesComponent extends Component{
         
         $item_name = array("ホーム","スコア","アウェー","試合開始","競技場");
         $data_item = array("section","date_s","date","home","score",
-                             "home_score","away_score","away","start_time","stadium","yaer","month");
+                             "home_score","away_score","away","start_time","stadium","yaer","month","week");
         
         //debug($data_item);
         
@@ -115,7 +115,12 @@ class MatchesComponent extends Component{
             if(preg_match("/.+月.+日(.+)/", $temp)){
                 $craw_result[] = $this->changeDateType($year,$temp);
             }
-            
+            //開催日（DATE変換化）なら週を追加
+//            if(preg_match("/\d{4}-\d{2}-\d{2}/", $temp)){
+//                //$craw_result[] = $this->getWeek($temp);
+//                var_dump($this->getWeek($temp));
+//            }
+//            
             //var_dump($craw_result);
         });
         
@@ -246,6 +251,30 @@ class MatchesComponent extends Component{
 
     }
     
+    /*日にちから月の何週目かを取得して返す
+     *
+     * @param  stirng  $date 
+     * @return int  $count_week
+     *      */
+    public function getWeek($date){
+        $now = strtotime($date);
+        $saturday = 6;
+        $week_day = 7;
+        //debug(date('w',$now));
+        $w = intval(date('w',$now));
+        //debug($w);
+        $d = intval(date('d',$now));
+        //debug($d);
+        if ($w!=$saturday) {
+        $w = ($saturday - $w) + $d;
+        } else { // 土曜日の場合を修正
+        $w = $d;
+        }
+        $count_week = ceil($w/$week_day);
+        return $count_week;
+    }
+    
+    
     /*日程毎の配列をDB登録用に整形して返す(ナビスコ杯使用)*/
     public function formatResultToNabisuko($match_info){
         foreach($match_info['match_info'] as $var){
@@ -304,9 +333,9 @@ class MatchesComponent extends Component{
         $temp = array();
         if($arr === 1){
                $i = 0;  //単日の場合
-               $section[] = $temp_result[$i];      //節
+               $section[] = $temp_result[$i];      //節取得
                array_shift($temp_result);
-               $date_str[] = $temp_result[$i];      //試合開催日
+               $date_str[] = $temp_result[$i];      //試合開催日取得
                array_shift($temp_result);
                $date_d[] = $temp_result[$i];
                array_shift($temp_result);
@@ -341,14 +370,16 @@ class MatchesComponent extends Component{
          *      スタジアム
          *      年度
          *      月
+         *      週目
          *          */
         $result = array();
         
         for($i = 0; $i < count($temp);$i++){
            //1つの配列に処理を行う
             foreach($temp[$i] as $var){
+                $week = $this->getWeek($date_d[$i]);
                 array_unshift($var, $section[$i],$date_str[$i],$date_d[$i]);   //節、開催日（曜日）、開催日追加
-                array_push($var, $year,$month);  //年、月を追加
+                array_push($var, $year,$month,$week);  //年、月を追加
                 $result[] = $var;
             }  
         }
@@ -741,8 +772,8 @@ class MatchesComponent extends Component{
      }
 
         /* [関数名] array_insert
-        * [機　能] 配列の任意の位置へ要素を挿入し、挿入後の配列を返す
-        * [引　数]
+        * [機能] 配列の任意の位置へ要素を挿入し、挿入後の配列を返す
+        * [引数]
         * @param array  &$array 挿入される配列（参照渡し）
         * @param string $insert 挿入する値
         * @param string $pos    挿入位置（先頭は0）
@@ -903,7 +934,8 @@ class MatchesComponent extends Component{
          *      出場時間（分）
          *      警告
          *      退場
-          *     年度
+         *      年度
+         *      
          *          */
         $goal_result = array_chunk($result, count($item_name));
         //var_dump($goal_result);

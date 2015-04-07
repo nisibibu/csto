@@ -54,7 +54,6 @@ class MatchController extends AppController{
         //$this->setMatchesNabisuko($nabisuko_result);
         
         
-
         
         /*画面表示テスト*/
         //if($this->show()){
@@ -109,10 +108,10 @@ class MatchController extends AppController{
         //$this->request->data = $this->Post->find('team',$options);
         //$this->request->data = array('team',$options);
         
-        
+        $this->saveMatchJLeague();
         
     }
-
+    
 
     /*チーム一覧の取得*/
     public function getTeamList(){
@@ -133,14 +132,11 @@ class MatchController extends AppController{
         /*Jリーグ試合結果取得・保存
          * from: suponichi
          *          */
-        $match_info_j1 = $this->getMatchesJ1League();
-        //debug($match_info);
+        $match_info_j1 = $this->getMatchesJ1League();   //J1の試合情報を取得
+        debug($match_info_j1);
         $result_j1 = $this->setMatchesInfoJLeague($match_info_j1); //j1を保存
-        //debug($result_j1);
-        $match_info_j2 = $this->getMatchesJ2League();
-        //debug($match_info_j2);
-        $result_j2 = $this->setMatchesInfoJLeague($match_info_j2,"j2");  //j2を保存
-        //debug($result_j2);
+        $match_info_j2 = $this->getMatchesJ2League();   //J2の試合情報を取得
+        //$result_j2 = $this->setMatchesInfoJLeague($match_info_j2,"j2");  //j2を保存
     }
 
 
