@@ -5,6 +5,7 @@
  * * /
  */
 App::uses('AppModel','Model');
+App::import('Component','Common');
 
 class Match extends AppModel{
     
@@ -91,6 +92,10 @@ class Match extends AppModel{
      *      */
     public function setMatchesOneSection($statuses,$j_class,$data_item){
         $section = $statuses[0][0]; //始めのデータの節を取り出し
+         /* Common コンポ―ネントインスタンス化 */
+        $collection = new ComponentCollection();
+        $common = new CommonComponent($collection);
+        
         
         if($j_class === "ヤマザキナビスコ杯"){
             $year = $statuses[0][9];    //始めのデータの年を取り出し
@@ -118,9 +123,16 @@ class Match extends AppModel{
                     $i = 0;
                     foreach($status as $var){
                        //１項目の処理
-                       $tmp = array(
-                           $data_item[$i] => $var,
-                       );
+                       if($data_item[$i] === 'home_team' || $data_item[$i] === 'away_team'){
+                           $tmp = array(
+                                $data_item[$i] => $common->formatTeamName($var),
+                           );
+                       }else{
+                           $tmp = array(
+                                $data_item[$i] => $var,
+                           );
+                       }
+                       
                        $i++;
                        $temp = $temp + $tmp; 
                     }
@@ -133,7 +145,7 @@ class Match extends AppModel{
                     $j++;
                 }
                 //debug($data);
-            $result = $this->saveAll($data); 
+                $result = $this->saveAll($data); 
             }else if($set_count > 8){
                 /*該当回が登録されていた場合何もしない*/
                 

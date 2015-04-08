@@ -226,7 +226,7 @@ class MatchesComponent extends Component{
             //debug($result_g);
             //debug($temp_result);
 
-//            /*DB登録用にデータを整形*/
+//          /*DB登録用にデータを整形*/
             foreach ($result_g as $var){
                 //$match_info[] = $this->formatResultToNabisuko($result);
                 $match_info[] = $this->formatResultToNabisuko($var);

@@ -46,7 +46,7 @@ class LeagueController extends AppController{
      * 
      * @return boolean $result
      */
-    public function saveJ1LeagueInfo($league){
+    public function saveJLeagueInfo($league){
        /*League情報を取得*/
         $league_info = $this->League->getLeagueInfo($league);
         //debug($league_info);
