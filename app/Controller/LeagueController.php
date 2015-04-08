@@ -25,7 +25,6 @@ class LeagueController extends AppController{
         //$this->setLeagueInfo($league_info_j1, $j_class);
         //J2のリーグ情報を登録
         //$j_class = "j2";
-        
         //$league_info_j2 = $this->League->getLeagueInfo($j_class);
         //debug($league_info_j2);
         //$this->setLeagueInfo($league_info_j2, $j_class);
@@ -41,11 +40,11 @@ class LeagueController extends AppController{
         
         //$this->setgoalRankingInfo($goal_ranking_j1, $j_class);   //DBへ保存
         
-        //$j_class = "j2";
+        $j_class = "j2";
 //        $param = "03";
-        //$goal_ranking_j2 = $this->League->getGoalRanking(GOAL_RANKING_J2); //J1ゴールランキングの取得
+        $goal_ranking_j2 = $this->League->getGoalRanking(GOAL_RANKING_J2); //J1ゴールランキングの取得
         //debug($goal_ranking_j2);
-        //$this->setgoalRankingInfo($goal_ranking_j2, $j_class);
+        $this->setgoalRankingInfo($goal_ranking_j2, $j_class);
          
          
     }

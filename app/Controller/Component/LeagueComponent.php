@@ -11,8 +11,10 @@ define('EXPECTATION_RANK',"http://soccer.yahoo.co.jp/jleague/expectranking");   
 
 define('ASSIST_RANKING','http://www.football-lab.jp/summary/player_ranking/j1/?year=2014');   //アシストランキング
 
+App::uses('CommonComponent', 'Controller/Component');
+
 /*リーグ情報の取得、格納*/
-class LeagueComponent extends Component{
+class LeagueComponent extends CommonComponent{
     
     /*J1の情報をスクレイピングで取得*/
     public function  getLeagueInfo($status = "j1"){
@@ -38,9 +40,21 @@ class LeagueComponent extends Component{
         });
         //debug($update_time);
         
-         /*年度の取得*/
-        preg_match('/^[0-9]{4}/', $update_time,$year);
-        $year = $year[0];
+         /* 年
+          * 月
+          * 週
+          * の取得*/
+        //preg_match('/^[0-9]{4}/', $update_time,$year);
+        //$year = $year[0];
+        preg_match('/(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<date>\d{1,2})日/',$update_time,$time);
+        $year = $time['year'];
+        $month = $time['month'];
+        $date = $year.'-'.$month.'-'.$time['date'];
+        
+        //何週目かの計算（月の)
+        $week = $this->getWeek($date);
+        //debug($week);
+        
         
         //項目名の取得
          $crawler->filter('#modSoccerStanding table thead th' )->each(function( $node )use(&$item_name){
@@ -84,7 +98,10 @@ class LeagueComponent extends Component{
             $league_info[] = $tmp;
         }
 
+        /*情報の付加*/
         $league_info['year'] = $year;
+        $league_info['month'] = $month;
+        $league_info['week'] = $week;
         
         return $league_info;
     }
@@ -113,9 +130,13 @@ class LeagueComponent extends Component{
             });
            //var_dump($update_time);
             /*年度の取得*/
-           preg_match('/^[0-9]{4}/', $update_time,$year);
-           $year = $year[0];
-           //debug($year);
+            preg_match('/(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<date>\d{1,2})日/',$update_time,$time);
+            $year = $time['year'];
+            $month = $time['month'];
+            $date = $year.'-'.$month.'-'.$time['date'];
+        
+            //何週目かの計算（月の)
+            $week = $this->getWeek($date);
            
           //項目の取得
           $crawler->filter('#modSoccerStats table th' )->each(function( $node )use(&$item_name){
@@ -171,21 +192,43 @@ class LeagueComponent extends Component{
          *      出場時間（分）
          *      警告
          *      退場
-          *     年度
-         *          */
+         *     年度
+         *
+         */
         $goal_result = array_chunk($craw_result, count($item_name));
         //var_dump($goal_result);
         //debug($goal_ranking_info);
         
-        foreach ($goal_result as $var){
-            //var_dump($var);
-            //各要素に年度を末尾に追加
-            array_push($var,$year);
-            $goal_ranking_info[] = $var;
-        }
-        //$goal_ranking_info = $goal_result;
+        //各チームごとに分けて取り出し
+         /*$league_info
+         * array(
+         *      順位
+         *      選手名
+         *      ベストゴール動画 
+         *      チーム名
+         *      勝点
+         *      試合数
+         *      勝敗
+         *      引き分け数
+         *      敗戦数
+         *      得点
+         *      失点
+         *      得失点差
+         *          */
         
-       //var_dump($goal_ranking_info);
+        
+        foreach ($goal_result as $var){
+            $tmp = array();
+            for($i = 0; $i < count($item_name); $i++){
+                $tmp[$item_name[$i]] = $var[$i];
+            }
+            $goal_ranking_info[] = $tmp;
+        }
+
+        //付加情報の追加
+        $goal_ranking_info['year'] = $year;
+        $goal_ranking_info['month'] = $month;
+        $goal_ranking_info['week'] = $week;
         
        return $goal_ranking_info;
            
