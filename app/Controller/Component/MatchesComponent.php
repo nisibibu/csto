@@ -7,13 +7,19 @@ define('GAME_MATCH_RESULT', 'http://www.sponichi.co.jp/soccer/games/');         
 define('YAMAZAKI_MATCH_RESULT','http://www.sponichi.co.jp/soccer/games/');
 define("YAMAZKI_MATCH_RESULT_YAHOO","http://soccer.yahoo.co.jp/jleague/schedule/jleaguecup");                 //ヤマザキカップ試合日程＆結果
 define("ACL_MATCH_RESULT","http://sportsnavi.yahoo.co.jp/sports/soccer/jleague/2015/schedule/112/");    //ACL試合日程＆結果
-define('SCORE_QUICK_J1',"http://www.nikkansports.com/soccer/jleague/j1/score/j1-score.html");           //J1の速報
+define('SCORE_QUICK_J1',"http://www.nikkansports.com/socncer/jleague/j1/score/j1-score.html");           //J1の速報
 define("ALL_MATCH_THIS_MONTH","http://www.jleague.jp/match/");      //Jリーグ公式サイト（当月）の試合
 /*リーグ情報の取得、格納*/
 class MatchesComponent extends Component{
     
     /*Jリーグ試合結果の情報をスクレイピングで取得
-     * Ｊ１昇格、プレーオフ未対応 スポニチ
+     * Ｊ１昇格、プレーオフ未対応なので対応させる
+     * 
+     * @param string $url
+     * @param string $j_class
+     * @param string $year
+     * @param string $month 
+     * 
      */
     public function  getMatchInfoJleague($url = GAME_MATCH_RESULT,$j_class ="j1", $year ="", $month="" ){
         
@@ -136,7 +142,7 @@ class MatchesComponent extends Component{
         
         /*Jリーグのデータ取得の時の処理*/
         if($j_class === "j1" || $j_class === "j2"){
-            var_dump("Jリーグの処理");
+            //var_dump("Jリーグの処理");
             $setu = array();
              for($i = 0; $i < count($craw_result); $i++){
                 if(preg_match("/第\d+節/",$craw_result[$i])){
@@ -203,18 +209,15 @@ class MatchesComponent extends Component{
                 $pattern_begin = "/".$var."/";
                 $pattern_end = "#.+月.+日.+#";
                 $result_s[] = $this->getIndividual($pattern_begin, $pattern_end, $result);
-            }
-
-            
-            
+            }          
             //debug($result_s);
+            
             $match_date = array();      //試合開催日をdate型に変換
             $match_date_s = array();    //曜日も含む文字列で試合開催日を保持
             $match_date_i = array();    //日付のデータの添え字番号を保持
             $temp_result = array();     //整理前のデータ（一時保管）
             $date_count = 0;
-
-
+            
             /*リーグステージ毎に分割して取得*/            
             foreach($result_s as $var){
                 $result_g[] = $this->getDataByGroupStage($var);
@@ -279,7 +282,8 @@ class MatchesComponent extends Component{
     public function formatResultToNabisuko($match_info){
         foreach($match_info['match_info'] as $var){
             if(preg_match("#\d{4}-\d{2}-\d{2}#", $var)){
-                $held_date = $var;
+                $held_date = $var;  //開催日の取得
+                $week = $this->getWeek($var);
             }
         }
         
@@ -313,7 +317,7 @@ class MatchesComponent extends Component{
                 /*データ整形*/
                 foreach($temp as $v){
                     array_unshift($v,$stege,$held_date);
-                    array_push($v,$year,$month);
+                    array_push($v,$year,$month,$week);
                     $result[] = $v;
                     //$i++;
                 }
@@ -426,6 +430,10 @@ class MatchesComponent extends Component{
      * グループステージの１節毎に試合結果を返す
      * 予選のみ対応（suponiti)
      * 
+     * @param array $match_info
+     * @param int $begin
+     * @return array $result
+     * 
      *      */
     public function getDataByGroupStage($match_info,$begin=0){
         $match_temp = array();
@@ -464,7 +472,7 @@ class MatchesComponent extends Component{
                  $next_i = $i + 1;
                  if(!array_key_exists($next_i, $slice_count)){
                      //最後のデータ
-                     //var_dump("最後のデータ");
+                     //debug($slice_count[$i]);
                      $result[] = array_slice($match_info,$slice_count[$i]);
                  }else{
                      $result[] = array_slice($match_info,$slice_count[$i],$slice_count[$i+1] - $match_count);
@@ -477,7 +485,12 @@ class MatchesComponent extends Component{
     }
     
    
-    /*開催日排列を毎のデータに分割し,先頭に節を挿入して返す*/
+    /*開催日排列を毎のデータに分割し,先頭に節を挿入して返す
+     *
+     * @param  array $result_s
+     * @return array $result
+     * 
+     *      */
     public function getDataByDate($result_s){
         $section = $result_s[0];
         for($i = 0; $i < count($result_s);$i++){

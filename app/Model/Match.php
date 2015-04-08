@@ -65,6 +65,7 @@ class Match extends AppModel{
     public function setMatches($statuses,$data_item,$j_class){
         /*１節まとめて登録*/
         //var_dump($statuses[0]);
+        //debug($statuses);
         
         $info_flag = FALSE; //情報だけでも登録するか(処理の判定に使用予定)
         $past_flag = FALSE; //過去分だけでも登録するか(処理の判定に使用予定)
@@ -83,9 +84,9 @@ class Match extends AppModel{
     /*試合情報の登録（１節）
      * J1 J2 ナビスコカップ使用
      * 
-     * $statuses:   １節のデータ(配列)
-     * $j_class:    league
-     * $data_item:  整形用のデータ項目(配列)
+     * @param array  $statuses:   １節のデータ(配列)
+     * @param string $j_class:    league
+     * @param array  $data_item:  整形用のデータ項目(配列)
      * 
      *      */
     public function setMatchesOneSection($statuses,$j_class,$data_item){
@@ -102,7 +103,7 @@ class Match extends AppModel{
         
         /*今回登録する部分の登録済み判定*/
         if($j_class === "ヤマザキナビスコ杯"){
-           $set_count = $this->isSetSecttion($section, $year,$j_class,$match_date);
+            $set_count = $this->isSetSecttion($section, $year,$j_class,$match_date);
         }else{
             $set_count = $this->isSetSecttion($section, $year,$j_class);
         }
@@ -138,7 +139,9 @@ class Match extends AppModel{
                 
                 
             }else{
-                /*データ削除してから登録処理*/
+                /* 当該ケースのデータ登録に失敗（全試合の結果の保存が出来ていない）ため
+                 * 
+                 * データ削除してから登録処理*/
                 
                 
             }

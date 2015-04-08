@@ -45,15 +45,16 @@ class MatchController extends AppController{
         
 
         //$this->saveMatchJLeague();
-        
+        //$result_j1 = $this->Matches->getMatchInfoJleague(GAME_MATCH_RESULT);
+        //debug($result_j1);
         
         //ナビスコカップの情報を取得
         /*実装中*/
         //$nabisuko_result = $this->getMatcesNabisuko();
         //debug($nabisuko_result);
-        //$this->setMatchesNabisuko($nabisuko_result);
-        
-        
+        //$this->saveMatchNabisuko();
+        //$nabisko_result =  $this->Matches->getMatchInfoJleague(YAMAZAKI_MATCH_RESULT,"ヤマザキナビスコ杯");
+        ///debug($nabisko_result);
         
         /*画面表示テスト*/
         //if($this->show()){
@@ -108,7 +109,7 @@ class MatchController extends AppController{
         //$this->request->data = $this->Post->find('team',$options);
         //$this->request->data = array('team',$options);
         
-        $this->saveMatchJLeague();
+        //$this->saveMatchJLeague();
         
     }
     
@@ -124,19 +125,19 @@ class MatchController extends AppController{
         return $team_list;
     }
 
-    /*Jリーグの結果の取得
-     * J1
-     * J2
+    /*Jリーグ(J1 J2)の試合結果の取得を行い、結果を保存
+     * 
+     * 
      *      */
     public function saveMatchJLeague(){
         /*Jリーグ試合結果取得・保存
          * from: suponichi
          *          */
         $match_info_j1 = $this->getMatchesJ1League();   //J1の試合情報を取得
-        debug($match_info_j1);
-        $result_j1 = $this->setMatchesInfoJLeague($match_info_j1); //j1を保存
+        //debug($match_info_j1);
+        $result_j1 = $this->setMatchesInfoJLeague($match_info_j1,"j1"); //j1を保存
         $match_info_j2 = $this->getMatchesJ2League();   //J2の試合情報を取得
-        //$result_j2 = $this->setMatchesInfoJLeague($match_info_j2,"j2");  //j2を保存
+        $result_j2 = $this->setMatchesInfoJLeague($match_info_j2,"j2");  //j2を保存
     }
 
 
@@ -154,8 +155,22 @@ class MatchController extends AppController{
         return $match_result_j;
     }
 
+    
+    /*ナビスコ杯の試合結果の取得を行い、結果を保存
+     * 
+     * 
+     *      */
+    public function saveMatchNabisuko(){
+        /* ナビスコ杯の試合結果取得・保存
+         * from: suponichi
+         *          */
+        $result_nabisuko =  $this->getMatcesNabisuko();
+        $this->setMatchesNabisuko($result_nabisuko);
+    }
+    
+    
     /* ナビスコ杯の試合情報を取得して返す
-     *
+     * 
      * 
      * return : ナビスコ杯の試合情報（1P分）
      *      */
@@ -182,6 +197,7 @@ class MatchController extends AppController{
                                 "stadium",
                                 "match_year",
                                 "match_month",
+                                "week",
                                 "league");
         }
         
@@ -219,6 +235,7 @@ class MatchController extends AppController{
                                 "stadium",
                                 "match_year",
                                 "match_month",
+                                "week",
                                 "league");
         }
         

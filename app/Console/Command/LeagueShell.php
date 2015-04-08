@@ -47,7 +47,7 @@ class LeagueShell extends AppShell{
     
     /*チームの試合傾向を保存*/
     public function saveTeamTrend(){
-        
+        /**/
     }
 
 }
