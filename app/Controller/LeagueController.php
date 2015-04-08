@@ -18,16 +18,8 @@ class LeagueController extends AppController{
             以下テスト用コード
          *          */
         
-        /*League情報を取得*/
-        //$j_class = "j1";
-        //$league_info_j1 = $this->League->getLeagueInfo($j_class);   //J1の情報を取得
-        //debug($league_info_j1);
-        //$this->setLeagueInfo($league_info_j1, $j_class);
-        //J2のリーグ情報を登録
-        //$j_class = "j2";
-        //$league_info_j2 = $this->League->getLeagueInfo($j_class);
-        //debug($league_info_j2);
-        //$this->setLeagueInfo($league_info_j2, $j_class);
+        
+        
         
         /*ゴールランキングの取得*/
         //$j_class = "j1";
@@ -40,14 +32,37 @@ class LeagueController extends AppController{
         
         //$this->setgoalRankingInfo($goal_ranking_j1, $j_class);   //DBへ保存
         
-        $j_class = "j2";
+        //$j_class = "j2";
 //        $param = "03";
-        $goal_ranking_j2 = $this->League->getGoalRanking(GOAL_RANKING_J2); //J1ゴールランキングの取得
+        //$goal_ranking_j2 = $this->League->getGoalRanking(GOAL_RANKING_J2); //J1ゴールランキングの取得
         //debug($goal_ranking_j2);
-        $this->setgoalRankingInfo($goal_ranking_j2, $j_class);
+        //$this->setgoalRankingInfo($goal_ranking_j2, $j_class);
          
          
     }
+    
+    /* Jリーグの情報をスクレイピングで取得して、ＤＢに保存する
+     * @param string $league
+     * 
+     * @return boolean $result
+     */
+    public function saveJ1LeagueInfo($league){
+       /*League情報を取得*/
+        $league_info = $this->League->getLeagueInfo($league);
+        //debug($league_info);
+        $result = $this->setLeagueInfo($league_info, $league); 
+        return $result;
+    }
+    
+    /* Jリーグのゴールランキングの情報をスクレイピングで取得して、ＤＢに保存する
+     * @param string $league
+     * 
+     * @return boolean $result
+     */
+    public function saveJGoalRanking($league){
+        
+    }
+    
     
     
     /*リーグ情報を登録*/

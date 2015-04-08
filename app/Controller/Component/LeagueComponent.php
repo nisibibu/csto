@@ -16,7 +16,12 @@ App::uses('CommonComponent', 'Controller/Component');
 /*リーグ情報の取得、格納*/
 class LeagueComponent extends CommonComponent{
     
-    /*J1の情報をスクレイピングで取得*/
+    /*Jリーグの情報をスクレイピングで取得
+     * @param string $status
+     * 
+     * 
+     * @return array $league_info
+     *      */
     public function  getLeagueInfo($status = "j1"){
         //Goutteオブジェクト生成
         $crawer = new Goutte\Client();
@@ -44,8 +49,6 @@ class LeagueComponent extends CommonComponent{
           * 月
           * 週
           * の取得*/
-        //preg_match('/^[0-9]{4}/', $update_time,$year);
-        //$year = $year[0];
         preg_match('/(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<date>\d{1,2})日/',$update_time,$time);
         $year = $time['year'];
         $month = $time['month'];
