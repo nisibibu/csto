@@ -7,6 +7,7 @@ define('GAME_MATCH_RESULT', 'http://www.sponichi.co.jp/soccer/games/');         
 define('YAMAZAKI_MATCH_RESULT','http://www.sponichi.co.jp/soccer/games/');
 define("YAMAZKI_MATCH_RESULT_YAHOO","http://soccer.yahoo.co.jp/jleague/schedule/jleaguecup");                 //ヤマザキカップ試合日程＆結果
 define("ACL_MATCH_RESULT","http://sportsnavi.yahoo.co.jp/sports/soccer/jleague/2015/schedule/112/");    //ACL試合日程＆結果
+define("ACL_MATCH","http://www.nikkansports.com/soccer/jleague/acl/result/");   //ACLの情報取得先URL
 define('SCORE_QUICK_J1',"http://www.nikkansports.com/socncer/jleague/j1/score/j1-score.html");           //J1の速報
 define("ALL_MATCH_THIS_MONTH","http://www.jleague.jp/match/");      //Jリーグ公式サイト（当月）の試合
 /*リーグ情報の取得、格納*/
