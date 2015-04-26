@@ -42,7 +42,11 @@ class TotoVotesComponent extends Component{
         $held_time_o = $this->getHeldTime();
         //debug($held_time_o);
         
-        /*取得ページの決定*/
+        /* 取得ページの決定
+         * 
+         * 
+         * 
+         */
         if($held_time == $held_time_o){
             /*DB＋1と最新回一緒(そのまま)*/
         }else if($held_time < $held_time_o){

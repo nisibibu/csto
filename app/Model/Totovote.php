@@ -413,7 +413,10 @@ class Totovote extends Vote{
         return $recent_held;
     }
     
-    /*今回（直近）の開催回を取得して返却*/
+    /*今回（直近）の開催回を取得して返却
+     * 
+     * 
+     *      */
     public function getRecentTime(){
         $recent_held = array();
         $data = array(
@@ -432,18 +435,34 @@ class Totovote extends Vote{
     
      
     /*今回（直近の）totoの試合情報（投票率含む）を取得***
+     * @param string type
+     * 
+     * @return array result
      * 
      *************************************************/
-    public function getVoteTotoRecent($held_time){
+    public function getVoteTotoRecent($held_time,$type=""){
         $result = array();
-        $data = array(
+        if($type){
+           $data = array(
+           "conditions" => array(
+                "AND" => array(
+                   "held_time" => $held_time,
+                   "class" => $type
+                ),
+           ),
+           'order' => array("no ASC"),  
+           );
+        }else{
+           $data = array(
            "conditions" => array(
                 "AND" => array(
                    "held_time" => $held_time
                 ),
            ),
            'order' => array("no ASC"),  
-        );
+           );
+        }
+        
         //debug($data);
         $result = $this->find("all",$data);
         //debug($result);
@@ -488,6 +507,14 @@ class Totovote extends Vote{
                 }else if($key === 'away_team'){
                     $temp[$key] = $value;
                 }else if($key === 'stadium'){
+                    $temp[$key] = $value;
+                }else if($key === '1_vote'){
+                    $temp[$key] = $value;
+                }else if($key === '0_vote'){
+                    $temp[$key] = $value;
+                }else if($key === '2_vote'){
+                    $temp[$key] = $value;
+                }else if($key === 'class'){
                     $temp[$key] = $value;
                 }
             }

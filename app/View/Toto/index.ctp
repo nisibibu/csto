@@ -53,8 +53,8 @@
                     " VS ". $toto_info['Totovote']['away_team']."  ".$toto_info['Totovote']['stadium']."<br />";
     }
     */
-    $held_time = $recent_toto_info['held_time'];
-    unset($recent_toto_info['held_time']);
+    $held_time = $recent_toto_info['toto']['held_time'];
+    unset($recent_toto_info['toto']['held_time']);
     /*
     $table_header = $this->Html->tableHeaders(
             array("開催日","開始時刻","No","ホーム","アウェイ","会場"));
@@ -73,7 +73,7 @@
     echo $this->Html->div('panel panel-default');
     echo $this->Html->tag('table');
     echo $this->Html->tableHeaders(array("開催日","開始時刻","No","ホーム","アウェイ","会場","詳細"));
-    foreach($recent_toto_info as $toto_info){
+    foreach($recent_toto_info['toto'] as $toto_info){
         $temp = $this->Form->create('card',array(
         'type' => 'POST',
         'url' => array(

@@ -62,7 +62,6 @@ class MatchesComponent extends Component{
         $date;                  //日
         $data_time;             //データの年月日
         
-        
         //更新日の取得（年度に使用）
         $crawler->filter('#midashi01' )->each(function( $node )use(&$data_time){
             //var_dump($node->text());

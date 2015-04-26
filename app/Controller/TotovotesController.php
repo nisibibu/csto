@@ -65,38 +65,84 @@ class TotovotesController extends AppController{
         //$result = $this->getNowTotoVoteInfo($db_name);
         //debug($result);
         
+        $this->getRecentAll();
         
-        //$recent_held = $this->getRecentHeld();
+        
+        $recent_held = $this->getRecentHeld();
         //$recent_held = $recent_held;
         //debug($recent_held);
         
-        //$match_info = $this->TotoVotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);    //toto開催回（自体の情報）の取得
+        $match_info = $this->TotoVotes->getTotoMatchInfo(TOTO_OFFICIAL,$recent_held);    //toto開催回（自体の情報）の取得
+        //debug($match_info);
         
         //debug($match_info);
         //$this->setTotoMatch($match_info);
         $toto_info = $this->getRecentTotoinfo();
-        
+        //debug($toto_info);
+        //$this->getRecentMiniInfo();
     }
     
-    /*最新回の情報を取得（totovotes minivotes)*/
-    public function getRecentTotoinfo(){
+    /*(DB)直近のtotoの試合情報の取得
+     * @param int recent_time
+     * @return array 
+     * 
+     *      
+     */
+    public function getRecentTotoinfo($recent_time=""){
+        //toto
         $toto_vote = new Totovote();
-        $recent_time = $toto_vote->getRecentTime();
-        $result = $toto_vote->getVoteTotoRecent($recent_time);
+        if(!$recent_time){
+            $recent_time = $toto_vote->getRecentTime();
+        }
+
+        $toto_temp = $toto_vote->getVoteTotoRecent($recent_time);
+        $result['toto'] = $toto_vote->getTotoMatchInfoOnly($toto_temp);
         
-        //試合情報のみ取り出し
-        $result = $toto_vote->getTotoMatchInfoOnly($result);
+        //mini
+        $mini_vote = new Totovote('Totovote','minivotes');
+        $mini_temp = $mini_vote->getVoteTotoRecent($recent_time,"A");
+        $result['mini']['A'] = $mini_vote->getTotoMatchInfoOnly($mini_temp);
+        //debug($result['mini']);
+        $mini_temp = $mini_vote->getVoteTotoRecent($recent_time,"B");
+        $result['mini']['B'] = $mini_vote->getTotoMatchInfoOnly($mini_temp);
+        //goal
+        $goal_vote = new Totovote('Totovote','goal3votes');
+        $goal_temp = $goal_vote->getVoteTotoRecent($recent_time);
+        $result['goal'] = $goal_vote->getTotoMatchInfoOnly($goal_temp);
+        //debug($result['goal']);
         
         return $result;
     }
     
-    /*DBから最新回を取得*/
+    /*(Toto公式サイト)直近のminiの試合情報の取得*/
+    public function getRecentMiniInfo(){
+        // 実装
+        $toto_vote = new Totovote('Totovotes','minivotes');
+        $recent_time = $toto_vote->getRecentTime();
+        $result = $toto_vote->getVoteTotoRecent($recent_time);
+        //debug($result);
+    }
+    
+    /*(Toto公式サイト)直近のgoalの試合情報の取得*/
+    public function getRecentGoalInfo(){
+        // 実装
+    }
+    
+    
+    /*DBから最新回を取得
+     * toto mini goal3からそれぞれ最新回の取得
+     * 3つを比較し、最新回を返す。
+     * @return int recent_held
+     */
     public function getRecentHeld(){
         /*開催回情報の取得*/
-        $vote = new Totovote('Totovote',"totovotes");
-        $recent_held = (int)$vote->getRecentTime();
+        $toto = new Totovote('Totovote',"totovotes");
+        $toto_times = (int)$toto->getRecentTime();
         
-        return $recent_held;
+        //$mini = new TotoVote('Totovote','minivotes');
+        //$mini_times = (int)$mini->getRecentTime();
+        
+        return $toto_times;
     }
     
     /*直近回の開催くじの種類を取得*/
@@ -229,9 +275,9 @@ class TotovotesController extends AppController{
         $goal = new Goal3vote();
         $held_time_goal = $goal->getRecentTime();
         
-//        debug($held_time_toto);
-//        debug($held_time_mini);
-//        debug($held_time_goal);
+        var_dump($held_time_toto."toto");
+        var_dump($held_time_mini."mini");
+        var_dump($held_time_goal,'goal');
         
         
         $result = $held_time_toto;

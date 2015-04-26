@@ -13,6 +13,7 @@
             <file>file:/C:/xampp/htdocs/cake/app/Model/League.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Model/Totovote.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Controller/AppController.php</file>
+            <file>file:/C:/xampp/htdocs/cake/app/Controller/Component/CommonComponent.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Config/bootstrap.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Controller/Component/MatchesComponent.php</file>
             <file>file:/C:/xampp/htdocs/cake/app/Plugin/Opauth/Controller/OpauthAppController.php</file>
