@@ -347,7 +347,7 @@ class Totovote extends Vote{
              
         }
         $result = $this->saveAll($data);
-        debug($result);
+        //debug($result);
     }
 
     /*Goal3(2)の投票率の登録

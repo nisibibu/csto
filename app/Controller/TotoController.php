@@ -75,7 +75,29 @@ class TotoController extends AppController{
         /*今回のtotoの試合情報を取得*/
         $recent_toto_info = $totovotes_controller->getRecentTotoinfo();
         //debug($recent_toto_info);
-        $this->set('recent_toto_info',$recent_toto_info);
+        //開催くじの取得
+        $kuji = array();
+        if(isset($recent_toto_info['toto'])){
+            $kuji[] = 'toto';
+        }
+        if(isset($recent_toto_info['mini']['A'])){
+            $kuji[] = 'mini-A';
+        }
+        if(isset($recent_toto_info['mini']['B'])){
+            $kuji[] = 'mini-B';
+        }
+        //debug(count($recent_toto_info['goal']));
+        if(isset($recent_toto_info['goal'])){
+            if(count($recent_toto_info['goal']) === 7 ){
+                $kuji[] = 'goal3';
+            }
+            if(count($recent_toto_info['goal']) === 5 ){
+                $kuji[] = 'goal2';
+            }
+        }
+        //debug($kuji);
+        $this->set('kuji',$kuji);
+        $this->set('recent_toto_info',$recent_toto_info);        
         
         
         /*POSTデータの判定、データの取り出し→画面へセット*/
@@ -104,14 +126,7 @@ class TotoController extends AppController{
             $this->set('match',$match_result);
         }
         
-      
-        
-        
-
-        
         /*画面表示テスト*/
-
-        
         
         /*ヘルパーに初期値(前回入力値）をセットする
          * 参照 CakePHP実践入門 p.139
@@ -119,6 +134,7 @@ class TotoController extends AppController{
          *          */    
         //$id = $this->request->pass[0];  //
         if($this->request->is('post')){
+            //debug($this->request->data['match']['kind']);
             if(array_key_exists('match', $this->request->data)){
                 $data = array(
                 'team'  => $this->request->data['match']['team'],
