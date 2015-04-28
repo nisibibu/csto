@@ -78,21 +78,21 @@ class TotoController extends AppController{
         //開催くじの取得
         $kuji = array();
         if(isset($recent_toto_info['toto'])){
-            $kuji[] = 'toto';
+            $kuji['toto'] = 'toto';
         }
         if(isset($recent_toto_info['mini']['A'])){
-            $kuji[] = 'mini-A';
+            $kuji['mini-A'] = 'mini-A';
         }
         if(isset($recent_toto_info['mini']['B'])){
-            $kuji[] = 'mini-B';
+            $kuji['mini-B'] = 'mini-B';
         }
         //debug(count($recent_toto_info['goal']));
         if(isset($recent_toto_info['goal'])){
             if(count($recent_toto_info['goal']) === 7 ){
-                $kuji[] = 'goal3';
+                $kuji['goal3'] = 'goal3';
             }
             if(count($recent_toto_info['goal']) === 5 ){
-                $kuji[] = 'goal2';
+                $kuji['goal2'] = 'goal2';
             }
         }
         //debug($kuji);
@@ -117,6 +117,9 @@ class TotoController extends AppController{
             $this->set('home_team_info',$home_team_info);
             $away_team_info = $form_data['away_team'];
             $this->set('away_team_info',$away_team_info);
+        }else if(!empty($form_data) && array_key_exists('kuji', $form_data)){
+            $kuji_kind = $form_data['kuji'];
+            $this->set('kuji_selected',$kuji_kind);
         }else{
             /*POSTで指定されてこなかった場合の処理*/
             $team ="C大阪";
@@ -168,6 +171,10 @@ class TotoController extends AppController{
     public function show(){
         //POSTが送信されたかどうか
         if($this->request->is('POST')){
+            if(array_key_exists('kuji', $this->request->data)){
+                $kuji = $this->request->data['kuji']['kind'];
+                $data['kuji'] = $kuji;
+            }
             if(array_key_exists('match', $this->request->data)){
                 $team = $this->request->data['match']['team'];
                 $count = $this->request->data["match"]['count'];

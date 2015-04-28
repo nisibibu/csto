@@ -61,32 +61,49 @@
     </form>-->
     
     <?php
+    //var_dump($kuji_selected);
     echo $this->Html->css(array('totopage'));
     /*開催くじから表示するものを選択*/
     //$kuji = array('toto','mini','goal');
     
     echo $this->Html->div('head-radio');
     echo $this->Form->create(
-            'Post', //モデル
+            'kuji', //モデル
             array('type' => 'post') // method = POST
             );
     $attributes = array(
         'class' => 'radio-inline',
-        'value'=> 0,
-        'legend' => false
+        'value'=> $kuji_selected,
+        'legend' => false,
+        'hiddenField' => false
         );
     //echo $this->Html->div('radio-inline');
-    echo $this->Form->radio('開催くじ：',$kuji,$attributes);
+    echo $this->Form->radio('kind',$kuji,$attributes);
     //echo $this->Html->tag('/div');
     echo $this->Form->submit('反映');
     echo $this->Form->end();
     echo $this->Html->tag('/div');
 
+     /*表示するくじのデータをセット*/
+    $toto_array;
+    if($kuji_selected === 'mini-A'){
+        $toto_array = $recent_toto_info['mini']['A'];
+    }elseif($kuji_selected === 'mini-B'){
+        $toto_array = $recent_toto_info['mini']['B'];
+    }elseif($kuji_selected === 'goal3' || $kuji_selected === 'goal2'){
+        $toto_array = $recent_toto_info['goal'];
+    }else{
+        $toto_array = $recent_toto_info['toto'];
+    }
+    unset($toto_array['held_time']);
+    debug($toto_array);
+    
     /*分けて記述*/
     echo $this->Html->div('panel panel-default');
     echo $this->Html->tag('table');
-    echo $this->Html->tableHeaders(array("開催日","開始時刻","No","ホーム","アウェイ","会場","詳細"));
-    foreach($recent_toto_info['toto'] as $toto_info){
+    echo $this->Html->tableHeaders(array("開催日","開始時刻","No","ホーム","アウェイ","1","0","2","会場","詳細"));
+    
+    foreach($toto_array as $toto_info){
         $temp = $this->Form->create('card',array(
         'type' => 'POST',
         'url' => array(
@@ -111,6 +128,7 @@
         //$toto_info[] = $detail;
         $temp_str = $temp. $temp_2. $temp_3. $temp_4. $temp_5;
         $toto_info[] = $temp_str;
+        //debug($toto_info);
         echo $this->Html->tableCells($toto_info);
          
     }
