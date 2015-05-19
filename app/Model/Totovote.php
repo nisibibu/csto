@@ -497,25 +497,29 @@ class Totovote extends Vote{
             $var = $match['Totovote'];
             foreach ($var as $key => $value) {
                 if($key === 'held_date'){
-                    $temp[$key] = $value;
+                    $temp['開催日'] = $value;
                 }else if($key === 'match_time'){
-                    $temp[$key] = $value;
+                    $temp['開始時刻'] = $value;
                 }else if($key === 'no'){
                     $temp[$key] = $value;
                 }else if($key === 'home_team'){
-                    $temp[$key] = $value;
+                    $temp['ホーム'] = $value;
                 }else if($key === 'away_team'){
-                    $temp[$key] = $value;
+                    $temp['アウェイ'] = $value;
                 }else if($key === 'stadium'){
-                    $temp[$key] = $value;
+                    $temp['スタジアム'] = $value;
                 }else if($key === '1_vote'){
-                    $temp[$key] = $value;
+                    $temp['1(%)'] = $value;
                 }else if($key === '0_vote'){
-                    $temp[$key] = $value;
+                    $temp['0(%)'] = $value;
                 }else if($key === '2_vote'){
-                    $temp[$key] = $value;
+                    $temp['2(%)'] = $value;
                 }else if($key === 'class'){
                     $temp[$key] = $value;
+                }else if($key === 'team'){
+                    $temp['チーム'] = $value;
+                }else if($key === 'position'){
+                    $temp['H/A'] = $value;
                 }
             }
             $result[] = $temp;

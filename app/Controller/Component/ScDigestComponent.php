@@ -6,8 +6,8 @@
  * and open the template in the editor.
  */
 
-require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
-
+//require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
+require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/autoload.php");
 
 App::uses('Component', 'Controller');
 

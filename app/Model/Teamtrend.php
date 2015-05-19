@@ -6,28 +6,71 @@
  */
 App::uses('AppModel', 'Model');
 
-class Teamtrend extends Appmodel{
+class Teamtrend extends AppModel{
       // public $useTable = 'teamtrendlos';
         
         //登録処理（時間帯別得点）
         public function setTrendGoalDb($statuses){
-            foreach ($statuses as $status){
-                //debug($status);
-                $data[] = array(
+            //登録・更新処理判定
+            $year = $statuses[0][8];
+            $month = $statuses[0][9];
+            $date = $statuses[0][10];
+            
+            //登録しようとしているデータの登録件数取得
+            $find_count = $this->findByDate($year,$month,$date);
+            
+            if($find_count === 0){
+                //登録処理
+                foreach ($statuses as $status){
+                    //debug($status);
+                    $data[] = array(
+                        'team' => $status[0],
+                        'allgoal' => $status[1],
+                        'time1_15' => $status[2],
+                        'time15_30' => $status[3],
+                        'time30_45' => $status[4],
+                        'time46_60' => $status[5],
+                        'time61_75' => $status[6],
+                        'time76_90' => $status[7],
+                        'data_year' => $status[8],
+                        'data_month' => $status[9],
+                        'data_date' => $status[10],
+                    );
+                }
+                //$result = $this->saveAll($data);
+                //debug($result);
+            }else{
+                 //更新処理
+                foreach($statuses as $status){
+                $conditions = array(
                     'team' => $status[0],
+                    'data_year' => $year,
+                    'data_month' => $month,
+                    'data_date' => $date,
+                );
+
+                $today = date("Y-m-d H:i:s");
+                //debug($today);
+                $data = array(
+                    'team' => "'".$status[0]."'",
                     'allgoal' => $status[1],
                     'time1_15' => $status[2],
-                    'time15_30' => $status[3],
-                    'time30_45' => $status[4],
+                    'time15_30' =>$status[3],
+                    'time30_45' => "'".$status[4]."'",
                     'time46_60' => $status[5],
                     'time61_75' => $status[6],
-                    'time76_90' => $status[7],
-                    'data_year' => $status[8],
-            );
-        }
-
-         $result = $this->saveAll($data);
-         debug($result);
+                    'time76_90' => "'".$status[7]."'",
+                    'data_year' => $year,
+                    'data_month' => $month,
+                    'data_date' => $date,
+                    'modified' => "'".$today."'",
+                );
+                //debug($data);
+                $result = $this->updateAll($data,$conditions);
+                
+                }
+            }
+            
         }
          
 
@@ -72,6 +115,23 @@ class Teamtrend extends Appmodel{
 
          $result =  $this->saveAll($data);
          debug($result);
+        }
+        
+        //日時で検索してヒットした件数を返す
+        public function findByDate($year,$month,$date){
+             $data = array(
+                "conditions" => array(
+                             "data_year" => $year,
+                             "data_month" => $month,
+                             "data_date" => $date,
+                ),
+                //'order' => array("ranking ASC"),    
+            );
+        //debug($data);
+        
+            $result_count = $this->find("count",$data);
+            //debug($result_count);
+            return $result_count;
         }
 }
 

@@ -5,7 +5,8 @@
  * -ニュースの処理に関するコンポーネント
  */
 
-require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
+//require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
+require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/autoload.php");
 App::uses('Component', 'Controller');
 
 class NewsComponent extends Component{

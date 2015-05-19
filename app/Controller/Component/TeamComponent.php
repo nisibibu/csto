@@ -5,7 +5,8 @@
  *  */
 //use Goutte\Client;
 //require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
-require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
+//require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
+require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/autoload.php");
 
 /*定数*/
 //totoOne

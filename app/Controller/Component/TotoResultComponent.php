@@ -1,7 +1,8 @@
 <?php
 
 use Goutte\Client;
-require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+//require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/autoload.php");
 /*定数*/
 //TOTOの投票率の取得用URL
 define('TOTO_RESULT', 'http://www.totoone.jp/kekka/');

@@ -1,7 +1,16 @@
 <?php
 
 use Goutte\Client;
-require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+//require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+//require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/goutte/goutte.phar");
+if(env('ROOT')){
+  require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/goutte/goutte.phar");  
+}else{
+  //debug(env('ROOT'));
+  require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';  
+}
+//require_once(env('ROOT')."cake/app/Vendor/goutte/goutte.phar");
+
 
 define('LEAG_RANKING', 'http://soccer.yahoo.co.jp/jleague/standings/');                 //リーグの情報
 define('TEAM_INFO_SPORTS_NAVI','http://soccer.yahoo.co.jp/jleague/teams/detail');       //チームの情報

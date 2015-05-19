@@ -4,7 +4,8 @@
  *
  *  */
 use Goutte\Client;
-require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+//require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/goutte/goutte.phar");
 /*定数*/
 //TOTOオフィシャルサイト
 define('TOTO_OFFICIAL','http://www.toto-dream.com/toto/');

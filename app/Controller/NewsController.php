@@ -15,10 +15,31 @@ class NewsController extends Controller{
         /**/
         public function index(){
             /*ニュースサイトからの情報取得（テスト）*/
-            //$this->NewsCraw->getNewsInfoSoccerKing();   //サッカーキング
+            $result_sk = $this->NewsCraw->getNewsInfoSoccerKing();   //サッカーキング
             $result_f = $this->NewsCraw->getNewsInfoFootBallChannel();  //フットボールチャンネル
-            //debug($result_f);
-            //$this->setNews($result_f);
+            $this->NewsCraw->getNewsInfoSoccerDigest();
+            
+            //debug($result_sk);
+            $this->setNews($result_f);
+            
+            //mecab テストコード
+            $text = $result_sk['title'];
+            $exe_path = 'C:/"Program Files (x86)"/MeCab/bin/mecab.exe';
+            $descriptorspec = array(
+                  0 => array("pipe", "r")
+                , 1 => array("pipe", "w")
+            );
+            $process = proc_open($exe_path, $descriptorspec, $pipes);
+            if (is_resource($process)) {
+                fwrite($pipes[0], $text);
+                fclose($pipes[0]);
+                $result = stream_get_contents($pipes[1]);
+                fclose($pipes[1]);
+                proc_close($process);
+            }
+            echo "<pre>";
+            //print_r($result);
+            echo "</pre>";
         }
         
         /*RSSからデータを取得*/

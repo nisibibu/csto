@@ -96,44 +96,98 @@
         $toto_array = $recent_toto_info['toto'];
     }
     unset($toto_array['held_time']);
-    debug($toto_array);
+    //debug($toto_array);
+    
+    //テーブル列名取得
+    $toto_head_item = array();
+    $toto_temp = $toto_array[0];
+//    while(current($toto_temp)){
+//        $toto_head_item[] = key($toto_temp);
+//        next($toto_temp);
+//    }
+    for($i = 0; $i < count($toto_temp); $i++){
+        $toto_head_item[] = key($toto_temp);
+        next($toto_temp);
+    }
+    //debug($toto_head_item);
     
     /*分けて記述*/
-    echo $this->Html->div('panel panel-default');
-    echo $this->Html->tag('table');
-    echo $this->Html->tableHeaders(array("開催日","開始時刻","No","ホーム","アウェイ","1","0","2","会場","詳細"));
     
-    foreach($toto_array as $toto_info){
-        $temp = $this->Form->create('card',array(
-        'type' => 'POST',
-        'url' => array(
-            'controller' => 'Toto','action' => 'index'))); //指定アクションに送信
-        //debug($temp);
-        $temp_2 = $this->Form->hidden('home_team',
-                array('value' => $toto_info['home_team']));
-        //debug($temp_4);
-        $temp_3 = $this->Form->hidden('away_team',
-                array('value' => $toto_info['away_team']));
-        //debug($temp_5);
-        $temp_4 = $this->Form->submit("詳細");
-        //debug($temp_2);
-        $options = array(
-        'label' => '詳細',
-        'div' => array(
-            'class' => 'glass-pill',
-            )
-        );
-        $temp_5 = $this->Form->end();
-        //debug($temp_3);
-        //$toto_info[] = $detail;
-        $temp_str = $temp. $temp_2. $temp_3. $temp_4. $temp_5;
-        $toto_info[] = $temp_str;
-        //debug($toto_info);
-        echo $this->Html->tableCells($toto_info);
-         
+    if($kuji_selected == "goal3" || $kuji_selected == 'goal2'){
+        echo $this->Html->div('panel panel-default');
+        echo $this->Html->tag('table');
+        //echo $this->Html->tableHeaders(array("開催日","開始時刻","No","ホーム","アウェイ","1","0","2","会場","詳細"));
+        echo $this->Html->tableHeaders($toto_head_item);
+        foreach($toto_array as $toto_info){
+            $temp = $this->Form->create('card',array(
+            'type' => 'POST',
+            'url' => array(
+                'controller' => 'Toto','action' => 'index'))); //指定アクションに送信
+            //debug($temp);
+            $temp_2 = $this->Form->hidden('home_team',
+                    array('value' => $toto_info['チーム']));
+            //debug($temp_4);
+//            $temp_3 = $this->Form->hidden('away_team',
+//                    array('value' => $toto_info['アウェイ']));
+            //debug($temp_5);
+            $temp_4 = $this->Form->submit("詳細");
+            //debug($temp_2);
+            $options = array(
+            'label' => '詳細',
+            'div' => array(
+                'class' => 'glass-pill',
+                )
+            );
+            $temp_5 = $this->Form->end();
+            //debug($temp_3);
+            //$toto_info[] = $detail;
+            $temp_str = $temp. $temp_2.
+                    //$temp_3. 
+                    $temp_4. $temp_5;
+            $toto_info[] = $temp_str;
+            //debug($toto_info);
+            echo $this->Html->tableCells($toto_info);
+
+        }
+        echo $this->Html->tag('/table');
+        echo $this->Html->tag('/div');
+    }else{
+        echo $this->Html->div('panel panel-default');
+        echo $this->Html->tag('table');
+        //echo $this->Html->tableHeaders(array("開催日","開始時刻","No","ホーム","アウェイ","1","0","2","会場","詳細"));
+        echo $this->Html->tableHeaders($toto_head_item);
+        foreach($toto_array as $toto_info){
+            $temp = $this->Form->create('card',array(
+            'type' => 'POST',
+            'url' => array(
+                'controller' => 'Toto','action' => 'index'))); //指定アクションに送信
+            //debug($temp);
+            $temp_2 = $this->Form->hidden('home_team',
+                    array('value' => $toto_info['ホーム']));
+            //debug($temp_4);
+            $temp_3 = $this->Form->hidden('away_team',
+                    array('value' => $toto_info['アウェイ']));
+            //debug($temp_5);
+            $temp_4 = $this->Form->submit("詳細");
+            //debug($temp_2);
+            $options = array(
+            'label' => '詳細',
+            'div' => array(
+                'class' => 'glass-pill',
+                )
+            );
+            $temp_5 = $this->Form->end();
+            //debug($temp_3);
+            //$toto_info[] = $detail;
+            $temp_str = $temp. $temp_2. $temp_3. $temp_4. $temp_5;
+            $toto_info[] = $temp_str;
+            //debug($toto_info);
+            echo $this->Html->tableCells($toto_info);
+
+        }
+        echo $this->Html->tag('/table');
+        echo $this->Html->tag('/div');
     }
-    echo $this->Html->tag('/table');
-    echo $this->Html->tag('/div');
     
     /*
     if(count($match) === 1){

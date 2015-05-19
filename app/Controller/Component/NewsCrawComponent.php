@@ -4,8 +4,8 @@
  * 各ニュースサイトをスクレイピング  
  */
 
-require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
-
+//require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
+require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/autoload.php");
 
 App::uses('Component', 'Controller');
 class NewsCrawComponent extends Component{
@@ -29,6 +29,8 @@ class NewsCrawComponent extends Component{
     public function getNewsInfoSoccerKing($param=""){
         $url = "http://www.soccer-king.jp/news/japan/jl".$param;
         
+        $article = array();     //記事を保持
+        
         $title_list = array();  //記事タイトルの保持
         
         //Goutteオブジェクト生成
@@ -46,7 +48,7 @@ class NewsCrawComponent extends Component{
             //debug($node->text());
             $title_list[] = trim($node->text());
         });
-        
+        $article['title_list'] = $title_list;
         //debug($title_list);
         
         
@@ -73,6 +75,7 @@ class NewsCrawComponent extends Component{
             //debug($node->text());
             $title = trim($node->text());
         });
+        $article['title'] = $title;
         //debug($title);
         
         /*記事の本文の取得*/
@@ -87,6 +90,7 @@ class NewsCrawComponent extends Component{
             $array = array_values($array); // これはキーを連番に振りなおし
             $article_body = $array;
         });
+        $article['body'] = $article_body;
         //debug($article_body);
         
         /*画像情報の取得*/
@@ -103,6 +107,8 @@ class NewsCrawComponent extends Component{
             }
             
         });
+        $article['photo_href'] = $photo_href;
+        $article['photo_src'] = $photo_src;
         //debug($photo_href);
         //debug($photo_src);
         
@@ -113,6 +119,7 @@ class NewsCrawComponent extends Component{
             //debug($node->text());
             $photo_info = trim($node->text());
         });
+        $article['photo_info'] = $photo_info;
         //debug($photo_info);
         
         /*動画情報の取得*/
@@ -133,6 +140,7 @@ class NewsCrawComponent extends Component{
             $array = array_values($array); 
             $relation_keyword[] = $array;
         });
+        $article['relation_keyword'] = $relation_keyword;
         //debug($relation_keyword);
         
         /*関連記事の取得*/
@@ -144,7 +152,7 @@ class NewsCrawComponent extends Component{
              *      関連記事タイトル
              *              */
         });
-        
+        return $article;
     }
     
     
@@ -299,12 +307,60 @@ class NewsCrawComponent extends Component{
         $url = $url.$param;
     }
     
-    /*サッカーダイジェストＷｅｂからニュースを取得*/
+    /*サッカーダイジェストＷｅｂからニュースを取得
+     * カテゴリー：jリーグ
+     *      */
     public function getNewsInfoSoccerDigest($param = "tag_list/tag_search=1&tag_id=50"){
         $url = "http://www.soccerdigestweb.com/";
         $url = $url.$param;
+        
+        $param = array();   //スクレイピング取得用
+        $param['title_list'] = ".entry";
+        $param['link'] =".entry a";
+        
+        //Goutteオブジェクト生成
+        $client = new Goutte\Client();
+        //var_dump($client);
+        //totoマッチング、投票率HTMLを取得
+        $crawler = $client->request('GET', $url);
+        
+        $title_list = $this->getItemByCraw($crawler, $param['title_list'],'text');
+        $temp_list = $this->getItemByCraw($crawler, $param['link'],'link');
+        $temp_list = array_unique($temp_list);
+        $link_list = array_values($temp_list);
+        
+        debug($link_list);
     }
     
+    
+    /*セレクタを指定して項目を取得して返す*/
+    public function getItemByCraw($crawler,$selecta,$type){
+        $item = array();
+        
+        if($type === 'text'){            
+            $crawler->filter($selecta)->each(function( $node )use(&$item){
+            //debug($node->text());
+            $text = trim($node->text());
+            /*記事本文の整形処理*/
+            $array = explode("\n", $text); // とりあえず行に分割
+            $array = array_map('trim', $array); // 各要素をtrim()にかける
+            $array = array_filter($array, 'strlen'); // 文字数が0のやつを取り除く
+            $array = array_values($array); //キーを連番に振りなおし
+            //$array = $this->fixDataBlank($array);
+            $item[] = $array;
+            });
+        }else if($type === 'link'){
+            $crawler->filter($selecta)->each(function( $node )use(&$item){
+            //debug($node->text());
+            $link = $node->attr('href');
+            $item[] = $link;
+            });
+        }
+        
+        //debug($title_box); 
+         
+        return $item;
+    }
     
     /*記事タイトルの一覧を取得して返す*/
     public function getNewsTitleList($crawer,$selecta_title){

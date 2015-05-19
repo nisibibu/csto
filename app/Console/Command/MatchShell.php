@@ -19,7 +19,7 @@ class MatchShell extends AppShell{
     
     /*メイン処理*/
     public function main(){
-       
+     $this->out('Hello World!');  
        
     }
     
@@ -31,9 +31,9 @@ class MatchShell extends AppShell{
         $result_j1 = $this->MatchController->setMatchesInfoJLeague($match_info_j1); //J1のの情報を保存
         debug($result_j1);
         
-        /*J2の試合結果を取得*/
+        /*J2の試合結果を取得*/  
         $match_info_j2 = $this->Matches->getMatchInfoJleague(GAME_MATCH_RESULT,"j2"); //J1の情報を取得
-        $result_j2 = $this->MatchController->setMatchesInfoJLeague($match_info_j2);  //J2の情報を保存
+        $result_j2 = $this->MatchController->setMatchesInfoJLeague($match_info_j2,"j2");  //J2の情報を保存
         debug($result_j2);
     }
     

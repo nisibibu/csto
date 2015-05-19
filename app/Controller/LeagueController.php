@@ -18,8 +18,8 @@ class LeagueController extends AppController{
             以下テスト用コード
          *          */
         
-        
-        
+        //$leaguej1 = $this->League->getLeagueInfo("j1");
+        //$this->setLeagueInfo($leaguej1,"j1");
         
         /*ゴールランキングの取得*/
         //$j_class = "j1";

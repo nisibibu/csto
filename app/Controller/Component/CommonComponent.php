@@ -1,13 +1,14 @@
 <?php
 
+
 /* 共通処理用のコンポーネント
  * 
  *  
  *
  */
+App::uses('Component', 'Controller');
 class CommonComponent extends Component{
    
-    
     /*日にちから月の何週目かを取得して返す
      *
      * @param  stirng  $date 

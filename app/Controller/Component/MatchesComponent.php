@@ -1,7 +1,13 @@
 <?php
 
 use Goutte\Client;
-require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+if(env('DOCUMENT_ROOT')){
+    require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/goutte/goutte.phar");
+}else{
+    //debug(env('DOCUMENT_ROOT'));
+    require_once 'C:\xampp\htdocs\cake/app/Vendor/goutte/goutte.phar';
+}
+
 
 define('GAME_MATCH_RESULT', 'http://www.sponichi.co.jp/soccer/games/');                                 //Jリーグ試合日程＆結果
 define('YAMAZAKI_MATCH_RESULT','http://www.sponichi.co.jp/soccer/games/');
@@ -10,6 +16,7 @@ define("ACL_MATCH_RESULT","http://sportsnavi.yahoo.co.jp/sports/soccer/jleague/2
 define("ACL_MATCH","http://www.nikkansports.com/soccer/jleague/acl/result/");   //ACLの情報取得先URL
 define('SCORE_QUICK_J1',"http://www.nikkansports.com/socncer/jleague/j1/score/j1-score.html");           //J1の速報
 define("ALL_MATCH_THIS_MONTH","http://www.jleague.jp/match/");      //Jリーグ公式サイト（当月）の試合
+
 /*リーグ情報の取得、格納*/
 class MatchesComponent extends Component{
     

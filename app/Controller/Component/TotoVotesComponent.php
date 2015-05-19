@@ -4,7 +4,8 @@
  *
  *  */
 use Goutte\Client;
-require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+//require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
+require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/goutte/goutte.phar");
 
 //define('TOT','http://www.totoone.jp/');
 
