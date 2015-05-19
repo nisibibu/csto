@@ -15,10 +15,11 @@ class Teamtrend extends AppModel{
             $year = $statuses[0][8];
             $month = $statuses[0][9];
             $date = $statuses[0][10];
+            $league = $statuses[0][11];
             
             //登録しようとしているデータの登録件数取得
-            $find_count = $this->findByDate($year,$month,$date);
-            
+            $find_count = $this->findByDate($year,$month,$date,$league);
+            debug($find_count);
             if($find_count === 0){
                 //登録処理
                 foreach ($statuses as $status){
@@ -35,9 +36,10 @@ class Teamtrend extends AppModel{
                         'data_year' => $status[8],
                         'data_month' => $status[9],
                         'data_date' => $status[10],
+                        'league' => $league,
                     );
                 }
-                //$result = $this->saveAll($data);
+                $result = $this->saveAll($data);
                 //debug($result);
             }else{
                  //更新処理
@@ -47,6 +49,7 @@ class Teamtrend extends AppModel{
                     'data_year' => $year,
                     'data_month' => $month,
                     'data_date' => $date,
+                    'league' => $league,
                 );
 
                 $today = date("Y-m-d H:i:s");
@@ -63,6 +66,7 @@ class Teamtrend extends AppModel{
                     'data_year' => $year,
                     'data_month' => $month,
                     'data_date' => $date,
+                    'league' => "'".$league."'",
                     'modified' => "'".$today."'",
                 );
                 //debug($data);
@@ -76,23 +80,87 @@ class Teamtrend extends AppModel{
 
         /*登録処理（時間帯別得点）*/
         public function setTrendLosDb($statuses){
-            foreach ($statuses as $status){
-                //debug($status);
-                $data[] = array(
+//            foreach ($statuses as $status){
+//                //debug($status);
+//                $data[] = array(
+//                    'team' => $status[0],
+//                    'all_los' => $status[1],
+//                    'time1_15' => $status[2],
+//                    'time15_30' => $status[3],
+//                    'time30_45' => $status[4],
+//                    'time46_60' => $status[5],
+//                    'time61_75' => $status[6],
+//                    'time76_90' => $status[7],
+//                    'data_year' => $status[8],
+//            );
+//        }
+//
+//         $result =  $this->saveAll($data);
+         //debug($result);
+         
+            //登録・更新処理判定
+            $year = $statuses[0][8];
+            $month = $statuses[0][9];
+            $date = $statuses[0][10];
+            $league = $statuses[0][11];
+            
+            //登録しようとしているデータの登録件数取得
+            $find_count = $this->findByDate($year,$month,$date,$league);
+            debug($find_count);
+            if($find_count === 0){
+                //登録処理
+                foreach ($statuses as $status){
+                    //debug($status);
+                    $data[] = array(
+                        'team' => $status[0],
+                        'all_los' => $status[1],
+                        'time1_15' => $status[2],
+                        'time15_30' => $status[3],
+                        'time30_45' => $status[4],
+                        'time46_60' => $status[5],
+                        'time61_75' => $status[6],
+                        'time76_90' => $status[7],
+                        'data_year' => $status[8],
+                        'data_month' => $status[9],
+                        'data_date' => $status[10],
+                        'league' => $league,
+                    );
+                }
+                $result = $this->saveAll($data);
+                //debug($result);
+            }else{
+                 //更新処理
+                foreach($statuses as $status){
+                $conditions = array(
                     'team' => $status[0],
+                    'data_year' => $year,
+                    'data_month' => $month,
+                    'data_date' => $date,
+                    'league' => $league,
+                );
+
+                $today = date("Y-m-d H:i:s");
+                //debug($today);
+                $data = array(
+                    'team' => "'".$status[0]."'",
                     'all_los' => $status[1],
                     'time1_15' => $status[2],
-                    'time15_30' => $status[3],
-                    'time30_45' => $status[4],
+                    'time15_30' =>$status[3],
+                    'time30_45' => "'".$status[4]."'",
                     'time46_60' => $status[5],
                     'time61_75' => $status[6],
-                    'time76_90' => $status[7],
-                    'data_year' => $status[8],
-            );
-        }
-
-         $result =  $this->saveAll($data);
-         debug($result);
+                    'time76_90' => "'".$status[7]."'",
+                    'data_year' => $year,
+                    'data_month' => $month,
+                    'data_date' => $date,
+                    'league' => "'".$league."'",
+                    'modified' => "'".$today."'",
+                );
+                //debug($data);
+                $result = $this->updateAll($data,$conditions);
+                
+                }
+            }
         }
         
         /*登録処理（状況別勝敗）*/
@@ -118,12 +186,13 @@ class Teamtrend extends AppModel{
         }
         
         //日時で検索してヒットした件数を返す
-        public function findByDate($year,$month,$date){
+        public function findByDate($year,$month,$date,$league){
              $data = array(
                 "conditions" => array(
                              "data_year" => $year,
                              "data_month" => $month,
                              "data_date" => $date,
+                             "league" => $league
                 ),
                 //'order' => array("ranking ASC"),    
             );

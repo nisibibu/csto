@@ -22,7 +22,7 @@ class TeamTrendShell extends AppShell{
     
     /*メイン処理*/
     public function main(){
-        $this->out("Hello");
+        
     }
     
     /*時間帯別の得点傾向情報を保存*/
@@ -33,8 +33,8 @@ class TeamTrendShell extends AppShell{
        $param = "?kind=4";
        $trend_J2 = $this->Trend->getTeamTrendGoal($param,"j2");
        
-        /*DBへ保存*/
-        //DBへ時間帯別得点の情報を登録
+       /*DBへ保存*/
+       //DBへ時間帯別得点の情報を登録
         $team_model = new Teamtrend('Teamtrend','teamtrendgoal');
         $team_model->setTrendGoalDb($trend_J1);
         $team_model->setTrendGoalDb($trend_J2);
@@ -46,7 +46,7 @@ class TeamTrendShell extends AppShell{
         $trend_J1 = $this->Trend->getTeamTrendLos();
         //J2の情報を取得
         $param = "?kind=5";
-        $trend_J2 = $this->Trend->getTeamTrendLos($param,"j2");
+        $trend_J2 = $this->Trend->getTeamTrendLos($param);
         /*DBへ保存*/
         $team_model = new Teamtrend('Teamtrend','teamtrendlos');
         $team_model->setTrendLosDb($trend_J1);

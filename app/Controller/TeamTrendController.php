@@ -10,22 +10,27 @@ class TeamTrendController extends AppController{
     
     public function  index(){
         /*チームの時間帯別得点の情報を取得(J1)*/
-        $trend_goal_J1 =  $this->TeamTrend->getTeamTrendGoal();    //J!チームの時間帯別得点を取得
+        //$trend_goal_J1 =  $this->TeamTrend->getTeamTrendGoal();    //J!チームの時間帯別得点を取得
         //debug($trend_goal_J1);
-        $this->setTrendGoal($trend_goal_J1);
+        //$this->setTrendGoal($trend_goal_J1);
         
         /*チームの時間帯別得点の情報を取得(J2)*/
         //$param = "?kind=4";
-        //$trend_goal_J2 = $this->TeamTrend->getTeamTrendGoal($param);  //J2チームの時間帯別得点を取得
+        //$trend_goal_J2 = $this->TeamTrend->getTeamTrendGoal($param,"j2");  //J2チームの時間帯別得点を取得
+        //debug($trend_goal_J2);
+        //$this->setTrendGoal($trend_goal_J2);
         
         /*チームの時間帯別失点の情報を取得(J1)*/
         //$trend_los_J1 = $this->TeamTrend->getTeamTrendLos();
+        //debug($trend_los_J1);
+        //$this->setTrendLos($trend_los_J1);
         
         /*チームの時間帯別失点の情報を取得(J2)*/
-        //$param = "?kind=5";
-        //$trend_los_J2 = $this->TeamTrend->getTeamTrendLos($param);
+        $param = "?kind=5";
+        $trend_los_J2 = $this->TeamTrend->getTeamTrendLos($param,"j2");
+        $this->setTrendLos($trend_los_J2);
         
-        ///debug($trend_los_J2);
+        //debug($trend_los_J2);
         
         //DBへ時間帯別得点の情報を登録
         //$this->setTrendGoal($trend_goal_J1);

@@ -5,8 +5,11 @@
 //use Goutte\Client;
 //require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
 //require_once 'C:\xampp\htdocs\cake\app\Vendor/autoload.php';
-require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/autoload.php");
-
+if(env('DOCUMENT_ROOT')){
+    require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/autoload.php");
+}else{
+    require_once("/var/www/cake/app/Vendor/autoload.php");
+}
 /*定数*/
 //totoOne
 define('TEAM_TREND', 'http://www.totoone.jp/blog/datawatch/timezone.php');
@@ -17,7 +20,7 @@ class TeamTrendComponent extends Component{
     public $uses = array('POST','Live','Totovote','Teamtrendgoal');    //使用するモデルを宣言
     
     /*チームの時間帯別得点を取得*/
-    public function getTeamTrendGoal($param = "?kind=1"){
+    public function getTeamTrendGoal($param = "?kind=1",$league="j1"){
         //Goutteオブジェクト生成
         $crawer_trend = new Goutte\Client();
         //$crawer_trend_2 = new Goutte\Client();
@@ -26,7 +29,7 @@ class TeamTrendComponent extends Component{
         $team_trend_temp = array();     //データ一時保管用変数
         $team_name = array();               //チーム名を保管
         $team_trend_url = TEAM_TREND.$param;
-        debug($team_trend_url);
+        //debug($team_trend_url);
 
         //totoマッチング、投票率HTMLを取得
         $crawler_trend = $crawer_trend->request('GET', $team_trend_url);
@@ -103,7 +106,7 @@ class TeamTrendComponent extends Component{
            //チーム名の追加（各チーム配列の先頭）
            array_unshift($temp_goal[$i], $team_name[$i]);
            //年度の追加
-            array_push($temp_goal[$i],$year,$month,$date);   //現在の設定は2014年
+            array_push($temp_goal[$i],$year,$month,$date,$league);   //現在の設定は2014年
             $team_trend_goal[] = $temp_goal[$i];   //チームの得点傾向を格納
         }
         //var_dump($team_trend_goal);
@@ -127,7 +130,7 @@ class TeamTrendComponent extends Component{
     }
     
     /*チームの時間帯別失点を取得*/
-    public function getTeamTrendLos($param = "?kind=2"){
+    public function getTeamTrendLos($param = "?kind=2",$league="j1"){
         //Goutteオブジェクト生成
         $crawer_trend = new Goutte\Client();
         //$crawer_trend_2 = new Goutte\Client();
@@ -149,6 +152,26 @@ class TeamTrendComponent extends Component{
         });
         //debug($team_name);
 
+         /*タイトルから年・月・日を取得*/
+        $date_array = array();
+        $crawler_trend->filter('.txt_lead1')->each(function( $node )use(&$date_array){
+            //debug($node->text());
+            $tmp = trim($node->text());
+            preg_match('#.+(?P<year>\d{4})年(?P<month>\d{2})月(?P<date>\d{2})日#',$tmp,$m);
+            $date_array = $m;
+        });
+        $year;$month;$date; //年 月 日 を格納
+        
+        if(array_key_exists('year', $date_array)){
+            $year = $date_array['year'];
+        }
+        if(array_key_exists('month', $date_array)){
+            $month = $date_array['month'];
+        }
+        if(array_key_exists('date', $date_array)){
+            $date = $date_array['date'];
+        }
+        
         //J１時間帯別得点を取得
         //時間帯別の取得
         $crawler_trend->filter('.time_sel')->each(function( $node )use(&$team_trend_temp){
@@ -191,7 +214,7 @@ class TeamTrendComponent extends Component{
            //チーム名の追加（各チーム配列の先頭）
            array_unshift($temp_los[$i], $team_name[$i]);
            //年度の追加
-           array_push($temp_los[$i],"2014");   //現在の設定は2014年
+           array_push($temp_los[$i],$year,$month,$date,$league);   //現在の設定は2014年
             $team_trend_los[] = $temp_los[$i];   //チームの得点傾向を格納
         }
        
