@@ -163,12 +163,72 @@ class Teamtrend extends AppModel{
             }
         }
         
-        /*登録処理（状況別勝敗）*/
-        public function setTrendWinDb($statuses){
-            foreach ($statuses as $status){
-                //debug($status);
-                $data[] = array(
+    /*登録処理（状況別勝敗）*/
+    public function setTrendWinDb($statuses){
+//            foreach ($statuses as $status){
+//                //debug($status);
+//                $data[] = array(
+//                    'team' => $status[0],
+//                    'win_pre' => $status[1],
+//                    'draw_pre' => $status[2],
+//                    'lose_pre' => $status[3],
+//                    'winning_pre' => $status[4],
+//                    'win_lead' => $status[5],
+//                    'draw_lead' => $status[6],
+//                    'lose_lead' => $status[7],
+//                    'winning_lead' => $status[8],
+//                    'data_year' => $status[9],
+//            );
+//        }
+//
+//         $result =  $this->saveAll($data);
+//         debug($result);
+            //登録・更新処理判定
+            $year = $statuses[0][9];
+            $month = $statuses[0][10];
+            $date = $statuses[0][11];
+            $league = $statuses[0][12];
+            
+            //登録しようとしているデータの登録件数取得
+            $find_count = $this->findByDate($year,$month,$date,$league);
+            debug($find_count);
+            if($find_count === 0){
+                //登録処理
+                foreach ($statuses as $status){
+                    //debug($status);
+                    $data[] = array(
+                        'team' => $status[0],
+                        'win_pre' => $status[1],
+                        'draw_pre' => $status[2],
+                        'lose_pre' => $status[3],
+                        'winning_pre' => $status[4],
+                        'win_lead' => $status[5],
+                        'draw_lead' => $status[6],
+                        'lose_lead' => $status[7],
+                        'winning_lead' => $status[8],
+                        'data_year' => $status[9],
+                        'data_month' => $status[10],
+                        'data_date' => $status[11],
+                        'league' => $league,
+                    );
+                }
+                $result = $this->saveAll($data);
+                //debug($result);
+            }else{
+                 //更新処理
+                foreach($statuses as $status){
+                $conditions = array(
                     'team' => $status[0],
+                    'data_year' => $year,
+                    'data_month' => $month,
+                    'data_date' => $date,
+                    'league' => $league,
+                );
+
+                $today = date("Y-m-d H:i:s");
+                //debug($today);
+                $data = array(
+                    'team' => "'".$status[0]."'",
                     'win_pre' => $status[1],
                     'draw_pre' => $status[2],
                     'lose_pre' => $status[3],
@@ -177,13 +237,18 @@ class Teamtrend extends AppModel{
                     'draw_lead' => $status[6],
                     'lose_lead' => $status[7],
                     'winning_lead' => $status[8],
-                    'data_year' => $status[9],
-            );
-        }
-
-         $result =  $this->saveAll($data);
-         debug($result);
-        }
+                    'data_year' => $year,
+                    'data_month' => $month,
+                    'data_date' => $date,
+                    'league' => "'".$league."'",
+                    'modified' => "'".$today."'",
+                );
+                //debug($data);
+                $result = $this->updateAll($data,$conditions);
+                
+                }
+            }
+    }
         
         //日時で検索してヒットした件数を返す
         public function findByDate($year,$month,$date,$league){

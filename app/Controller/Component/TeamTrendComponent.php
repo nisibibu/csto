@@ -223,7 +223,7 @@ class TeamTrendComponent extends Component{
     }
     
      /*チームの時間帯別失点を取得*/
-    public function getTeamTrendWin($param = "?kind=3"){
+    public function getTeamTrendWin($param = "?kind=3",$league="j1"){
         //Goutteオブジェクト生成
         $crawer_trend = new Goutte\Client();
 
@@ -244,6 +244,27 @@ class TeamTrendComponent extends Component{
         });
         //var_dump($team_name);
 
+         /*タイトルから年・月・日を取得*/
+        $date_array = array();
+        $crawler_trend->filter('.txt_lead1')->each(function( $node )use(&$date_array){
+            //debug($node->text());
+            $tmp = trim($node->text());
+            preg_match('#.+(?P<year>\d{4})年(?P<month>\d{2})月(?P<date>\d{2})日#',$tmp,$m);
+            $date_array = $m;
+        });
+        $year;$month;$date; //年 月 日 を格納
+        
+        if(array_key_exists('year', $date_array)){
+            $year = $date_array['year'];
+        }
+        if(array_key_exists('month', $date_array)){
+            $month = $date_array['month'];
+        }
+        if(array_key_exists('date', $date_array)){
+            $date = $date_array['date'];
+        }
+        
+        
         //J１時間帯別得点を取得
         //時間帯別の取得
         $crawler_trend->filter('.time_sel')->each(function( $node )use(&$team_trend_temp){
@@ -291,12 +312,11 @@ class TeamTrendComponent extends Component{
 
         
         //データの加工処理
-        $year = "2014";  //年度
         for($i = 0; $i < count($team_name) ;  $i++){
            //チーム名の追加（各チーム配列の先頭）
            array_unshift($temp_win[$i], $team_name[$i]);
            //年度の追加
-           array_push($temp_win[$i],$year);   //現在の設定は2014年
+           array_push($temp_win[$i],$year,$month,$date,$league);   //現在の設定は2014年
             $team_trend_win[] = $temp_win[$i];   //チームの勝敗傾向を格納
         }
        
