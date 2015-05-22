@@ -21,9 +21,9 @@ class TeamTrendController extends AppController{
         //$this->setTrendGoal($trend_goal_J2);
         
         /*チームの時間帯別失点の情報を取得(J1)*/
-        //$trend_los_J1 = $this->TeamTrend->getTeamTrendLos();
+        $trend_los_J1 = $this->TeamTrend->getTeamTrendLos();
         //debug($trend_los_J1);
-        //$this->setTrendLos($trend_los_J1);
+        $this->setTrendLos($trend_los_J1);
         
         /*チームの時間帯別失点の情報を取得(J2)*/
         //$param = "?kind=5";
@@ -47,7 +47,7 @@ class TeamTrendController extends AppController{
         //J2の状況別勝敗の情報を取得
         $param = "?kind=6";
         $trend_win_J2 = $trend_win_J2 = $this->TeamTrend->getTeamTrendWin($param,"j2");    //J2の状況別勝敗を取得
-        debug($trend_win_J2);
+        //debug($trend_win_J2);
         //$this->setTrendWinning($trend_win_J2);
     }
     

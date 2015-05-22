@@ -52,9 +52,12 @@ class MatchController extends AppController{
         /*実装中*/
         //$nabisuko_result = $this->getMatcesNabisuko();
         //debug($nabisuko_result);
-        $this->saveMatchNabisuko();
+        //$this->saveMatchNabisuko();
         //$nabisko_result =  $this->Matches->getMatchInfoJleague(YAMAZAKI_MATCH_RESULT,"ヤマザキナビスコ杯");
         ///debug($nabisko_result);
+        
+        /*スタッツ情報の取得*/
+        $this->Matches->getStatuRecentMatch("j1");
         
         /*画面表示テスト*/
         //if($this->show()){

@@ -16,9 +16,99 @@ define("ACL_MATCH_RESULT","http://sportsnavi.yahoo.co.jp/sports/soccer/jleague/2
 define("ACL_MATCH","http://www.nikkansports.com/soccer/jleague/acl/result/");   //ACLの情報取得先URL
 define('SCORE_QUICK_J1',"http://www.nikkansports.com/socncer/jleague/j1/score/j1-score.html");           //J1の速報
 define("ALL_MATCH_THIS_MONTH","http://www.jleague.jp/match/");      //Jリーグ公式サイト（当月）の試合
+define("NIKKAN_JLEAGUE","http://www.nikkansports.com/");   //スタッツ取得用
 
-/*リーグ情報の取得、格納*/
+/*リーグ情報の取得・格納
+ * 
+ * 
+ * 
+ *
+ *  */
 class MatchesComponent extends Component{
+    /*Jリーグ速報から試合詳細へ→スタッツ情報の取得（直近の試合のみ）
+     * 
+     *      */
+    public function getStatuRecentMatch($league){
+        $url = NIKKAN_JLEAGUE ."soccer/jleague/". $league . "/score";
+        //debug($url);
+        
+        //Goutteオブジェクト生成
+        $crawer = new Goutte\Client();
+        
+        //順位を取得
+        $crawler = $crawer->request('GET',$url);
+        
+        $detail_links = array(); //試合詳細を見るリンクURLを保持
+        
+        //リンクの取得
+        $crawler->filter('p.showDetail a' )->each(function( $node )use(&$detail_links){
+               //var_dump($node->attr('href'));
+               $detail_links[] = $node->attr('href');
+        });
+        $detail_links = array_unique($detail_links);//重複するリンクを削除
+        //debug($detail_links);
+        
+        /*更新日時の取得*/
+        $update;
+        $crawler->filter('p.upDate' )->each(function( $node )use(&$update){
+               //var_dump($node->attr('href'));
+               $update = trim($node->text());
+        });
+        debug($update);
+        
+        /**** 直近の開催試合分のスタッツ取得(１試合分） ****/
+        $stats_url = NIKKAN_JLEAGUE . $detail_links[0];
+        $stats_clawer = $crawer->request('GET', $stats_url);
+        
+        //対戦カードの取得
+        $match_cards = array();
+        $stats_clawer->filter('.kickStats th')->each(function( $node )use(&$match_cards){
+            $match_cards[] = trim($node->text());
+        });
+        debug($match_cards);
+        
+        //スタッツ情報の取得
+        $stats_array = array(); 
+        $stats_clawer->filter('.kickStats td')->each(function( $node )use(&$stats_array){
+            $stats_array[] = trim($node->text());
+        });
+        debug($stats_array);
+        
+        //スタッツ情報の整形
+        $temp_array = array();  //整形用一時変数
+        if(count($match_cards) !== 3){
+            return;  //対戦カードの取得失敗
+        }
+        if(count($stats_array) === 21){
+            $tmp_stat;
+            for($i = 0; $i < count($stats_array); $i++){
+                if($i % 3 === 2){
+                    $temp_array[$tmp_name][] = $stats_array[$i];
+                }else if($i % 3 === 1){
+                    $temp_array[$stats_array[$i]][] = $tmp_stat;
+                    $tmp_name = $stats_array[$i];
+                }else{
+                    $tmp_stat = $stats_array[$i];
+                }
+            }
+        }else{
+            return;  //スタッツ情報の取得失敗
+        }
+        debug($temp_array);
+        
+        $result;    //整形済みデータ
+        $item_array = array_keys($temp_array);
+        debug($item_array);
+        
+        for($i = 0; $i < count($item_array); $i++){
+            $result[$match_cards[0]][$item_array[$i]] = $temp_array[$item_array[$i]][0];
+        }
+        for($i = 0; $i < count($item_array); $i++){
+            $result[$match_cards[2]][$item_array[$i]] = $temp_array[$item_array[$i]][1];
+        }
+        debug($result);
+    }
+    
     
     /*Jリーグ試合結果の情報をスクレイピングで取得
      * Ｊ１昇格、プレーオフ未対応なので対応させる

@@ -106,7 +106,7 @@ class Teamtrend extends AppModel{
             
             //登録しようとしているデータの登録件数取得
             $find_count = $this->findByDate($year,$month,$date,$league);
-            debug($find_count);
+            //debug($find_count);
             if($find_count === 0){
                 //登録処理
                 foreach ($statuses as $status){
@@ -130,7 +130,7 @@ class Teamtrend extends AppModel{
                 //debug($result);
             }else{
                  //更新処理
-                $this->out("update");
+                //debug($statuses);
                 foreach($statuses as $status){
                 $conditions = array(
                     'team' => $status[0],
