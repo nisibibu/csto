@@ -40,8 +40,17 @@ class LeagueShell extends AppShell{
     
     /*Jリーグのゴールランキングを保存*/
     public function saveJLeagueGoalRanking(){
-        /*取得*/
+        App::uses('League','Model');     //モデルクラスにTeamTrendを指定
         
+        //モデルクラスのインスタンスを生成
+        $league = new League('League','goalranking');
+        
+        /*J1のゴールランキングを取得*/
+        $goal_ranking_j1 = $this->Leagues->getGoalRanking(GOAL_RANKING_J1);
+        $league->setGoalRankingDb($goal_ranking_j1,"j1");
+        
+        $goal_ranking_j2 = $this->Leagues->getGoalRanking(GOAL_RANKING_J2); //J2ゴールランキングの取得
+        $league->setGoalRankingDb($goal_ranking_j2,"j2");
         
     }
     

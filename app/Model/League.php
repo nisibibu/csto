@@ -120,8 +120,8 @@ class League extends AppModel{
                     'name' => $status["選手名"],
                     'team' => $common->formatTeamName($status['チーム名']),
                     'position' => $status['Pos'],
-                    'goal' => $status["PK"],
-                    'pk' => $status["得点"],
+                    'goal' => $status["得点"],
+                    'pk' => $status["PK"],
                     'shoot' => $status["シュート"],
                     'shoot_per_goal' => $status["シュート決定率"],
                     'shoot_per_90' => $status["90分平均得点"],
@@ -142,6 +142,7 @@ class League extends AppModel{
             //更新処理
             foreach($statuses as $status){
                 $conditions = array(
+                    'name' => $status['選手名'],
                     'team' => $common->formatTeamName($status['チーム名']),
                     'year' => $year,
                     'month' => $month,

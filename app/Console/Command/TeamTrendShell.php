@@ -56,12 +56,15 @@ class TeamTrendShell extends AppShell{
     /*状況別勝敗の記録*/
     public function winTrend(){
        //チームの状況別勝敗のDB登録
-       $team_trend =  $this->Trend->getTeamTrendWin();
+       $team_trend_j1 =  $this->Trend->getTeamTrendWin();
+       $param = "?kind=6";
+       $team_trend_j2 = $this->Trend->getTeamTrendWin($param,"j2");
        /*コントローラー使用の場合*/
        //$this->TeamTrendController->setTrendWinning($team_trend); 
        /*モデル使用の場合*/
         $team_model = new Teamtrend('Teamtrend','teamtrendwinning');
-        $team_model->setTrendWinDb($team_trend);
+        $team_model->setTrendWinDb($team_trend_j1);
+        $team_model->setTrendWinDb($team_trend_j2);
     }
 }
 

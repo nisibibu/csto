@@ -7,6 +7,7 @@ class Totovote extends Vote{
     public $useDbConfig = 'default';    //defaultの接続設定を指定
     
     /*バリデーションの設定*/
+    
     public $validate = array(
             'held_time' => array(
                 'required' => true,

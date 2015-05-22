@@ -130,6 +130,7 @@ class Teamtrend extends AppModel{
                 //debug($result);
             }else{
                  //更新処理
+                $this->out("update");
                 foreach($statuses as $status){
                 $conditions = array(
                     'team' => $status[0],

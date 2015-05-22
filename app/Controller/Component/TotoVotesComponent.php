@@ -5,8 +5,11 @@
  *  */
 use Goutte\Client;
 //require_once 'C:\xampp\htdocs\cake\app\Vendor/goutte/goutte.phar';
-require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/goutte/goutte.phar");
-
+if(env('DOCUMENT_ROOT')){
+    require_once($_SERVER['DOCUMENT_ROOT']."cake/app/Vendor/goutte/goutte.phar");
+}else{
+    require_once '/var/www/cake/app/Vendor/goutte/goutte.phar';
+}
 //define('TOT','http://www.totoone.jp/');
 
 /*shellからモデルを使用する*/
@@ -41,7 +44,7 @@ class TotoVotesComponent extends Component{
         
         /*official page より取得*/
         $held_time_o = $this->getHeldTime();
-        //debug($held_time_o);
+        debug($held_time_o);
         
         /* 取得ページの決定
          * 
@@ -57,7 +60,7 @@ class TotoVotesComponent extends Component{
             $held_time = $held_time_o;
         }
         //debug($held_time);
-        //$held_time = 754;
+        //$held_time = 767;
         /*次の回の開催回のページがあるかチェック*/
         $url_next = "http://www.toto-dream.com/dci/I/IPA/IPA01.do?op=disptotoLotInfo&holdCntId=0".$held_time;
         try{
@@ -159,6 +162,7 @@ class TotoVotesComponent extends Component{
             $held = trim($node->attr("alt"));
             if($held){
                 $held_times = $held;
+                //var_dump($held_times);
             }
         });
         

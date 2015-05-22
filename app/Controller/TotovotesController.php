@@ -65,10 +65,10 @@ class TotovotesController extends AppController{
         //$result = $this->getNowTotoVoteInfo($db_name);
         //debug($result);
         
-        $this->getRecentAll();
+        //$this->getRecentAll();
         
         
-        $recent_held = $this->getRecentHeld();
+        //$recent_held = $this->getRecentHeld();
         //$recent_held = $recent_held;
         //debug($recent_held);
         
@@ -76,8 +76,8 @@ class TotovotesController extends AppController{
         //debug($match_info);
         
         //debug($match_info);
-        //$this->setTotoMatch($match_info);
-        $toto_info = $this->getRecentTotoinfo();
+        $this->setTotoMatch($match_info);
+        //$toto_info = $this->getRecentTotoinfo();
         //debug($toto_info);
         //$this->getRecentMiniInfo();
     }
