@@ -11,6 +11,8 @@ class Match extends AppModel{
     
     //public $primaryKey = 'section';
     
+    
+    
     /*Controllerクラスから受け取ったデータを
      * １節毎に分割
      * 現在日時より前の情報
@@ -476,12 +478,14 @@ class Match extends AppModel{
     
     
     
-    /*セクションの設定個数を返却（該当セクションが登録されているか判定)*/
+    /*セクションの設定個数を返却（該当セクションが登録されているか判定)
+     * 
+     * 
+     * 
+     *      */
     public function isSetSecttion($section,$year,$league = "j1",$match_date=""){
 //        $recent_secttion = array();
 //        $is_set;
-        
-        
         if($league === "ヤマザキナビスコ杯"){
             $data = array(
             "conditions" => array(

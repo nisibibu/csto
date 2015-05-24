@@ -57,7 +57,9 @@ class MatchController extends AppController{
         ///debug($nabisko_result);
         
         /*スタッツ情報の取得*/
-        $this->Matches->getStatuRecentMatch("j1");
+        $league = 'j1';
+        $stats = $this->Matches->getStatuRecentMatch($league);
+        $this->setStas($stats, $league);
         
         /*画面表示テスト*/
         //if($this->show()){
@@ -116,6 +118,14 @@ class MatchController extends AppController{
         
     }
     
+    
+    /*スタッツ情報の登録・更新*/
+    public function setStas($stas,$league){
+        App::uses('Stat', 'Model');
+        $stas_model = new Stat('Stat');
+        
+        $stas_model->setStats($stas, $league);
+    }
 
     /*チーム一覧の取得*/
     public function getTeamList(){

@@ -54,25 +54,83 @@ class MatchesComponent extends Component{
                //var_dump($node->attr('href'));
                $update = trim($node->text());
         });
-        debug($update);
+        //debug($update);
+        preg_match("#^(?P<year>\d{4})年(?P<month>\d{2})月(?P<day>\d{2})日.+#", $update,$m);
+        $year['year'] = $m['year'];
+        $month['month'] = $m['month'];
+        $day['day'] = $m['day'];
+        //debug($year);
         
+        $stats_list = array(); //返却用
         /**** 直近の開催試合分のスタッツ取得(１試合分） ****/
-        $stats_url = NIKKAN_JLEAGUE . $detail_links[0];
+        foreach($detail_links as $link){
+            $stats_array = $this->getOneMatchStats($link,$year,$month,$day);
+            $stats_list += $stats_array;
+        }
+        
+        //debug($stats_array[3]);
+        return $stats_list;
+    }
+    
+    /* 一試合のスタッツ情報を取得・整形して返す(nikkann)
+     * @param string url
+     * @param string year
+     * @param string month
+     * @param string day
+     * 
+     * @return array stats
+     */
+    private function getOneMatchStats($url,$year,$month,$day){
+        $stats_url = NIKKAN_JLEAGUE . $url;
+        
+         //Goutteオブジェクト生成
+        $crawer = new Goutte\Client();
         $stats_clawer = $crawer->request('GET', $stats_url);
+        
+        /*セクション・スタジアム・ゴール関連の取得*/
+        $section;
+        $match_detail;
+        $stats_clawer->filter('.scoreTwrap td' )->each(function( $node )use(&$section,&$match_detail){
+               //var_dump($node->text());
+                if(preg_match("#.+第(?P<section>\d{1,2})節.+#", $node->text(),$m)){
+                    $section = $m['section'];
+                }
+                $match_detail[] = trim($node->text());
+               
+        });
+        //debug($section);
+        //debug($match_detail);
+        
+        $stadium = null;
+        $home_team_goal = null;
+        $away_team_goal = null;
+        $score = null;
+        $goal_detail = null;
+        //対戦カードの詳細を整形
+        if(count($match_detail) > 5){   //点数部分まで取得できた場合
+            $stadium = $match_detail[2];
+            $home_team_goal = $match_detail[4];
+            $away_team_goal = $match_detail[6];
+            if(preg_match("#(?P<first_score>\d{1}－\d{1})(?P<second_score>\d{1}－\d{1})#", $match_detail[5],$m)){
+                $score['first_score'] = $m['first_score'];
+                $score['second_score']= $m['second_score'];
+            }
+        }
+        
         
         //対戦カードの取得
         $match_cards = array();
         $stats_clawer->filter('.kickStats th')->each(function( $node )use(&$match_cards){
             $match_cards[] = trim($node->text());
         });
-        debug($match_cards);
+        //debug($match_cards);
         
         //スタッツ情報の取得
         $stats_array = array(); 
         $stats_clawer->filter('.kickStats td')->each(function( $node )use(&$stats_array){
             $stats_array[] = trim($node->text());
         });
-        debug($stats_array);
+        //debug($stats_array);
         
         //スタッツ情報の整形
         $temp_array = array();  //整形用一時変数
@@ -83,9 +141,11 @@ class MatchesComponent extends Component{
             $tmp_stat;
             for($i = 0; $i < count($stats_array); $i++){
                 if($i % 3 === 2){
-                    $temp_array[$tmp_name][] = $stats_array[$i];
+                    $name = $this->changeNameForDb($tmp_name);
+                    $temp_array[$name][] = $stats_array[$i];
                 }else if($i % 3 === 1){
-                    $temp_array[$stats_array[$i]][] = $tmp_stat;
+                    $name = $this->changeNameForDb($stats_array[$i]);
+                    $temp_array[$name][] = $tmp_stat;
                     $tmp_name = $stats_array[$i];
                 }else{
                     $tmp_stat = $stats_array[$i];
@@ -94,21 +154,70 @@ class MatchesComponent extends Component{
         }else{
             return;  //スタッツ情報の取得失敗
         }
-        debug($temp_array);
+        //debug($temp_array);
         
-        $result;    //整形済みデータ
+        $result;
         $item_array = array_keys($temp_array);
-        debug($item_array);
+        //debug($item_array);
+        
+        $home_team = $match_cards[0];
+        $away_team = $match_cards[2];
+        
+        //HOME TEAM
+        $result[$home_team]['section'] = $section;
+        $result[$home_team]['team'] = $home_team;
+        if(!is_null($home_team_goal)){
+            $result[$home_team]['goal'] = $home_team_goal;
+        }
+        $result[$home_team]['vs_team'] = $away_team;
+        $result[$home_team]['position'] = 'Home';
+        if(!is_null($stadium)){
+            $result[$home_team]['stadium'] = $stadium;
+        }
         
         for($i = 0; $i < count($item_array); $i++){
-            $result[$match_cards[0]][$item_array[$i]] = $temp_array[$item_array[$i]][0];
+            $result[$home_team][$item_array[$i]] = $temp_array[$item_array[$i]][0];
+        }       
+        $stats[$home_team] = array_merge($result[$home_team],$score,$year,$month,$day); 
+        
+        //AWAY TEAM
+        $result[$away_team]['section'] = $section;
+        $result[$away_team]['team'] = $away_team;
+        if(!is_null($away_team)){
+            $result[$away_team]['goal'] = $away_team_goal;
+        }
+        $result[$away_team]['vs_team'] = $home_team;
+        $result[$away_team]['position'] = 'Away';
+        if(!is_null($stadium)){
+            $result[$away_team]['stadium'] = $stadium;
         }
         for($i = 0; $i < count($item_array); $i++){
-            $result[$match_cards[2]][$item_array[$i]] = $temp_array[$item_array[$i]][1];
+            $result[$away_team][$item_array[$i]] = $temp_array[$item_array[$i]][1];
         }
-        debug($result);
+        $stats[$away_team] = array_merge($result[$away_team],$score,$year,$month,$day); 
+        //debug($stats);
+        return $stats;
     }
     
+    /*スタッツの項目名をDB用に変換*/
+    private function changeNameForDb($name){
+        if($name === "シュート"){
+            $name = "shoot";
+        }elseif($name === "ゴールキック"){
+            $name = 'goal_kick';
+        }elseif($name === "コーナーキック"){
+            $name = 'corner';
+        }elseif($name === "直接ＦＫ"){
+            $name = 'direct_fk';
+        }elseif($name === "間接ＦＫ"){
+            $name = 'indirect_fk';
+        }elseif($name === "ＰＫ"){
+            $name = 'pk';
+        }elseif($name === "キープ率"){
+            $name = 'keep_percent';
+        }
+        return $name;
+    }
     
     /*Jリーグ試合結果の情報をスクレイピングで取得
      * Ｊ１昇格、プレーオフ未対応なので対応させる
