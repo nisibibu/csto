@@ -69,7 +69,7 @@ class MatchController extends AppController{
         /*試合開催日の取得*/
         $league = "j1";$year = '2015';
         $past_link = $this->Matches->getMatchDayAndCount("j1","2015","04");
-        $this->Matches->getPastMatchStats($past_link,$year,$league);
+        $this->Matches->getPastMatchsStats($past_link,$year,$league);
         /*画面表示テスト*/
         //if($this->show()){
             //Formからのデータ受け取り

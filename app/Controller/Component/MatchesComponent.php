@@ -201,9 +201,16 @@ class MatchesComponent extends Component{
     }
     
     
-    /**/
-    public function getPastMatchsStats(){
+    /*過去の*/
+    public function getPastMatchsStats($links,$year,$league){
+        $stats = array();
+        $day_list = array_keys($links);
         
+        for($i = 0; $i < count($day_list); $i++){
+            $stats[$day_list[$i]] = $this->getPastDayMatchStats($day_list[$i],$links[$day_list[$i]], $year, $league);
+        }
+
+        debug($stats[$day_list[0]]);
     }
     
     
@@ -211,36 +218,34 @@ class MatchesComponent extends Component{
      *@param array links 1day od links
      * 
      *      */
-    public function getPastDayMatchStats($links,$year,$league){
+    public function getPastDayMatchStats($match_day,$links,$year,$league){
         //debug($links);
         
         /*１日分の試合の取得 */
-        $day_list = array_keys($links);
+        //$match_day = array_keys($links);
         $count = array();
         $result_stats = array();
  
-        for($i = 1; $i <= count($links[$day_list[0]]); $i++){
+        for($i = 1; $i <= count($links); $i++){
                 $count[] = sprintf("%02d",$i);
         }
         
         $stats = array();
         foreach($count as $var){
                 //URL
-                $url = "/soccer/jleague/".$league."/score/".$year."/".$year.$day_list[0].$var.".html";
+                $url = "/soccer/jleague/".$league."/score/".$year."/".$year.$match_day.$var.".html";
 
                 //引数用の配列作成
                 $year_array['year'] = $year;
-                preg_match("#^(?<month>\d{2})(?<day>\d{2})$#", $day_list[0],$m);
+                preg_match("#^(?<month>\d{2})(?<day>\d{2})$#", $match_day,$m);
                 $month['month'] = $m['month'];
                 $day['day'] = $m['day'];
 
                 $stats = array_merge($stats,$this->getOneMatchStats($url, $year_array, $month, $day));
         }
        
-        
-        
-        debug($stats);
-        
+        //debug($stats);
+        return $stats;
     }
     
     /*Jリーグ速報から試合詳細へ→スタッツ情報の取得（直近の試合のみ）
@@ -318,8 +323,8 @@ class MatchesComponent extends Component{
         $match_detail;
         $stats_clawer->filter('.scoreTwrap td' )->each(function( $node )use(&$section,&$match_detail){
                //var_dump($node->text());
-                if(preg_match("#.+第(?P<section>\d{1,2})節.+#", $node->text(),$m)){
-                    $section = $m['section'];
+                if(preg_match("#.+第(?P<section>.+)節.+#", $node->text(),$m)){
+                    $section = mb_convert_kana($m['section'],"n");
                 }
                 $match_detail[] = trim($node->text());
                
