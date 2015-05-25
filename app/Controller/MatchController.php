@@ -64,7 +64,7 @@ class MatchController extends AppController{
         
         /*スタッツ情報（付随情報）の取得*/
         $stats = $this->Matches->getStatsSupo("j2");
-        $this->setStas($stats, "j2");
+        //$this->setStas($stats, "j2");
         
         
         /*画面表示テスト*/
