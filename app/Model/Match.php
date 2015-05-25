@@ -355,7 +355,7 @@ class Match extends AppModel{
 	if($name === '名古屋'){
             $name = '名古屋グランパス';
         }
-	if($name === 'C大阪'){
+	if($name === 'C大阪' || $name === 'Ｃ大阪'){
             $name = 'セレッソ大阪';
         }
 	if($name === '鳥栖'){
@@ -364,16 +364,16 @@ class Match extends AppModel{
 	if($name === '柏'){
             $name = '柏レイソル';
         }
-	if($name === 'G大阪'){
+	if($name === 'G大阪' || $name === 'Ｇ大阪'){
             $name = 'ガンバ大阪';
         }
 	if($name  === '横浜'){
             $name = '横浜 Ｆ・マリノス';
         }
-	if($name === '川崎F'){
+	if($name === '川崎F' || $name === '川崎Ｆ'){
             $name = '川崎フロンターレ';
         }
-	if($name === 'FC東京'){
+	if($name === 'FC東京' || $name === '東京'){
             $name = 'ＦＣ東京';
         }
 	if($name === '鹿島'){
@@ -412,7 +412,7 @@ class Match extends AppModel{
 	if($name === '栃木'){
             $name = '栃木ＳＣ';
         }
-	if($name === '東京V'){
+	if($name == '東京V' || $name == '東京Ｖ'){
             $name = '東京ヴェルディ1969';
         }
 	if($name === '岐阜'){

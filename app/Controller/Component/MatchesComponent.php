@@ -16,7 +16,7 @@ define("ACL_MATCH_RESULT","http://sportsnavi.yahoo.co.jp/sports/soccer/jleague/2
 define("ACL_MATCH","http://www.nikkansports.com/soccer/jleague/acl/result/");   //ACLの情報取得先URL
 define('SCORE_QUICK_J1',"http://www.nikkansports.com/socncer/jleague/j1/score/j1-score.html");           //J1の速報
 define("ALL_MATCH_THIS_MONTH","http://www.jleague.jp/match/");      //Jリーグ公式サイト（当月）の試合
-define("NIKKAN_JLEAGUE","http://www.nikkansports.com/");   //スタッツ取得用
+define("NIKKAN_JLEAGUE","http://www.nikkansports.com");   //スタッツ取得用
 
 /*リーグ情報の取得・格納
  * 
@@ -25,11 +25,157 @@ define("NIKKAN_JLEAGUE","http://www.nikkansports.com/");   //スタッツ取得�
  *
  *  */
 class MatchesComponent extends Component{
+    
+    
+    /* Jリーグの結果からスタッツの情報を取得
+     * 年、月を指定しない場合は本日(date)から取得する 
+     *      
+     */
+    public function getStatsSupo($league,$year="",$month=""){
+        if($year == "" || $month == ""){
+            $today = date('Y-m-d');
+            preg_match("#^(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})$#",$today,$m);
+            $year = $m['year'];
+            $month = $m['month'];
+        }
+        
+        //月画面のURL作成
+        $url = GAME_MATCH_RESULT.$year."/".$league."/fixtures_results/".$month.".html";
+        //debug($url);
+        
+        //Goutteオブジェクト生成
+        $crawer = new Goutte\Client();
+        
+        //順位を取得
+        $crawler = $crawer->request('GET',$url);
+        
+        $detail_links = array();    //詳細画面へのリンク
+        $temp_date;
+        $crawler->filter('.table-block01 a' )->each(function( $node )use(&$detail_links,&$temp_date){
+               preg_match("#^/soccer/games/\d{4}/.+/(?P<day>\d{4})/.+$#",$node->attr('href'),$day);
+               $date = $day['day'];
+               if($temp_date == NULL || $temp_date !== $date){
+                   $temp_date = $date;
+               }
+               $detail_links[$temp_date][] = $node->attr('href');
+        });
+        //$detail_links = array_unique($detail_links);//重複するリンクを削除
+        //debug($detail_links);
+        
+        //開催日(0000)の取得
+//        $helddates = array();
+//        foreach($detail_links as $var){
+//            preg_match("#^/soccer/games/\d{4}/.+/(?P<day>\d{4})/.+$#",$var,$day);
+//            $helddates[] = $day['day'];
+//        }
+//        $helddates = array_unique($helddates);
+        //debug($helddates);
+        
+        /*１試合のスタッツ情報取得
+         * 日付毎に分類して取得
+         * 
+         *          
+         */
+        $stats = array();
+        foreach($detail_links as $key=>$value){
+            $tmp = array();
+            for($i = 0; $i < count($value); $i++){
+                $tmp += $this->getOneStats($value[$i], $year, $league);
+            }
+            $stats[$key] = $tmp;
+        }
+        //$stats = $this->getOneStats($detail_links['0502'][0], $year, $league);
+        //debug($stats['0502']);
+        //debug($stats);
+        
+        return $stats;
+    }
+    
+    
+    /* スタッツ情報の取得
+     * 節 チーム 天気 年 リーグ 
+     * 
+     * 
+     *      */
+    private function getOneStats($url,$year,$league){
+        $stat_url = "http://www.sponichi.co.jp/".$url;
+        
+        $craw = new Goutte\Client();
+        $crawler = $craw->request('GET',$stat_url);
+        
+        //節・天気の取得
+        $section;$weather;
+        $crawler->filter('tr.tr_ffffff td' )->each(function( $node )use(&$section,&$weather){
+               $text = $node->text();
+               if(preg_match("#第(?<section>.+)節#", $text,$m)){
+                   $section = mb_convert_kana($m['section'], "a");
+               }
+               if(preg_match("#▽(?<weather>(晴.*|曇.*|雨.*))$#", $text,$n)){
+                   $weather = $n['weather'];
+               }
+               
+        });
+        //debug($section);
+        //debug($weather);
+
+        //対戦チームの取得
+        $home_team = NULL;
+        $away_team = NULL;
+        $crawler->filter('td.tr_e3e3e3' )->each(function( $node )use(&$home_team,&$away_team){
+               $text = $node->text();
+               //var_dump($text);
+               if(preg_match("#^(?<team>.+)\s.+.+勝.+分.+敗.+$#", $text,$m)){
+                   //debug($m);
+                   if(!$home_team){
+                       $home_team = trim($m['team']);
+                   }else{
+                       $away_team = trim($m['team']);
+                   }
+               }
+        });
+        //debug($home_team);
+        //debug($away_team);
+        /*得点者の取得
+         *
+         *          */
+        
+        /*警告の取得
+         *
+         *          */
+        
+        /*退場の取得
+         *
+         *          */
+        
+        /*データの整形（hometeam awayteam)*/
+        $stas = array();
+        
+        //HOMETEAM
+        $home_array['section'] = $section;
+        $home_array['team'] = $home_team;
+        $home_array['weather'] = $weather;
+        $home_array['year'] = $year;
+        $home_array['league'] = $league;
+        
+        
+        //AWAYTEAM
+        $away_array['section'] = $section;
+        $away_array['team'] = $away_team;
+        $away_array['weather'] = $weather;
+        $away_array['year'] = $year;
+        $away_array['league'] = $league;
+        
+        $stats[$home_team] = $home_array;
+        $stats[$away_team] = $away_array;
+        
+        return $stats;
+    }
+    
     /*Jリーグ速報から試合詳細へ→スタッツ情報の取得（直近の試合のみ）
      * 
      *      */
     public function getStatuRecentMatch($league){
-        $url = NIKKAN_JLEAGUE ."soccer/jleague/". $league . "/score";
+        $url = NIKKAN_JLEAGUE ."/soccer/jleague/". $league . "/score";
         //debug($url);
         
         //Goutteオブジェクト生成
@@ -59,14 +205,22 @@ class MatchesComponent extends Component{
         $year['year'] = $m['year'];
         $month['month'] = $m['month'];
         $day['day'] = $m['day'];
-        //debug($year);
+//        debug($year);
+//        debug($month);
+//        debug($day);
         
         $stats_list = array(); //返却用
         /**** 直近の開催試合分のスタッツ取得(１試合分） ****/
-        foreach($detail_links as $link){
+        try{
+            foreach($detail_links as $link){
             $stats_array = $this->getOneMatchStats($link,$year,$month,$day);
             $stats_list += $stats_array;
+            }
+        } catch (Exception $ex) {
+            print_r($ex);
+            return FALSE;
         }
+        
         
         //debug($stats_array[3]);
         return $stats_list;
@@ -82,7 +236,7 @@ class MatchesComponent extends Component{
      */
     private function getOneMatchStats($url,$year,$month,$day){
         $stats_url = NIKKAN_JLEAGUE . $url;
-        
+        //debug($stats_url);
          //Goutteオブジェクト生成
         $crawer = new Goutte\Client();
         $stats_clawer = $crawer->request('GET', $stats_url);
@@ -137,7 +291,7 @@ class MatchesComponent extends Component{
         if(count($match_cards) !== 3){
             return;  //対戦カードの取得失敗
         }
-        if(count($stats_array) === 21){
+        if(count($stats_array) === 21 || count($stats_array) === 18){
             $tmp_stat;
             for($i = 0; $i < count($stats_array); $i++){
                 if($i % 3 === 2){
