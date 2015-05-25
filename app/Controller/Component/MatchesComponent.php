@@ -27,6 +27,35 @@ define("NIKKAN_JLEAGUE","http://www.nikkansports.com");   //スタッツ取得�
 class MatchesComponent extends Component{
     
     
+    /* Jリーグ開催日（0000)と開催試合数の取得
+     *
+     *      */
+    public function getMatchDayAndCount($league,$year,$month){
+         //月画面のURL作成
+        $url = GAME_MATCH_RESULT.$year."/".$league."/fixtures_results/".$month.".html";
+        //debug($url);
+        
+        //Goutteオブジェクト生成
+        $crawer = new Goutte\Client();
+        
+        //順位を取得
+        $crawler = $crawer->request('GET',$url);
+        
+        $detail_links = array();    //詳細画面へのリンク
+        $temp_date;
+        $crawler->filter('.table-block01 a' )->each(function( $node )use(&$detail_links,&$temp_date){
+               preg_match("#^/soccer/games/\d{4}/.+/(?P<day>\d{4})/.+$#",$node->attr('href'),$day);
+               $date = $day['day'];
+               if($temp_date == NULL || $temp_date !== $date){
+                   $temp_date = $date;
+               }
+               $detail_links[$temp_date][] = $node->attr('href');
+        });
+        //$detail_links = array_unique($detail_links);//重複するリンクを削除
+        return $detail_links;
+    }
+    
+    
     /* Jリーグの結果からスタッツの情報を取得
      * 年、月を指定しない場合は本日(date)から取得する 
      *      
@@ -169,6 +198,49 @@ class MatchesComponent extends Component{
         $stats[$away_team] = $away_array;
         
         return $stats;
+    }
+    
+    
+    /**/
+    public function getPastMatchsStats(){
+        
+    }
+    
+    
+    /* 過去のスタッツ情報（詳細）を取得
+     *@param array links 1day od links
+     * 
+     *      */
+    public function getPastDayMatchStats($links,$year,$league){
+        //debug($links);
+        
+        /*１日分の試合の取得 */
+        $day_list = array_keys($links);
+        $count = array();
+        $result_stats = array();
+ 
+        for($i = 1; $i <= count($links[$day_list[0]]); $i++){
+                $count[] = sprintf("%02d",$i);
+        }
+        
+        $stats = array();
+        foreach($count as $var){
+                //URL
+                $url = "/soccer/jleague/".$league."/score/".$year."/".$year.$day_list[0].$var.".html";
+
+                //引数用の配列作成
+                $year_array['year'] = $year;
+                preg_match("#^(?<month>\d{2})(?<day>\d{2})$#", $day_list[0],$m);
+                $month['month'] = $m['month'];
+                $day['day'] = $m['day'];
+
+                $stats = array_merge($stats,$this->getOneMatchStats($url, $year_array, $month, $day));
+        }
+       
+        
+        
+        debug($stats);
+        
     }
     
     /*Jリーグ速報から試合詳細へ→スタッツ情報の取得（直近の試合のみ）

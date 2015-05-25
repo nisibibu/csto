@@ -63,10 +63,13 @@ class MatchController extends AppController{
         //$this->setStas($stats, $league);
         
         /*スタッツ情報（付随情報）の取得*/
-        $stats = $this->Matches->getStatsSupo("j2");
+        //$stats = $this->Matches->getStatsSupo("j1","2015","04");
         //$this->setStas($stats, "j2");
         
-        
+        /*試合開催日の取得*/
+        $league = "j1";$year = '2015';
+        $past_link = $this->Matches->getMatchDayAndCount("j1","2015","04");
+        $this->Matches->getPastMatchStats($past_link,$year,$league);
         /*画面表示テスト*/
         //if($this->show()){
             //Formからのデータ受け取り
